@@ -4,6 +4,20 @@
   become: true
 
   tasks:    
+    
+    - name: Install depends RHEL
+      ansible.builtin.package:
+        name:
+          - epel-release
+          - python-pip
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install pexpect python package
+      ansible.builtin.pip:
+        name: pexpect
+      when: ansible_os_family == "RedHat"
+    
     - name: Make install directory 
       ansible.builtin.shell:
         cmd: mkdir -p /home/user/
