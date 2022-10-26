@@ -3,7 +3,11 @@
   hosts: all
   become: true
 
-  tasks:    
+  tasks:  
+    - name: Install depends
+      ansible.builtin.package:
+        name: ca-certificates
+        state: present
     
     - name: Install depends RHEL
       ansible.builtin.package:
@@ -27,7 +31,6 @@
         url: https://download.onlyoffice.com/install/workspace-install.sh
         dest: /home/user/
         mode: '0440'
-        validate_certs: no
       become: yes
 
     - name: Run install srcipt
