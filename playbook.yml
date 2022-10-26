@@ -27,3 +27,12 @@
 
     - ansible.builtin.debug:
         msg: "{{ info.stdout }}"
+
+    ####################################
+    #                                  # 
+    #  Healthcheck all services below  #
+    #                                  #
+    ####################################
+
+    - name: Check service status 
+         
