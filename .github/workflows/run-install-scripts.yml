@@ -39,7 +39,7 @@ jobs:
         brew install gnu-sed
 
     - name: Replace os image
-      run: gsed sed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
+      run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
 
     - name: Show Vagrant version
       run: vagrant --version
