@@ -4,12 +4,6 @@
   become: true
 
   tasks:  
-    - name: Install pip for Debian
-      ansible.builtin.package:
-        name: python-pip
-        state: present
-      when: ansible_os_family == "Debian"
-    
     - name: Install depends RHEL
       ansible.builtin.package:
         name:
