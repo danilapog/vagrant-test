@@ -5,9 +5,10 @@
 
   tasks:  
     - name: Install depends
-      ansible.builtin.package:
-        name: ca-certificates
+      ansible.builtin.apt:
+        name: python3-pip
         state: present
+      when: ansible_os_family == "Debian"
     
     - name: Install depends RHEL
       ansible.builtin.package:
@@ -19,8 +20,13 @@
 
     - name: Install pexpect python package
       ansible.builtin.pip:
-        name: pexpect
-      when: ansible_os_family == "RedHat"
+        name: 
+          - pexpect
+          - urllib3
+          - pyOpenSSL
+          - ndg-httpsclient
+          - pyasn1
+        
     
     - name: Make install directory 
       ansible.builtin.shell:
