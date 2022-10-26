@@ -15,9 +15,9 @@ jobs:
       matrix:
         boxes: 
           - generic/centos7
-          - generic/debian9
-          - generic/debian10
-          - generic/debian11
+          - debian/stretch64
+          - debian/buster64
+          - debian/bullseye64
           - ubuntu/xenial64
           - generic/ubuntu1804
           - generic/ubuntu2004
