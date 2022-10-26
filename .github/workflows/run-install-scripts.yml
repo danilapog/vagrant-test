@@ -15,12 +15,12 @@ jobs:
       matrix:
         boxes: 
           - generic/centos7
-            #- generic/debian9
-            #- generic/debian10
-            #- generic/debian11
-            #- ubuntu/xenial64
-            #- ubuntu/focal64
-            #- ubuntu/bionic64
+          - generic/debian9
+          - generic/debian10
+          - generic/debian11
+          - ubuntu/xenial64
+          - ubuntu/focal64
+          - ubuntu/bionic64
  
     steps:
     - name: Checkout code      
