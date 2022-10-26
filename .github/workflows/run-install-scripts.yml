@@ -5,18 +5,18 @@ on: [push]
 jobs:
   vagrant-up:
     runs-on: macos-12
-    strategy:
-      fail-fast: false
-      matrix:
-        image: 
-          - generic/centos7
-          - generic/centos8
-          - generic/debian9
-          - generic/debian10
-          - generic/debian11
-          - ubuntu/xenial64
-          - ubuntu/focal64
-          - ubuntu/bionic64
+    # strategy:
+    #  fail-fast: false
+    #  matrix:
+    #    image: 
+    #      - generic/centos7
+    #      - generic/centos8
+    #      - generic/debian9
+    #      - generic/debian10
+    #      - generic/debian11
+    #      - ubuntu/xenial64
+    #      - ubuntu/focal64
+    #      - ubuntu/bionic64
  
     steps:
     - uses: actions/checkout@v2
