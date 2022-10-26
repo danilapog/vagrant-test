@@ -4,8 +4,20 @@ on: [push]
 
 jobs:
   vagrant-up:
-    runs-on: macos-10.15
-
+    runs-on: macos-12
+    strategy:
+      fail-fast: false
+      matrix:
+        image: 
+          - generic/centos7
+          - generic/centos8
+          - generic/debian9
+          - generic/debian10
+          - generic/debian11
+          - ubuntu/xenial64
+          - ubuntu/focal64
+          - ubuntu/bionic64
+ 
     steps:
     - uses: actions/checkout@v2
  
@@ -22,9 +34,3 @@ jobs:
 
     - name: Run vagrant up
       run: vagrant up
-
-    - name: ssh into box after boot
-      run: vagrant ssh -c "echo 'hello world!'"
-
-    - name: check that ip address have access
-      run: ping 192.168.56.0
