@@ -15,12 +15,12 @@ jobs:
       matrix:
         boxes: 
           - generic/centos7
-          - debian/stretch64
-          - debian/buster64
-          - debian/bullseye64
-          - ubuntu/xenial64
-          - generic/ubuntu1804
-          - generic/ubuntu2004
+          - geerlingguy/debian9
+          - geerlingguy/debian10
+          - geerlingguy/debian11
+          - geerlingguy/ubuntu1604
+          - geerlingguy/ubuntu1804
+          - geerlingguy/ubuntu2004
  
     steps:
     - name: Checkout code      
