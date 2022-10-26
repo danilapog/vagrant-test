@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "generic/centos8"
+    config.vm.box = "generic/centos7"
 
     config.ssh.insert_key = false
     
