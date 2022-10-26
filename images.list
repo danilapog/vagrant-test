@@ -1,0 +1,8 @@
+generic/centos7
+generic/centos8
+generic/debian9
+generic/debian10
+generic/debian11
+ubuntu/xenial64
+ubuntu/focal64
+ubuntu/bionic64

@@ -34,15 +34,6 @@
       ansible.builtin.shell:
         cmd: echo "N" | bash /home/user/workspace-install.sh
       register: info
-      #  - name: Run install srcipt
-      # ansible.builtin.expect:
-      #  command: bash /home/user/workspace-install.sh --skiphardwarecheck true
-      #  responses:
-      #   "Install with Docker [Y/N/C]?": 'Y'
-      #   "Install ONLYOFFICE Mail Server [Y/N]?": 'N'
-      #register: info
-      #timeout: 40000
-      become: yes
 
     - ansible.builtin.debug:
         msg: "{{ info.stdout }}"
