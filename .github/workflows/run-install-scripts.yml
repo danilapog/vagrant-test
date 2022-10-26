@@ -37,7 +37,7 @@ jobs:
       run: pip3 install ansible 
 
     - name: Replace os image
-      run: sed -i "s!%BOX_IMAGE%!${{ matrix.boxes }}!" Vagrantfile
+      run: sed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
 
     - name: Show Vagrant version
       run: vagrant --version
