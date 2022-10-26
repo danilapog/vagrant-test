@@ -22,6 +22,7 @@
       ansible.builtin.pip:
         name: 
           - pexpect
+      when: ansible_os_family == "RedHat"
     
     - name: Make install directory 
       ansible.builtin.shell:
