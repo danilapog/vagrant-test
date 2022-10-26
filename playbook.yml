@@ -32,7 +32,7 @@
 
     - name: Run install srcipt
       ansible.builtin.shell:
-        cmd: echo "N" | bash /home/user/workspace-install.sh
+        cmd: echo "N" | bash /home/user/workspace-install.sh --skiphardwarecheck true
       register: info
 
     - ansible.builtin.debug:
