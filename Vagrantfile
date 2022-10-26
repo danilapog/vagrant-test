@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "ENV['BOX_IMAGE']"
+    config.vm.box = "%BOX_IMAGE%"
 
     config.ssh.insert_key = false
     

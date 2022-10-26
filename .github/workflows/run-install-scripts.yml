@@ -36,11 +36,11 @@ jobs:
     - name: Install test dependencies.
       run: pip3 install ansible 
 
-      #a- name: Replace os image
-      #run: sed -i "s!%BOX_IMAGE%!${{ matrix.boxes }}!" Vagrantfile
+    - name: Replace os image
+      run: sed -i "s!%BOX_IMAGE%!${{ matrix.boxes }}!" Vagrantfile
 
     - name: Show Vagrant version
       run: vagrant --version
 
     - name: Run vagrant up
-      run: BOX_IMAGE=${{ matrix.boxes }} vagrant up
+      run: vagrant up
