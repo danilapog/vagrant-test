@@ -21,11 +21,7 @@
     - name: Install pexpect python package
       ansible.builtin.pip:
         name: 
-          - urllib3
-          - pyOpenSSL
-          - ndg-httpsclient
-          - pyasn1
-        
+          - pexpect
     
     - name: Make install directory 
       ansible.builtin.shell:
@@ -36,6 +32,7 @@
         url: https://download.onlyoffice.com/install/workspace-install.sh
         dest: /home/user/
         mode: '0440'
+        validate_certs: no
       become: yes
 
     - name: Run install srcipt
