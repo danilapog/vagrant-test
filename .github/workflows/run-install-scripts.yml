@@ -19,8 +19,8 @@ jobs:
           - generic/debian10
           - generic/debian11
           - ubuntu/xenial64
-          - ubuntu/focal64
-          - ubuntu/bionic64
+          - generic/ubuntu1804
+          - generic/ubuntu2004
  
     steps:
     - name: Checkout code      
