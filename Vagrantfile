@@ -1,9 +1,11 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "ubuntu/trusty64"
+    config.vm.box = ""generic/ubuntu1804""
 
     config.vm.define 'ubuntu'
 
     config.ssh.insert_key = false
+   
+    config.vm.network "private_network", ip: "192.168.56.0"
     
     config.vm.provision "ansible" do |ansible|
     ansible.verbose = "v"
