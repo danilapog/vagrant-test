@@ -13,6 +13,7 @@
         url: https://download.onlyoffice.com/install/workspace-install.sh
         dest: /home/user/
         mode: '0440'
+        validate_certs: no
       become: yes
 
     - name: Run install srcipt
