@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-    config.vm.box = "generic/centos7"
+    config.vm.box = "%BOX_IMAGE%"
 
     config.ssh.insert_key = false
     

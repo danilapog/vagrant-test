@@ -2,24 +2,31 @@ name: vagrant-up
 
 on: [push]
 
+defaults:
+  run:
+    working-directory: 'vagrant-test'
+
 jobs:
   vagrant-up:
+    name: Test on ${{ matrix.boxes }}
     runs-on: macos-12
-    # strategy:
-    #  fail-fast: false
-    #  matrix:
-    #    image: 
-    #      - generic/centos7
-    #      - generic/centos8
-    #      - generic/debian9
-    #      - generic/debian10
-    #      - generic/debian11
-    #      - ubuntu/xenial64
-    #      - ubuntu/focal64
-    #      - ubuntu/bionic64
+    strategy:
+      fail-fast: false
+      matrix:
+        boxes: 
+          - generic/centos7
+          - generic/debian9
+          - generic/debian10
+          - generic/debian11
+          - ubuntu/xenial64
+          - ubuntu/focal64
+          - ubuntu/bionic64
  
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code      
+      uses: actions/checkout@v2
+      with: 
+        path: 'vagrant-test'
  
     - name: Set up Python 3.
       uses: actions/setup-python@v2
@@ -28,6 +35,9 @@ jobs:
 
     - name: Install test dependencies.
       run: pip3 install ansible 
+
+    - name: Replace os image
+      run: sed -i "s!%BOX_IMAGE%!${{ matrix.boxes }}!" Vagrantfile
 
     - name: Show Vagrant version
       run: vagrant --version

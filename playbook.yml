@@ -20,8 +20,10 @@
 
     - name: Run install srcipt
       ansible.builtin.shell:
-        cmd: echo "N" | bash /home/user/workspace-install.sh --skiphardwarecheck true
+        cmd: echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false
       register: info
+      args:
+        chdir: /home/user/
 
     - ansible.builtin.debug:
         msg: "{{ info.stdout }}"
