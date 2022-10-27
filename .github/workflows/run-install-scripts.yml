@@ -49,8 +49,11 @@ jobs:
       run: vagrant up
     
     - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo kill -9 $(sudo lsof -t -i:9001) ; sudo apt-get remove postfix -y"
-      if: matrix.boxes == 'generic/debian*'
+      run: |
+           if [ "${{ matrix.boxes }}" == "generic/debian*" ]; then 
+                 vagrant ssh -c "sudo kill -9 $(sudo lsof -t -i:9001) ; sudo apt-get remove postfix -y"
+           fi
+      shell: bash 
       
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
@@ -59,5 +62,5 @@ jobs:
       run: vagrant ssh -c "wget https://download.onlyoffice.com/install/workspace-install.sh"
 
     - name: run script
-      run: vagrant ssh -c "sudo -i ; echo 'N' | bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+      run: vagrant ssh -c "sudo passwd -u root ; echo 'N' | bash workspace-install.sh --skiphardwarecheck true --makeswap false"
 
