@@ -3,7 +3,7 @@ Vagrant.configure("2") do |config|
     
     config.vm.define 'ubuntu'
 
-    config.ssh.username 'root'   
+    config.ssh.username = 'root'   
     config.ssh.password = 'vagrant'
     config.ssh.insert_key = 'true'
 
