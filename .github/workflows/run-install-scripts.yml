@@ -49,7 +49,7 @@ jobs:
       run: vagrant up
 
     - name: check ports
-      run: vagrant ssh -c "sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
+      run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
 
     - name: download install sctipt
       run: vagrant ssh -c "wget https://download.onlyoffice.com/install/workspace-install.sh"
