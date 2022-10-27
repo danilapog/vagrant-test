@@ -47,11 +47,11 @@ jobs:
       run: vagrant up
     
     - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo apt-get remove postfix -y"
+      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils"
       if: |
           matrix.boxes == 'generic/debian9' || 
           matrix.boxes == 'generic/debian10' || 
-          matrix.boxes == 'generic/debian11'
+          matrix.boxes == 'generic/debian11' 
       
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
