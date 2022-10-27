@@ -52,5 +52,5 @@ jobs:
       run: vagrant ssh -c "wget https://download.onlyoffice.com/install/workspace-install.sh"
 
     - name: run script
-      run: vagrant ssh -c "echo 'N' | bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+      run: vagrant ssh -c "echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
 
