@@ -9,7 +9,7 @@ defaults:
 jobs:
   vagrant-up:
     name: Test on ${{ matrix.boxes }}
-    runs-on: macos-10.15
+    runs-on: macos-12
     strategy:
       fail-fast: false
       matrix:
@@ -21,7 +21,7 @@ jobs:
           - generic/ubuntu1604
           - generic/ubuntu1804
           - generic/ubuntu2004
-            # - generic/ubuntu2204
+          - generic/ubuntu2204
  
     steps:
     - name: Checkout code      
@@ -47,7 +47,7 @@ jobs:
       run: vagrant up
     
     - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo kill -9 $(sudo lsof -t -i:9001) ; sudo apt-get remove postfix -y"
+      run: vagrant ssh -c "sudo apt-get remove postfix -y"
       if: |
           matrix.boxes == 'generic/debian9' || 
           matrix.boxes == 'generic/debian10' || 
@@ -55,12 +55,13 @@ jobs:
       
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
-    - name: set up root password
-      run: vagrant ssh -c "sudo passwd -u root"
      
     - name: download install sctipt
-      run: vagrant ssh -c "sudo su - ; wget https://download.onlyoffice.com/install/workspace-install.sh"
+      run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
 
     - name: run script
-      run: vagrant ssh -c "sudo su - ; echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+      run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+    
+    - name: Shutdown and exit
+      run: vagrant ssh -c "echo 'Tests finished, check output if they failed' ; exit"
 
