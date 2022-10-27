@@ -35,9 +35,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install test dependencies.
-      run: |
-              #pip3 install ansible 
-        brew install gnu-sed
+      run: brew install gnu-sed
 
     - name: Replace os image
       run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
