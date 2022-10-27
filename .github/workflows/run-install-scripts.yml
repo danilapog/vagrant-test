@@ -47,10 +47,11 @@ jobs:
 
     - name: Run vagrant up
       run: vagrant up
-
-    - if: matrix.boxes == 'generic/debian*'
-          run: |
-            apt-get remove postfix -y
+    
+    - name: remove postfix on Debian
+      if: ${{ matrix.boxes }} == 'generic/debian*'
+      run: |
+         apt-get remove postfix -y
       
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
