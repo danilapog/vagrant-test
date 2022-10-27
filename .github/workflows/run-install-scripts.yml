@@ -9,7 +9,7 @@ defaults:
 jobs:
   vagrant-up:
     name: Test on ${{ matrix.boxes }}
-    runs-on: macos-10.5
+    runs-on: macos-11
     strategy:
       fail-fast: false
       matrix:
