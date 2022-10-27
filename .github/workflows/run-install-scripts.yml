@@ -50,7 +50,10 @@ jobs:
     
     - name: remove postfix on Debian
       run: vagrant ssh -c "sudo kill -9 $(sudo lsof -t -i:9001) ; sudo apt-get remove postfix -y"
-      if: matrix.boxes == 'generic/debian9' matrix.boxes == 'generic/debian10' martix.boxes == 'generic/debian11'
+      if: |
+         matrix.boxes == 'generic/debian9' 
+         matrix.boxes == 'generic/debian10' 
+         martix.boxes == 'generic/debian11'
       
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
