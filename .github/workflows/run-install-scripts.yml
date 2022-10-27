@@ -47,7 +47,7 @@ jobs:
       run: vagrant up
     
     - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils"
+      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
       if: |
           matrix.boxes == 'generic/debian9' || 
           matrix.boxes == 'generic/debian10' || 
