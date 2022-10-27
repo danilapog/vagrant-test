@@ -15,12 +15,12 @@ jobs:
       matrix:
         boxes: 
           - generic/centos7
-          - geerlingguy/debian9
-          - geerlingguy/debian10
-          - geerlingguy/debian11
-          - geerlingguy/ubuntu1604
-          - geerlingguy/ubuntu1804
-          - geerlingguy/ubuntu2004
+          - bento/debian-9
+          - bento/debian-10
+          - bento/debian-11
+          - bento/ubuntu-16.04
+          - bento/ubuntu-18.04
+          - bento/ubuntu-20.04
  
     steps:
     - name: Checkout code      
