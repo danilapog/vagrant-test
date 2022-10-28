@@ -67,7 +67,7 @@ jobs:
       run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
 
     - name: check rabbitmq logs
-      run: vagrant ssh -c "ls -l /var/log/rabbitmq ; echo ${RABBITMQ_LOG_BASE} ; echo ${RABBITMQ_LOGS}"
+      run: vagrant ssh -c "cat /var/log/rabbitmq/startup_err ;  cat /var/log/rabbitmq/startup_log"
     
     - name: check hosts
       run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
