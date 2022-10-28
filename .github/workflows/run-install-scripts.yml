@@ -65,6 +65,9 @@ jobs:
 
     - name: run script
       run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+
+    - name: check rabbitmq logs
+      run: vagrant ssh -c "ls -l /var/log/rabbitmq ; echo ${RABBITMQ_LOG_BASE} ; echo ${RABBITMQ_LOGS}"
     
     - name: Shutdown and exit
       run: vagrant ssh -c "echo 'Tests finished, check output if they failed' ; exit"
