@@ -3,8 +3,6 @@ Vagrant.configure("2") do |config|
     
     config.vm.define 'ubuntu'
     
-    config.vm.network "private_network", ip: "192.168.56.4"
-
     # Prevent SharedFoldersEnableSymlinksCreate errors
     config.vm.synced_folder ".", "/vagrant", disabled: true
 end
