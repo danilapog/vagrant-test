@@ -64,7 +64,7 @@ jobs:
       run: vagrant ssh -c "echo '$(hostname -s)'"
 
     - name: Set hostname 
-      run: vagrant ssh -c "echo '127.0.0.1 $(hostname -s)' | sudo tee -a /etc/hosts"
+      run: vagrant ssh -c "echo '127.0.0.1 instance4test' | sudo tee -a /etc/hosts"
 
     - name: check hosts
       run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
