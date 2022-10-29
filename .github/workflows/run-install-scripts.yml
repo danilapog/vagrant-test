@@ -60,13 +60,13 @@ jobs:
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
     
-    - name: check work command
-      run: vagrant ssh -c "echo '$(hostname -s)'"
+          #- name: check work command
+          #run: vagrant ssh -c "echo '$(hostname -s)'"
 
     - name: Set hostname 
       run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
 
-    - name: check hosts
+    - name: Check is that hosts is correct
       run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
      
     - name: download install sctipt
@@ -75,11 +75,11 @@ jobs:
     - name: run script
       run: vagrant ssh -c "sudo bash -c 'export RABBITMQ_NODENAME=rabbit@localhost' ; sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
 
-    - name: check rabbitmq logs
-      run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
+      #- name: check rabbitmq logs
+      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
       #if: | 
       #    matrix.boxes == 
 
-    - name: check logs with another files
-      run: vagrant ssh -c "sudo cat /var/log/rabbitmq/rabbitmq-server.error.log ; sudo cat /var/log/rabbitmq/rabbitmq-server.log"
+      #- name: check logs with another files
+      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/rabbitmq-server.error.log ; sudo cat /var/log/rabbitmq/rabbitmq-server.log"
     
