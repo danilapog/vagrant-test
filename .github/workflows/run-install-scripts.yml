@@ -18,7 +18,8 @@ jobs:
           - generic/debian9
           - generic/debian10
           - generic/debian11
-          - generic/ubuntu1604
+          #- generic/ubuntu1604
+          - geerlingguy/ubuntu1604
           - generic/ubuntu1804
           - generic/ubuntu2004
           - generic/ubuntu2204
