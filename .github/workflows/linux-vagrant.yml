@@ -56,8 +56,8 @@ jobs:
            sudo apt-get install linux-headers-$(uname -r)
 
 
-    - name: Replace os image
-      run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
+    - name: Replace os image for Vagrantfile
+      run: sed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
 
     - name: Show Vagrant version
       run: vagrant --version
