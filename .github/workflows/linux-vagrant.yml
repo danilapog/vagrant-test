@@ -2,6 +2,8 @@ name: vagrant-up
 
 on: [push]
 
+env:
+  VAGRANT_VERSION: 2.3.2
 defaults:
   run:
     working-directory: 'vagrant-test'
@@ -9,7 +11,7 @@ defaults:
 jobs:
   vagrant-up:
     name: Test on ${{ matrix.boxes }}
-    runs-on: macos-12
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -18,8 +20,7 @@ jobs:
           - generic/debian9
           - generic/debian10
           - generic/debian11
-          #- generic/ubuntu1604
-          - geerlingguy/ubuntu1604
+          - generic/ubuntu1604
           - generic/ubuntu1804
           - generic/ubuntu2004
           - generic/ubuntu2204
@@ -35,8 +36,25 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install test dependencies.
-      run: brew install gnu-sed
+    - name: Install virtual-box+vagrant.
+      run: |
+
+           # ################## #
+           # setting up vagrant #
+           # ################## #
+          
+           mkdir -p ./vagrant
+           wget https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}-1_amd64.deb ./vagrant/vagrant_amd64.deb
+           dpkg -i ./vagrant/vagrant_amd64.deb
+
+           # ###################### #
+           # setting up virtual-box #
+           # ###################### #
+           
+           wget http://download.virtualbox.org/virtualbox/7.0.2/virtualbox-7.0_7.0.2-154219~Ubuntu~jammy_amd64.deb ./vagrant/virtualbox_amd64.deb
+           dpkg -i virtualbox_amd64.deb
+           apt-get install linux-headers-$(uname -r)
+
 
     - name: Replace os image
       run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
@@ -48,27 +66,14 @@ jobs:
       run: vagrant up
     
     - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
+      run: vagrant ssh -c "sudo apt-get remove postfix -y"
       if: |
           matrix.boxes == 'generic/debian9' ||
           matrix.boxes == 'generic/debian10' || 
-          matrix.boxes == 'generic/debian11' || 
-          matrix.boxes == 'generic/ubuntu1604' ||
-          matrix.boxes == 'generic/ubuntu1804' ||
-          matrix.boxes == 'generic/ubuntu2004' ||
-          matrix.boxes == 'generic/ubuntu2204'
+          matrix.boxes == 'generic/debian11'
       
-      #- name: check ports
-      #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
-    
-          #- name: check work command
-          #run: vagrant ssh -c "echo '$(hostname -s)'"
-
     - name: Set hostname 
       run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
-
-    - name: Check is that hosts is correct
-      run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
      
     - name: download install sctipt
       run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
@@ -76,11 +81,3 @@ jobs:
     - name: run script
       run: vagrant ssh -c "sudo bash -c 'export RABBITMQ_NODENAME=rabbit@localhost' ; sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
 
-      #- name: check rabbitmq logs
-      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
-      #if: | 
-      #    matrix.boxes == 
-
-      #- name: check logs with another files
-      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/rabbitmq-server.error.log ; sudo cat /var/log/rabbitmq/rabbitmq-server.log"
-    

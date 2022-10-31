@@ -1,0 +1,85 @@
+name: vagrant-up
+
+on: [push]
+
+defaults:
+  run:
+    working-directory: 'vagrant-test'
+
+jobs:
+  vagrant-up:
+    name: Test on ${{ matrix.boxes }}
+    runs-on: macos-12
+    strategy:
+      fail-fast: false
+      matrix:
+        boxes: 
+          - generic/centos7
+          - generic/debian9
+          - generic/debian10
+          - generic/debian11
+          - generic/ubuntu1604
+          - generic/ubuntu1804
+          - generic/ubuntu2004
+          - generic/ubuntu2204
+ 
+    steps:
+    - name: Checkout code      
+      uses: actions/checkout@v2
+      with: 
+        path: 'vagrant-test'
+ 
+    - name: Set up Python 3.
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install test dependencies.
+      run: brew install gnu-sed
+
+    - name: Replace os image
+      run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
+
+    - name: Show Vagrant version
+      run: vagrant --version
+
+    - name: Run vagrant up
+      run: vagrant up
+    
+    - name: remove postfix on Debian
+      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
+      if: |
+          matrix.boxes == 'generic/debian9' ||
+          matrix.boxes == 'generic/debian10' || 
+          matrix.boxes == 'generic/debian11' || 
+          matrix.boxes == 'generic/ubuntu1604' ||
+          matrix.boxes == 'generic/ubuntu1804' ||
+          matrix.boxes == 'generic/ubuntu2004' ||
+          matrix.boxes == 'generic/ubuntu2204'
+      
+      #- name: check ports
+      #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
+    
+          #- name: check work command
+          #run: vagrant ssh -c "echo '$(hostname -s)'"
+
+    - name: Set hostname 
+      run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
+
+    - name: Check is that hosts is correct
+      run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
+     
+    - name: download install sctipt
+      run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
+
+    - name: run script
+      run: vagrant ssh -c "sudo bash -c 'export RABBITMQ_NODENAME=rabbit@localhost' ; sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false"
+
+      #- name: check rabbitmq logs
+      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
+      #if: | 
+      #    matrix.boxes == 
+
+      #- name: check logs with another files
+      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/rabbitmq-server.error.log ; sudo cat /var/log/rabbitmq/rabbitmq-server.log"
+    
