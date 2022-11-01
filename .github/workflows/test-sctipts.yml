@@ -57,14 +57,14 @@ jobs:
           matrix.boxes == 'generic/ubuntu2004' ||
           matrix.boxes == 'generic/ubuntu2204'
       
-    - name: Set hostname 
-      run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
+    #- name: Set hostname 
+     # run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
 
-    - name: Check is that hosts is correct
-      run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
+    #- name: Check is that hosts is correct
+     # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
      
-    - name: download install sctipt
-      run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
+    #- name: download install sctipt
+    # run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
 
     #- name: run script
     # run: vagrant ssh -c "status=$? ; cmd='sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false' ; \$cmd ; if [ $status != 0 ]; then exit 1 ; fi"
