@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.hostname = "host4test"
     
-    config.vm.provision "shell", inline: $sctipt
+    config.vm.provision "shell", inline: "$script"
     
     # Prevent SharedFoldersEnableSymlinksCreate errors
     config.vm.synced_folder ".", "/vagrant", disabled: true
