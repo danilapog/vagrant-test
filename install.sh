@@ -1,14 +1,15 @@
 #!/bin/bash
 
-prepare_debian () {
+#prepare_debian () {
+#
+#}
 
-}
-
-healthcheck_services () {
-
-}
+#healthcheck_services () {
+#
+#}
 
 install_workspace () {
+
    if [ ! -f /etc/centos-release ]; then apt-get remove postfix -y ; fi
    echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts
    wget https://download.onlyoffice.com/install/workspace-install.sh 
