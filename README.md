@@ -1,6 +1,7 @@
 # vagrant-github-actions
 [![Build Status](https://github.com/jonashackt/vagrant-github-actions/workflows/vagrant-up/badge.svg)](https://github.com/jonashackt/vagrant-github-actions/actions)
 
+f
 Example project showing how to run a Vagrant box on GitHub Actions
 
 
