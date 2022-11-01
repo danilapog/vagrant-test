@@ -36,23 +36,21 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install virtual-box+vagrant.
-      run: |
+        #- name: Install virtual-box+vagrant.
+        #run: |
            # ################## #
            # setting up vagrant #
            # ################## #
           
-              #sudo wget https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}-1_amd64.deb
-              #sudo dpkg -i vagrant_${VAGRANT_VERSION}-1_amd64.deb
+        #sudo wget https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}-1_amd64.deb > /dev/null 2>&1
+        #sudo dpkg -i vagrant_${VAGRANT_VERSION}-1_amd64.deb > /dev/null 2>&1
+
            # ###################### #
            # setting up virtual-box #
            # ###################### #
            
-           #sudo wget http://download.virtualbox.org/virtualbox/7.0.2/virtualbox-7.0_7.0.2-154219~Ubuntu~jammy_amd64.deb
-           #sudo apt-get install --fix-missing ./virtualbox-7.0_7.0.2-154219~Ubuntu~jammy_amd64.deb
-           #sudo apt-get install linux-headers-$(uname -r)
-           #sudo apt update 
-           #sudo apt install -y virtualbox virtualbox-ext-pack 
+          #sudo apt update 
+          #sudo apt install -y virtualbox
 
     - name: Replace os image
       run: sed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
