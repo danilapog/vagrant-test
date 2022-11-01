@@ -73,7 +73,7 @@ jobs:
       run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
 
     - name: run script
-      run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false | if [ $(echo $?) == 1 ]; then echo 'FAILED! FAILED! exit with 1' ; exit 1 ; fi"
+      run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $(echo $?) == 1 ]; then echo 'FAILED! FAILED! exit with 1' ; exit 1 ; fi"
 
       #- name: check rabbitmq logs
       #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
