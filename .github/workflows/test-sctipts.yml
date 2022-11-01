@@ -60,8 +60,8 @@ jobs:
       #- name: check ports
       #run: vagrant ssh -c "sudo -i ; sudo apt-get update ; sudo apt-get install netstat; sudo netstat -tulpn | grep LISTEN"
     
-          #- name: check work command
-          #run: vagrant ssh -c "echo '$(hostname -s)'"
+    - name: check work command
+      run: vagrant ssh -c "exit 1"
 
     - name: Set hostname 
       run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
@@ -75,8 +75,6 @@ jobs:
     - name: run script
       run: vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $(echo $?) = 1 ]; then echo 'FAILED! FAILED! exit with 1' ; exit 1 ; fi"
 
-      #- name: check rabbitmq logs
-      #run: vagrant ssh -c "sudo cat /var/log/rabbitmq/startup_err ;  sudo cat /var/log/rabbitmq/startup_log"
       #if: | 
       #    matrix.boxes == 
 
