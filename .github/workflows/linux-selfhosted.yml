@@ -52,7 +52,7 @@ jobs:
            #sudo apt-get install --fix-missing ./virtualbox-7.0_7.0.2-154219~Ubuntu~jammy_amd64.deb
            #sudo apt-get install linux-headers-$(uname -r)
            sudo apt update 
-           sudo apt install virtualbox virtualbox-ext-pack
+           sudo apt install -y virtualbox virtualbox-ext-pack 
 
     - name: Replace os image
       run: sed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
