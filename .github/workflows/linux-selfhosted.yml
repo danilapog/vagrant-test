@@ -11,7 +11,7 @@ defaults:
 jobs:
   vagrant-up:
     name: Test on ${{ matrix.boxes }}
-    runs-on: [self-hosted, ubuntu20]
+    runs-on: [self-hosted, linux]
     strategy:
       fail-fast: false
       matrix:
