@@ -70,7 +70,7 @@ jobs:
       run: vagrant ssh -c "status=$? ; cmd='sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false' "
   
     - name: run script
-      run: vagrant ssh -c "$cmd ; if [[ $status != 0 ]] then; exit 1
+      run: vagrant ssh -c "$cmd ; if [[ $status != 0 ]] then; exit 1"
       
     #vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $? != 0 ] ; then exit 1; fi  "
      
