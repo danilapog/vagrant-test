@@ -14,7 +14,7 @@ install_workspace () {
    echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts
    wget https://download.onlyoffice.com/install/workspace-install.sh 
    echo "N" | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false
-   if [ $? != 0 ] ; then echo "exit with 0" ; exit 0; fi
+   if [ $? != 0 ] ; then echo "FAILED: exit with 1" ; exit 1; fi
 
 }
 
