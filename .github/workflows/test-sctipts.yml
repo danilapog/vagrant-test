@@ -47,20 +47,23 @@ jobs:
       run: vagrant up
 
     - name: Check exit code
-      run: vagrant ssh -- /bin/false; echo $?
+      run:  vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; sudo wget https://download.onlyoffice.com/install/workspace-install.sh ;echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
     
-    #- name: remove postfix on Debian
-    # run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
-   # if: |
-   #     matrix.boxes == 'generic/debian9' ||
-   #    matrix.boxes == 'generic/debian10' || 
-   #   matrix.boxes == 'generic/debian11' || 
-    #     matrix.boxes == 'generic/ubuntu1804' ||
-    #     matrix.boxes == 'generic/ubuntu2004' ||
-    #     #matrix.boxes == 'generic/ubuntu2204'
+    - name: remove postfix on Debian
+      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
+      if: |
+        matrix.boxes == 'generic/debian9' ||
+        matrix.boxes == 'generic/debian10' || 
+        matrix.boxes == 'generic/debian11' || 
+        matrix.boxes == 'generic/ubuntu1804' ||
+        matrix.boxes == 'generic/ubuntu2004' ||
+        matrix.boxes == 'generic/ubuntu2204'
       
-    #- name: Set hostname 
-     # run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
+    - name: Set hostname
+      run:  vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts 
+    
+    - name: Install scripts
+      run: vagrant ssh -- sudo wget https://download.onlyoffice.com/install/workspace-install.sh ; echo "N" | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
 
     #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
