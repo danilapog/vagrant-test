@@ -60,7 +60,7 @@ jobs:
       run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
     
     - name: Download scripts
-      run: vagrant ssh -- sudo wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/workspace-install.sh ; pwd
+      run: vagrant ssh -- sudo wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/ ; ls /home/vagrant/
 
     - name: install
       run: vagrant ssh -- pwd ; ls -l ; echo "N" | sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
