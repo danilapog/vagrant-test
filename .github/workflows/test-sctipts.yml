@@ -45,6 +45,9 @@ jobs:
 
     - name: Run vagrant up
       run: vagrant up
+
+    - name: Check exit code
+      run: vagrant ssh -- /bin/false; echo $?
     
     #- name: remove postfix on Debian
     # run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"

@@ -13,8 +13,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.hostname = "host4test"
 
-    config.vm.provision "shell", 
-      inline: $script
+    #config.vm.provision "shell", inline: $script
     
     #config.vm.provision "shell", path: './install.sh'
     
