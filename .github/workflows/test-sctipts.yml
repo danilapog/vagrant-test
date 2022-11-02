@@ -63,10 +63,10 @@ jobs:
     #  run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
     
     - name: Download scripts
-      run: vagrant ssh -- "pwd ; wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/ "
+      run: vagrant ssh -- "pwd ; wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/"
 
     - name: Install
-      run: vagrant ssh -- "echo 'N' | sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $? !=0 ]; then exit 1; fi"
+      run: vagrant ssh -- echo 'N' \|\ sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $? !=0 ]; then exit 1; fi
 
     - name: Healthcheck that services is running
       run: | 
