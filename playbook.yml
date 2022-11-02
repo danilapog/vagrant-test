@@ -13,13 +13,14 @@
     - name: Download sctipt
       ansible.builtin.get_url:
         url: https://download.onlyoffice.com/install/workspace-install.sh
+        dest: /home/vagrant/
         mode: '0440'
         validate_certs: no
       become: yes
 
     - name: Run install srcipt
       ansible.builtin.shell:
-        cmd: echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false
+        cmd: echo "N" | bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false
 
 
     ####################################
