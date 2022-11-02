@@ -63,7 +63,7 @@ jobs:
       run: vagrant ssh -- pwd ; sudo wget https://download.onlyoffice.com/install/workspace-install.sh 
 
     - name: install
-      run: vagrant ssh -- pwd ; ls -l ; echo "N" | sudo bash ./workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
+      run: vagrant ssh -- pwd ; ls -l ; echo 'N' | sudo bash ./workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
 
     #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
