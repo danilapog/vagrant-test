@@ -46,16 +46,15 @@ jobs:
     - name: Run vagrant up
       run: vagrant up
     
-    - name: remove postfix on Debian
-      run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
-      if: |
-         matrix.boxes == 'generic/debian9' ||
-         matrix.boxes == 'generic/debian10' || 
-         matrix.boxes == 'generic/debian11' || 
-         matrix.boxes == 'generic/ubuntu1604' ||
-         matrix.boxes == 'generic/ubuntu1804' ||
-         matrix.boxes == 'generic/ubuntu2004' ||
-         matrix.boxes == 'generic/ubuntu2204'
+    #- name: remove postfix on Debian
+    # run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
+   # if: |
+   #     matrix.boxes == 'generic/debian9' ||
+   #    matrix.boxes == 'generic/debian10' || 
+   #   matrix.boxes == 'generic/debian11' || 
+    #     matrix.boxes == 'generic/ubuntu1804' ||
+    #     matrix.boxes == 'generic/ubuntu2004' ||
+    #     #matrix.boxes == 'generic/ubuntu2204'
       
     #- name: Set hostname 
      # run: vagrant ssh -c "echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts"
