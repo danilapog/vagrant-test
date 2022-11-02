@@ -46,9 +46,6 @@ jobs:
     - name: Run vagrant up
       run: vagrant up
 
-    - name: Check exit code
-      run:  vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; sudo wget https://download.onlyoffice.com/install/workspace-install.sh ;echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
-    
     - name: remove postfix on Debian
       run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
       if: |
