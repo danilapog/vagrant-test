@@ -55,15 +55,18 @@ jobs:
         matrix.boxes == 'generic/ubuntu1804' ||
         matrix.boxes == 'generic/ubuntu2004' ||
         matrix.boxes == 'generic/ubuntu2204'
-      
-    - name: Set hostname
-      run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
     
-    - name: Download scripts
-      run: vagrant ssh -- pwd ; sudo wget https://download.onlyoffice.com/install/workspace-install.sh 
+    - name: check exit code
+      run: vagrant ssh -c " /bin/false ; echo $? "
+    
+    #- name: Set hostname
+    #  run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
+    
+    #- name: Download scripts
+    #  run: vagrant ssh -- pwd ; sudo wget https://download.onlyoffice.com/install/workspace-install.sh 
 
-    - name: install
-      run: vagrant ssh -- pwd ; ls -l ; echo 'N' | sudo bash ./workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
+    #- name: install
+    #  run: vagrant ssh -- pwd ; ls -l ; echo 'N' | sudo bash ./workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
 
     #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
