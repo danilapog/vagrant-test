@@ -57,7 +57,7 @@ jobs:
         matrix.boxes == 'generic/ubuntu2204'
     
     - name: check exit code
-      run: vagrant ssh -c " /bin/false ; echo $? "
+      run: vagrant ssh -- /bin/false ; echo $? 
     
     #- name: Set hostname
     #  run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
