@@ -57,10 +57,10 @@ jobs:
         matrix.boxes == 'generic/ubuntu2204'
       
     - name: Set hostname
-      run:  vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts 
+      run:  vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
     
     - name: Install scripts
-      run: vagrant ssh -- sudo wget https://download.onlyoffice.com/install/workspace-install.sh ; echo "N" | sudo bash ./workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
+      run: vagrant ssh -- sudo wget https://download.onlyoffice.com/install/workspace-install.sh ./scripts/workspace-install.sh ; echo "N" | sudo bash ./scripts/workspace-install.sh --skiphardwarecheck true --makeswap false ; exit $?
 
     #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
