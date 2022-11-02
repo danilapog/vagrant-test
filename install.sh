@@ -1,19 +1,10 @@
 #!/bin/bash
 
-#prepare_debian () {
-#
-#}
-
-#healthcheck_services () {
-#
-#}
+set -e 
 
 
 
-   if [ ! -f /etc/centos-release ]; then apt-get remove postfix -y ; fi
-   echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts
-   wget https://download.onlyoffice.com/install/workspace-install.sh 
-   echo "N" | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false
-   echo $?
-   if [ $? != 0 ] ; then exit 1; else exit 0; fi
-
+if [ ! -f /etc/centos-release ]; then apt-get remove postfix -y ; fi
+echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts
+wget https://download.onlyoffice.com/install/workspace-install.sh 
+echo "N" | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false
