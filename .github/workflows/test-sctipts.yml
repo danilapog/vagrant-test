@@ -68,8 +68,9 @@ jobs:
     - name: Install
       run: vagrant ssh -- echo 'N' \|\ sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false 
 
-    - name: Check exit code
-      run: vagrant ssh -c "if [ $? != 0 ]; then echo INSTALLATION FAILED: exit with 1 ; exit 1 ; else echo INSTALLATION SUCCESS: exit with 0 ; exit 0 ; fi"
+    - name: Check code
+      run: |
+           vagrant ssh -c "if [ $? != 0 ]; then echo 'INSTALLATION FAILED: exit with 1' ; exit 1 ; else echo 'INSTALLATION SUCCESS: exit with 0' ; exit 0 ; fi"
 
      #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
