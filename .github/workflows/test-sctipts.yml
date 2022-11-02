@@ -35,7 +35,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install test dependencies.
-      run: brew install gnu-sed
+      run: brew install gnu-sed ansible
 
     - name: Replace os image
       run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
@@ -62,15 +62,15 @@ jobs:
     #- name: Set hostname
     #  run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
     
-    - name: Download scripts
-      run: vagrant ssh -- "wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/"
+      #- name: Download scripts
+      #run: vagrant ssh -- "wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/"
 
-    - name: Install
-      run: vagrant ssh -- echo 'N' \|\ sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false 
+      #- name: Install
+      #run: vagrant ssh -- echo 'N' \|\ sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false >> output.logs
 
-    - name: Check code
-      run: |
-           vagrant ssh -c "if [ $? != 0 ]; then echo 'INSTALLATION FAILED: exit with 1' ; exit 1 ; else echo 'INSTALLATION SUCCESS: exit with 0' ; exit 0 ; fi"
+      #- name: Check code
+      #run: |
+      #     vagrant ssh -c "cat /home/vagrant/output.logs | grep "
 
      #- name: Check is that hosts is correct
      # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
@@ -78,9 +78,3 @@ jobs:
     #- name: download install sctipt
     # run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
 
-    #- name: run script
-    # run: vagrant ssh -c "status=$? ; cmd='sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false' ; \$cmd ; if [ $status != 0 ]; then exit 1 ; fi"
-      
-    #vagrant ssh -c "sudo echo 'N' | sudo bash workspace-install.sh --skiphardwarecheck true --makeswap false ; if [ $? != 0 ] ; then exit 1; fi  "
-     
-     #if [ $? != 0 ] ; then exit 1; fi "
