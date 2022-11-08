@@ -61,6 +61,8 @@ jobs:
 
 ```
 
+Healthcheck
+
 And since there's no stable release of VirtualBox for Big Sur (v11), well go with MacOS version 10.15 (which is currently also the `macos-latest` [environment on GitHub Actions](https://github.com/actions/virtual-environments))
 
 We also use the https://github.com/actions/cache action here to cache our Vagrant boxes for further runs. Using `hashFiles('Vagrantfile')` will make sure we only create a new cache, if our `Vagrantfile` changed (and thus assume, that the box name is also different).
