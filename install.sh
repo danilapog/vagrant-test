@@ -60,6 +60,7 @@ function prepare_vm() {
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
   echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
+  sleep 60
 }
 
 function healthcheck_systemd_services() {
@@ -86,12 +87,9 @@ function healthcheck_supervisor_services() {
     done
 }
 
-
-
 function healthcheck_documentserver() {
 echo "test"
 }
-
 
 function healthcheck_general_status() {
   if [ ! -z "${SYSTEMD_SVC_FAILED}" ] || [ ! -z ${SUPERVISOR_SVC_FAILED} ]; then
