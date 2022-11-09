@@ -60,10 +60,12 @@ function prepare_vm() {
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
   echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
-  sleep 60
 }
 
 function healthcheck_systemd_services() {
+ 
+  sleep 60s 
+
   for service in ${SERVICES_SYSTEMD[@]} 
   do 
     if systemctl is-active --quiet ${service}; then
