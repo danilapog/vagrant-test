@@ -107,6 +107,7 @@ main() {
   install_workspace
   healthcheck_systemd_services
   healthcheck_supervisor_services
+  healthcheck_general_status
 }
 
 
