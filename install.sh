@@ -88,10 +88,11 @@ healthcheck_systemd_services() {
 
 
 main() {
+  common::get_colors
   prepare_vm
   install_workspace
   healthcheck_systemd_services
-  healthcheck_supervisor_services
+  #healthcheck_supervisor_services
 
 }
 
