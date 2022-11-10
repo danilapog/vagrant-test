@@ -51,7 +51,7 @@ jobs:
       run: brew install gnu-sed
 
     - name: Replace os image
-      run: gsed -i 's!%BOX_IMAGE%!${BOX_DISTRIBUTION}/${{ matrix.boxes }}!' Vagrantfile
+      run: gsed -i 's!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!' Vagrantfile
 
       #- name: setting-up Docker install if present
       #run:|
