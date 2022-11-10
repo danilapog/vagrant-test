@@ -2,25 +2,38 @@ name: vagrant-up
 
 on: [push]
 
+env: 
+  BOX_DISTRIBUTION: generic
+
 defaults:
   run:
     working-directory: 'vagrant-test'
 
 jobs:
   vagrant-up:
-    name: "Test on ${{ matrix.boxes }}-${{ matrix.installation }} installation"
+    name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: macos-12
     strategy:
       fail-fast: false
       matrix:
-        boxes: [generic/centos7, generic/debian9, generic/debian10, generic/debian11, generic/ubuntu1604, generic/ubuntu1804, generic/ubuntu2004, generic/ubuntu2204]
-        installation: [default, docker]
+        boxes: 
+          - centos7
+          - debian9
+          - debian10
+          - debian11
+          - ubuntu1604
+          - ubuntu1804
+          - ubuntu2004
+          - ubuntu2204
+        installation: 
+          - default
+          - docker
         exclude:
-          - boxes: generic/debian9
+          - boxes: debian9
             installation: docker
-          - boxes: generic/centos7
+          - boxes: centos7
             installation: docker
-          - boxes: generic/ubuntu1604
+          - boxes: ubuntu1604
             installation: docker
 
     steps:
@@ -38,7 +51,10 @@ jobs:
       run: brew install gnu-sed
 
     - name: Replace os image
-      run: gsed -i 's!%BOX_IMAGE%!${{ matrix.boxes }}!' Vagrantfile
+      run: gsed -i 's!%BOX_IMAGE%!${BOX_DISTRIBUTION}/${{ matrix.boxes }}!' Vagrantfile
+
+      #- name: setting-up Docker install if present
+      #run:|
 
     - name: Show Vagrant version
       run: vagrant --version
