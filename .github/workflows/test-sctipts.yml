@@ -8,7 +8,7 @@ defaults:
 
 jobs:
   vagrant-up:
-    name: "Test on ${{ matrix.boxes }}-${{ matrix.condition }} installation"
+    name: "Test on ${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: macos-12
     strategy:
       fail-fast: false
@@ -16,12 +16,12 @@ jobs:
         boxes: [generic/centos7, generic/debian9, generic/debian10, generic/debian11, generic/ubuntu1604, generic/ubuntu1804, generic/ubuntu2004, generic/ubuntu2204]
         installation: [default, docker]
         exclude:
-          - boxes: [generic/debian9]
-            installation: [docker]
-          - boxes: [generic/centos7]
-            installation: [docker]
-          - boxes: [generic/ubuntu1604]
-            installation: [docker]
+          - boxes: generic/debian9
+            installation: docker
+          - boxes: generic/centos7
+            installation: docker
+          - boxes: generic/ubuntu1604
+            installation: docker
 
     steps:
     - name: Checkout code      
