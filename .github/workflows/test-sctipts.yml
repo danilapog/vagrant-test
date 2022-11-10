@@ -55,12 +55,9 @@ jobs:
 
     - name: setting-up Docker install if present
       run: |
-        if [ ${{ matrix.installation }} == 'default' ]; then
-          gsed -i "s!%ARGUMENT%!!" Vagrantfile
-        fi
 
         if [ ${{ matrix.installation }} == 'docker' ]; then
-          gsed -i "s!%ARGUMENT%!, :args => \"-d true\"!" Vagrantfile
+          gsed -i "s!'./install.sh'!./install.sh', :args => \"-d true\"!" Vagrantfile
         fi
  
 
