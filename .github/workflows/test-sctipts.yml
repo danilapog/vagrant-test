@@ -14,8 +14,19 @@ jobs:
       fail-fast: false
       matrix:
         boxes: [generic/centos7, generic/debian9, generic/debian10, generic/debian11, generic/ubuntu1604, generic/ubuntu1804, generic/ubuntu2004, generic/ubuntu2204]
-        docker: [NO]
-        
+        condition: [default]
+        include:
+          - boxes: [generic/debian10]
+            condition: [docker]
+          - boxes: [generic/debian11]
+            condition: [docker]
+          - boxes: [generic/ubuntu1804]
+            condition: [docker]
+          - boxes: [generic/ubuntu2004]
+            condition: [docker]
+          - boxes: [generic/ubuntu2204]
+            condition: [docker]
+
     steps:
     - name: Checkout code      
       uses: actions/checkout@v2
