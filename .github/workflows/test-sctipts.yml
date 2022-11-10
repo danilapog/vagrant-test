@@ -60,7 +60,7 @@ jobs:
         fi
 
         if [ ${{ matrix.installation }} == 'docker' ]; then
-          gsed -i "s!%ARGUMENT%!-d true!" Vagrantfile
+          gsed -i "s!%ARGUMENT%!, :args => \"-d true\"!" Vagrantfile
         fi
  
 
