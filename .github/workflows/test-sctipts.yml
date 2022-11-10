@@ -23,8 +23,8 @@ jobs:
           - generic/ubuntu2004
           - generic/ubuntu2204
         include:
-          - boxes: ["generic/debian10", "generic/gebian11", "generic/ubuntu1804", "generic/ubuntu2004", "generic/ubuntu2204"]
-            docker: true
+          - boxes: [generic/debian10, generic/gebian11, generic/ubuntu1804, generic/ubuntu2004, generic/ubuntu2204]
+            docker: 16
  
     steps:
     - name: Checkout code      
@@ -45,6 +45,9 @@ jobs:
 
     - name: Show Vagrant version
       run: vagrant --version
+
+    - name: check matrix
+      run: echo ${{ matrix.docker }}
 
     - name: Run vagrant up
       run: vagrant up
