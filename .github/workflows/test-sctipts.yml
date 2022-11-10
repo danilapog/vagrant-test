@@ -24,12 +24,7 @@ jobs:
           - generic/ubuntu2204
         include:
           - docker: true
-            boxes: 
-              - generic/debian10
-              - generic/gebian11
-              - generic/ubuntu1804
-              - generic/ubuntu2004
-              - generic/ubuntu2204
+            boxes: ["generic/debian10", "generic/gebian11", "generic/ubuntu1804", "generic/ubuntu2004", "generic/ubuntu2204"]
  
     steps:
     - name: Checkout code      
