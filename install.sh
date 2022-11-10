@@ -61,7 +61,7 @@ function prepare_vm() {
 
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
-  echo "Y" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
+  echo "Y N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
 }
 
 function healthcheck_systemd_services() {
