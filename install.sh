@@ -2,6 +2,19 @@
 
 set -e 
 
+while [ "$1" != "" ]; do
+	case $1 in
+
+		-d | --docker_installation )
+			if [ "$2" != "" ]; then
+				DOCKER_INSTALLATION=$2
+				shift
+			fi
+		;;
+        esac
+	shift
+done
+
 export TERM=xterm-256color^M
 
 SERVICES_SYSTEMD=(
@@ -34,7 +47,6 @@ SERVICES_SUPERVISOR=(
 	"ds:docservice"
 	"ds:metrics")
 
-
 function common::get_colors() {
     COLOR_BLUE=$'\e[34m'
     COLOR_GREEN=$'\e[32m'
@@ -61,11 +73,16 @@ function prepare_vm() {
 
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
-  #echo "Y N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
+  
+  if [ -z ${DOCKER_INSTALLATION} ]; then
+
+  bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
+  "
+     else 
   bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "Y
   N
   "
-
+     fi
 }
 
 function healthcheck_systemd_services() {
@@ -103,13 +120,21 @@ function healthcheck_general_status() {
 }
 
 
+function healthcheck_docker_installation() {
+	exit 0
+}
+
 main() {
   common::get_colors
   prepare_vm
   install_workspace
-  healthcheck_systemd_services
-  healthcheck_supervisor_services
-  healthcheck_general_status
+  if [ -z ${DOCKER_INSTALLATION} ]; then
+    healthcheck_systemd_services
+    healthcheck_supervisor_services
+    healthcheck_general_status
+  else
+    healthcheck_docker_installation
+  fi
 }
 
 

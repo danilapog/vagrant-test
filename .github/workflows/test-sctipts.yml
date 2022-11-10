@@ -53,14 +53,19 @@ jobs:
     - name: Replace os image
       run: gsed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
 
-      #- name: setting-up Docker install if present
-      #run:|
+    - name: setting-up Docker install if present
+      run:|
+        if [ ${{ matrix.installation }} == 'default' ]; then
+          gsed -i "s!%ARGUMENT%!!" Vagrantfile
+        fi
+
+        if [ ${{ matrux.installation }} == 'docker' ]; then
+          gsed -i "s!%ARGUMENT%!-d true!" Vagrantfile
+        fi
+ 
 
     - name: Show Vagrant version
       run: vagrant --version
-
-    - name: check matrix
-      run: echo ${{ matrix.docker }}
 
     - name: Run vagrant up
       run: vagrant up
