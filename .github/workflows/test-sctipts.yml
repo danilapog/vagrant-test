@@ -59,7 +59,7 @@ jobs:
           gsed -i "s!%ARGUMENT%!!" Vagrantfile
         fi
 
-        if [ ${{ matrux.installation }} == 'docker' ]; then
+        if [ ${{ matrix.installation }} == 'docker' ]; then
           gsed -i "s!%ARGUMENT%!-d true!" Vagrantfile
         fi
  
