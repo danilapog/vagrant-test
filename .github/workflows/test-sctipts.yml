@@ -22,10 +22,10 @@ jobs:
           - generic/ubuntu1804
           - generic/ubuntu2004
           - generic/ubuntu2204
-        docker: "NO"
+        docker: [ "NO" ]
         include:
           - boxes: ["generic/debian11"]
-            docker: "YES"
+            docker: [ "YES" ]
  
     steps:
     - name: Checkout code      
