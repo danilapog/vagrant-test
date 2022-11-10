@@ -57,7 +57,7 @@ jobs:
       run: |
 
         if [ ${{ matrix.installation }} == 'docker' ]; then
-          gsed -i "s!'./install.sh'!./install.sh', :args => \"-d true\"!" Vagrantfile
+          gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
         fi
  
 
