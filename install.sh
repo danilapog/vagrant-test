@@ -5,6 +5,8 @@ set -e
 export TERM=xterm-256color^M
 
 SERVICES_SYSTEMD=(
+	"monoserve.service"
+	"monoserveApiSystem.service"
 	"onlyofficeAutoCleanUp.service" 
 	"onlyofficeBackup.service" 
 	"onlyofficeControlPanel.service" 
@@ -59,7 +61,7 @@ function prepare_vm() {
 
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
-  echo "N" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
+  echo "Y" | bash workspace-install.sh --skiphardwarecheck true --makeswap false 
 }
 
 function healthcheck_systemd_services() {
@@ -89,13 +91,9 @@ function healthcheck_supervisor_services() {
     done
 }
 
-function healthcheck_documentserver() {
-echo "test"
-}
-
 function healthcheck_general_status() {
   if [ ! -z "${SYSTEMD_SVC_FAILED}" ] || [ ! -z ${SUPERVISOR_SVC_FAILED} ]; then
-    echo "${COLOR_YELLOW}⚠ ⚠ ATTENTION: Some sevices is not running⚠ ⚠ ${COLOR_RESET}"
+    echo "${COLOR_YELLOW}⚠ ⚠  ATTENTION: Some sevices is not running ⚠ ⚠ ${COLOR_RESET}"
     exit 1
   fi
 }
