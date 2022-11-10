@@ -54,7 +54,7 @@ jobs:
       run: gsed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
 
     - name: setting-up Docker install if present
-      run:|
+      run: |
         if [ ${{ matrix.installation }} == 'default' ]; then
           gsed -i "s!%ARGUMENT%!!" Vagrantfile
         fi
