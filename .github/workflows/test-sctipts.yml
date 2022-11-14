@@ -70,7 +70,7 @@ jobs:
     - name: Run vagrant up
       run: vagrant up
   
-  vagrant-up(docker):
+  vagrant-up_docker:
     name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: macos-12
     strategy:
