@@ -60,6 +60,14 @@ function common::get_colors() {
     export COLOR_YELLOW
 }
 
+function check_hw() {
+        local FREE_RAM=$(free -h)
+	local FREE_CPU=$(nproc)
+	echo "${COLOR_RED} ${FREE_RAM} ${COLOR_RESET}"
+        echo "${COLOR_RED} ${FREE_CPU} ${COLOR_RESET}"
+}
+
+
 function prepare_vm() {
   if [ ! -f /etc/centos-release ]; then 
     apt-get remove postfix -y 
@@ -127,6 +135,7 @@ function healthcheck_docker_installation() {
 main() {
   common::get_colors
   prepare_vm
+  check_hw
   install_workspace
   if [ -z ${DOCKER_INSTALLATION} ]; then
     healthcheck_systemd_services
