@@ -47,6 +47,9 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Check cpu
+      run: sysctl -n hw.ncpu
+
     - name: Install test dependencies.
       run: brew install gnu-sed
 
