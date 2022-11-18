@@ -59,12 +59,6 @@ jobs:
       with:
         python-version: '3.x'
 
-        #- name: Check cpu
-        #run: sysctl -n hw.ncpu
-
-        #- name: Install test dependencies.
-        #run: brew install gnu-sed
-
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
 
@@ -91,36 +85,3 @@ jobs:
     secrets:
       access-token: ${{ secrets.ACCESS_TOKEN }}
       do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}    
-      
-      #- name: remove postfix on Debian
-      #run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
-      #if: |
-      #  matrix.boxes == 'generic/debian9' ||
-      #  matrix.boxes == 'generic/debian10' || 
-      #  matrix.boxes == 'generic/debian11' || 
-      #  matrix.boxes == 'generic/ubuntu1804' ||
-      #  matrix.boxes == 'generic/ubuntu2004' ||
-      #  matrix.boxes == 'generic/ubuntu2204'
-    
-      #- name: check exit code
-      #run: vagrant ssh -- /bin/false ; echo $? 
-    
-    #- name: Set hostname
-    #  run: vagrant ssh -- echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts ; mkdir -p ./scripts
-    
-      #- name: Download scripts
-      #run: vagrant ssh -- "wget https://download.onlyoffice.com/install/workspace-install.sh -P /home/vagrant/"
-
-      #- name: Install
-      #run: vagrant ssh -- echo 'N' \|\ sudo bash /home/vagrant/workspace-install.sh --skiphardwarecheck true --makeswap false >> output.logs
-
-      #- name: Check code
-      #run: |
-      #     vagrant ssh -c "cat /home/vagrant/output.logs | grep "
-
-     #- name: Check is that hosts is correct
-     # run: vagrant ssh -c "sudo cat /etc/hosts ; sudo cat /etc/hostname"
-     
-    #- name: download install sctipt
-    # run: vagrant ssh -c "sudo wget https://download.onlyoffice.com/install/workspace-install.sh"
-
