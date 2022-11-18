@@ -10,9 +10,19 @@ defaults:
     working-directory: 'vagrant-test'
 
 jobs:
+  spin-up-droplet:
+    name: Spin up Droplet
+    uses: oxide-one/worm/.github/workflows/spinup.yaml@main
+    with:
+      name: gha-${{ github.run_id }}-${{ github.run_number }}
+    secrets:
+      access-token: ${{ secrets.ACCESS_TOKEN }}
+      do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}
+
   vagrant-up:
+    needs: spin-up-droplet
     name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
-    runs-on: macos-12
+    runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
@@ -68,6 +78,18 @@ jobs:
     - name: Run vagrant up
       run: vagrant up
   
+  tear-down-droplet:
+    needs: 
+      - vagrant-up
+    name: Spin Down Droplet
+    if: always() 
+    uses: oxide-one/worm/.github/workflows/teardown.yaml@main
+    with:
+      name: gha-${{ github.run_id }}-${{ github.run_number }}
+    secrets:
+      access-token: ${{ secrets.YOUR_GITHUB_PERSONAL_ACCESS_TOKEN }}
+      do-access-token: ${{ secrets.YOUR_DIGITALOCEAN_ACCESS_TOKEN }}    
+      
       #- name: remove postfix on Debian
       #run: vagrant ssh -c "sudo apt-get remove postfix -y ; sudo apt-get install dialog apt-utils -y"
       #if: |
