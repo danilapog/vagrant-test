@@ -15,6 +15,7 @@ jobs:
     uses: oxide-one/worm/.github/workflows/spinup.yaml@main
     with:
       image: ubuntu-20-04-x64
+      size: c-4
       name: gha-${{ github.run_id }}-${{ github.run_number }}
     secrets:
       access-token: ${{ secrets.ACCESS_TOKEN }}
