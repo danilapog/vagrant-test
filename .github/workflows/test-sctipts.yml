@@ -136,12 +136,17 @@ jobs:
       run: vagrant up
       
   tear-down:
-    name: Destroy instance 
+    name: Destroy instance ${{ matrix.name }}
     needs: [spin-up, vagrant-up]
     if: always()
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: 
+          - ${{needs.spin-up.outputs.instance-name}}
+        
     steps:
-    
     # Install Doctl
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
