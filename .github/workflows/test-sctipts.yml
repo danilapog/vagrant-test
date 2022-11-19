@@ -4,37 +4,72 @@ on: [push]
 
 env: 
   BOX_DISTRIBUTION: generic
+  RUNNER_IMAGE: 
+  RUNNER_REGION:
+  RUNNER_SIZE:
 
 defaults:
   run:
     working-directory: 'vagrant-test'
 
 jobs:
-  spin-up-droplet:
-    name: ${{ matrix.boxes }}
-    uses: oxide-one/worm/.github/workflows/spinup.yaml@main
+  spin-up:
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        boxes: 
-          - centos7-runner
-          - debian9-runner
-          - debian10-runner
-          - debian11-runner
-          - ubuntu1604-runner
-          - ubuntu1804-runner
-          - ubuntu2004-runner
-          - ubuntu2204-runner
-          
-    with:
-      image: ubuntu-20-04-x64
-      size: s-4vcpu-8gb-intel
-      name: gha-${{ github.run_id }}-${{ github.run_number }}
-    secrets:
-      access-token: ${{ secrets.ACCESS_TOKEN }}
-      do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}
+        name: 
+          - gha-runner-centos7
+          - gha-runner-debian9
+          - gha-runner-debian10
+          #- debian11
+          #- ubuntu1604
+          #- ubuntu1804
+          #- ubuntu2004
+          #- ubuntu2204
+    steps:
+    # Install Doctl
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_ACCESS_TOKEN }}
+        
+    # Template out the file for user-data
+    - name: Template out file
+      run: |
+        cat << EOF > ./user-data
+        #!/bin/bash
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sh get-docker.sh
+        apt -y update
+        apt -y install jq
+        useradd -m gha-runner -G docker
+        echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
+        export RUNNER_CFG_PAT="${{ secrets.ACCESS_TOKEN }}"
+        cd /home/gha-runner
+        curl -s https://raw.githubusercontent.com/actions/runner/main/scripts/create-latest-svc.sh | sudo -E -s -u gha-runner bash -s ${{ github.repository }}
+        EOF
+        
+    # Create the VM
+    - name: Create vm for ${{ matrix.name }}
+      run: doctl compute droplet create ${{ matrix.name }} --image ${RUNNER_IMAGE} --region ${RUNNER_REGION} --size ${RUNNER_SIZE} --wait --user-data-file ./user-data > /dev/null
+
+    - name: Wait for VM to come online
+      run: | 
+        sleep 30
+        for ATTEMPT in {1..10};
+        do
+          echo "#### Attempt $ATTEMPT ####"
+          if curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{ matrix.name }}") | has("status")';
+          then
+            exit 0
+          fi
+          sleep 30
+        done
+        exit 1
 
   vagrant-up:
-    needs: spin-up-droplet
+    needs: spin-up
     name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: self-hosted
     strategy:
@@ -44,11 +79,11 @@ jobs:
           - centos7
           - debian9
           - debian10
-          - debian11
-          - ubuntu1604
-          - ubuntu1804
-          - ubuntu2004
-          - ubuntu2204
+          #- debian11
+          #- ubuntu1604
+          #- ubuntu1804
+          #- ubuntu2004
+          #- ubuntu2204
         #installation: 
         #  - default
         #  - docker
@@ -96,4 +131,22 @@ jobs:
       name: gha-${{ github.run_id }}-${{ github.run_number }}
     secrets:
       access-token: ${{ secrets.ACCESS_TOKEN }}
-      do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}    
+      do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}  
+      
+  tear-down:
+    runs-on: ubuntu-latest
+    steps:
+    # Install Doctl
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DO_ACCESS_TOKEN }}
+
+    # Create the VM
+    - name: Delete vm ${{ inputs.name }}
+      run: doctl compute droplet delete ${{ inputs.name }} -f
+
+    - name: Delete the runner
+      run: | 
+        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.access-token }}" | jq -er '.runners[] | select(.name == "${{ inputs.name }}").id')
+        curl -s -X DELETE https://api.github.com/repos/${{ github.repository }}/actions/runners/$RUNNER_ID -H "accept: application/json" -H "authorization: token ${{ secrets.access-token }}"
