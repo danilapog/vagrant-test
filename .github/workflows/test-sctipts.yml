@@ -11,19 +11,20 @@ defaults:
 
 jobs:
   spin-up-droplet:
-    name: Spin up Droplet
+    name: ${{ matrix.boxes }}
     uses: oxide-one/worm/.github/workflows/spinup.yaml@main
     strategy:
       matrix:
         boxes: 
-          - centos7
-          - debian9
-          - debian10
-          - debian11
-          - ubuntu1604
-          - ubuntu1804
-          - ubuntu2004
-          - ubuntu2204
+          - centos7-runner
+          - debian9-runner
+          - debian10-runner
+          - debian11-runner
+          - ubuntu1604-runner
+          - ubuntu1804-runner
+          - ubuntu2004-runner
+          - ubuntu2204-runner
+          
     with:
       image: ubuntu-20-04-x64
       size: s-4vcpu-8gb-intel
