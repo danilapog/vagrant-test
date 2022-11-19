@@ -18,7 +18,7 @@ jobs:
     name: Make ${{ matrix.name }}
     runs-on: ubuntu-latest
     outputs: 
-      instance-name: ${{ step.instance-name.outputs.instance-name }}
+      instance-name: ${{ steps.instance-name.outputs.instance-name }}
     strategy:
       fail-fast: false
       matrix:
