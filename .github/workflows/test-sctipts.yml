@@ -49,10 +49,10 @@ jobs:
         cat << EOF > ./user-data
         #!/bin/bash
         
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sh get-docker.sh
-        apt -y update
-        apt -y install jq
+        #curl -fsSL https://get.docker.com -o get-docker.sh
+        #sh get-docker.sh
+        #apt -y update
+        #apt -y install jq
         
         useradd -m gha-runner -G docker
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
@@ -123,9 +123,6 @@ jobs:
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
       
-    - name: Delete vm ${{needs.spin-up.outputs.instance-name}}
-      run: echo "test"
-      
     #- name: setting-up Docker install if present
       #run: |
        # if [ ${{ matrix.installation }} == 'docker' ]; then
@@ -140,7 +137,7 @@ jobs:
       
   tear-down:
     name: Destroy instance 
-    needs: vagrant-up
+    needs: [spin-up, vagrant-up]
     if: always()
     runs-on: ubuntu-latest
     steps:
