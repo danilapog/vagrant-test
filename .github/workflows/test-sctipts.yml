@@ -19,11 +19,11 @@ jobs:
           - gha-runner-centos7
           #- gha-runner-debian9
           #- gha-runner-debian10
-          #- debian11
-          #- ubuntu1604
-          #- ubuntu1804
-          #- ubuntu2004
-          #- ubuntu2204
+          #- gha-runner-debian11
+          #- gha-runner-ubuntu1604
+          #- gha-runner-ubuntu1804
+          #- gha-runner-ubuntu2004
+          #- gha-runner-ubuntu2204
     steps:
     # Install Doctl
     - name: Install doctl
@@ -36,10 +36,12 @@ jobs:
       run: |
         cat << EOF > ./user-data
         #!/bin/bash
+        
         curl -fsSL https://get.docker.com -o get-docker.sh
         sh get-docker.sh
         apt -y update
         apt -y install jq
+        
         useradd -m gha-runner -G docker
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
         export RUNNER_CFG_PAT="${{ secrets.ACCESS_TOKEN }}"
@@ -69,8 +71,9 @@ jobs:
     needs: spin-up
     name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: self-hosted
-    env:
-      working-directory: 'vagrant-test'
+    defaults:
+      run:
+        working-directory: 'vagrant-test'
     strategy:
       fail-fast: false
       matrix:
