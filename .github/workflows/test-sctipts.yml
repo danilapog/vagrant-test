@@ -49,10 +49,10 @@ jobs:
         cat << EOF > ./user-data
         #!/bin/bash
         
-        #curl -fsSL https://get.docker.com -o get-docker.sh
-        #sh get-docker.sh
-        #apt -y update
-        #apt -y install jq
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sh get-docker.sh
+        apt -y update
+        apt -y install jq
         
         useradd -m gha-runner -G docker
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
