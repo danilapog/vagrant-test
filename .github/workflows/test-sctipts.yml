@@ -8,10 +8,6 @@ env:
   RUNNER_REGION: fra1
   RUNNER_SIZE: s-4vcpu-8gb-intel
 
-defaults:
-  run:
-    working-directory: 'vagrant-test'
-
 jobs:
   spin-up:
     runs-on: ubuntu-latest
@@ -72,6 +68,8 @@ jobs:
     needs: spin-up
     name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
     runs-on: self-hosted
+    env:
+      working-directory: 'vagrant-test'
     strategy:
       fail-fast: false
       matrix:
@@ -108,18 +106,21 @@ jobs:
 
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
-
+      working-directory: ${working-directory}
+      
     - name: setting-up Docker install if present
       run: |
         if [ ${{ matrix.installation }} == 'docker' ]; then
           gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
         fi
+      working-directory: ${working-directory}
  
     - name: Show Vagrant version
       run: vagrant --version
 
     - name: Run vagrant up
       run: vagrant up
+      working-directory: ${working-directory}
       
   tear-down:
     runs-on: ubuntu-latest
