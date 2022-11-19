@@ -138,6 +138,7 @@ jobs:
   tear-down:
     name: Destroy instance 
     needs: vagrant-up
+    if: always()
     runs-on: ubuntu-latest
     steps:
     
