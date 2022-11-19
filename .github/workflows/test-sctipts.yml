@@ -18,7 +18,7 @@ jobs:
     name: Make ${{ matrix.name }}
     runs-on: ubuntu-latest
     outputs: 
-      instance-name: ${{ steps.instance-name.outputs.instance-name }}
+      instance-name: ${{ steps.get-name.outputs.instance-name }}
     strategy:
       fail-fast: false
       matrix:
@@ -39,8 +39,8 @@ jobs:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
         
     - name: Move instance name in output
-      id: instance-name
-      run: echo "${{ matrix.name }}" >> $GITHUB_OUTPUT
+      id: get-name
+      run: echo "${{ matrix.name }}"
   
         
     # Template out the file for user-data
