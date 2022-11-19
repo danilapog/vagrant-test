@@ -1,7 +1,12 @@
 name: vagrant-up
 
-on: [push]
+#on: [push]
 
+#on:
+#  pull_request:
+#    paths:
+#    - 'sub-project/**'
+    
 env: 
   BOX_DISTRIBUTION: generic
   RUNNER_IMAGE: ubuntu-20-04-x64
