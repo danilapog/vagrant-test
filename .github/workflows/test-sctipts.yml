@@ -40,7 +40,7 @@ jobs:
         
     - name: Move instance name in output
       id: get-name
-      run: echo "${{ matrix.name }}"
+      run: echo "${{ matrix.name }}" >> $GITHUB_OUTPUT
   
         
     # Template out the file for user-data
