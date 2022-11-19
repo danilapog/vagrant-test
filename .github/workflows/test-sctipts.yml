@@ -1,6 +1,6 @@
 name: vagrant-up
 
-#on: [push]
+on: [push]
 
 #on:
 #  pull_request:
@@ -17,6 +17,8 @@ jobs:
   spin-up:
     name: Make ${{ matrix.name }}
     runs-on: ubuntu-latest
+    outputs: 
+      instance-name: ${{ step.instance-name.outputs.instance-name }}
     strategy:
       fail-fast: false
       matrix:
@@ -35,6 +37,11 @@ jobs:
       uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
+        
+    - name: Move instance name in output
+      id: instance-name
+      run: echo "${{ matrix.name }}" >> ${GITHUB_OUTPUT}
+  
         
     # Template out the file for user-data
     - name: Template out file
@@ -141,10 +148,10 @@ jobs:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
 
     # Create the VM
-    - name: Delete vm ${{ inputs.name }}
-      run: doctl compute droplet delete ${{ inputs.name }} -f
+    - name: Delete vm ${{ needs.spin-up.outputs.instance-name }}
+      run: doctl compute droplet delete ${{ needs.spin-up.outputs.instance-name }} -f
 
     - name: Delete the runner
       run: | 
-        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{ inputs.name }}").id')
+        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{ needs.spin-up.outputs.instance-name }}").id')
         curl -s -X DELETE https://api.github.com/repos/${{ github.repository }}/actions/runners/$RUNNER_ID -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}"
