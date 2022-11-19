@@ -40,7 +40,7 @@ jobs:
         
     - name: Move instance name in output
       id: get-name
-      run: echo "gha-runner-centos7" >> $GITHUB_OUTPUT
+      run: echo "test=world" >> $GITHUB_OUTPUT
   
         
     # Template out the file for user-data
