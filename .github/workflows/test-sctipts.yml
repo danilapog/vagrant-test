@@ -4,9 +4,9 @@ on: [push]
 
 env: 
   BOX_DISTRIBUTION: generic
-  RUNNER_IMAGE: 
-  RUNNER_REGION:
-  RUNNER_SIZE:
+  RUNNER_IMAGE: ubuntu-20-04-x64
+  RUNNER_REGION: fra1
+  RUNNER_SIZE: s-4vcpu-8gb-intel
 
 defaults:
   run:
@@ -120,18 +120,6 @@ jobs:
 
     - name: Run vagrant up
       run: vagrant up
-  
-  tear-down-droplet:
-    needs: 
-      - vagrant-up
-    name: Spin Down Droplet
-    if: always() 
-    uses: oxide-one/worm/.github/workflows/teardown.yaml@main
-    with:
-      name: gha-${{ github.run_id }}-${{ github.run_number }}
-    secrets:
-      access-token: ${{ secrets.ACCESS_TOKEN }}
-      do-access-token: ${{ secrets.DO_ACCESS_TOKEN }}  
       
   tear-down:
     runs-on: ubuntu-latest
@@ -148,5 +136,5 @@ jobs:
 
     - name: Delete the runner
       run: | 
-        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.access-token }}" | jq -er '.runners[] | select(.name == "${{ inputs.name }}").id')
-        curl -s -X DELETE https://api.github.com/repos/${{ github.repository }}/actions/runners/$RUNNER_ID -H "accept: application/json" -H "authorization: token ${{ secrets.access-token }}"
+        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{ inputs.name }}").id')
+        curl -s -X DELETE https://api.github.com/repos/${{ github.repository }}/actions/runners/$RUNNER_ID -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}"
