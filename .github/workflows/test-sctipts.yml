@@ -137,14 +137,16 @@ jobs:
       
   tear-down:
     name: Destroy instance ${{ matrix.name }}
-    needs: [spin-up, vagrant-up]
+    needs: [vagrant-up]
     if: always()
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         name: 
-          - ${{needs.spin-up.outputs.instance-name}}
+          - gha-runner-centos7
+          - gha-runner-debian9
+          - gha-runner-debian10
         
     steps:
     # Install Doctl
@@ -154,10 +156,10 @@ jobs:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
 
     # Create the VM
-    - name: Delete vm ${{needs.spin-up.outputs.instance-name}}
-      run: doctl compute droplet delete ${{needs.spin-up.outputs.instance-name}} -f
+    - name: Delete vm ${{ matrix.name }}
+      run: doctl compute droplet delete ${{ matrix.name }} -f
 
     - name: Delete the runner
       run: | 
-        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{needs.spin-up.outputs.instance-name}}").id')
+        RUNNER_ID=$(curl -s -X GET https://api.github.com/repos/${{ github.repository }}/actions/runners -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}" | jq -er '.runners[] | select(.name == "${{ matrix.name }}").id')
         curl -s -X DELETE https://api.github.com/repos/${{ github.repository }}/actions/runners/$RUNNER_ID -H "accept: application/json" -H "authorization: token ${{ secrets.ACCESS_TOKEN }}"
