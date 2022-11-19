@@ -111,11 +111,11 @@ jobs:
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
       
-    - name: setting-up Docker install if present
-      run: |
-        if [ ${{ matrix.installation }} == 'docker' ]; then
-          gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
-        fi
+    #- name: setting-up Docker install if present
+      #run: |
+       # if [ ${{ matrix.installation }} == 'docker' ]; then
+        #  gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
+        #fi
         
     - name: Show Vagrant version
       run: vagrant --version
