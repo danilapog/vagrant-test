@@ -92,8 +92,8 @@ jobs:
       matrix:
         boxes: 
           - centos7
-            #- debian9
-            #- debian10
+          #- debian9
+          #- debian10
           #- debian11
           #- ubuntu1604
           #- ubuntu1804
@@ -124,11 +124,11 @@ jobs:
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
       
-    #- name: setting-up Docker install if present
-      #run: |
-       # if [ ${{ matrix.installation }} == 'docker' ]; then
-        #  gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
-        #fi
+   #- name: setting-up Docker install if present
+     #run: |
+      # if [ ${{ matrix.installation }} == 'docker' ]; then
+      #   gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
+      # fi
         
     - name: Show Vagrant version
       run: vagrant --version
@@ -146,8 +146,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-centos7
-          - gha-runner-debian9
-          - gha-runner-debian10
+            #- gha-runner-debian9
+            #- gha-runner-debian10
         
     steps:
     # Install Doctl
