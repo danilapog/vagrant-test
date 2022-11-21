@@ -1,9 +1,10 @@
 name: vagrant-up
 
-on: [push]
+#on: [push]
 
 #on:
 #  pull_request:
+#    types: [opened, reopened, edited]
 #    paths:
 #    - 'sub-project/**'
     
@@ -24,8 +25,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-centos7
-          - gha-runner-debian9
-          - gha-runner-debian10
+          #- gha-runner-debian9
+          #- gha-runner-debian10
           #- gha-runner-debian11
           #- gha-runner-ubuntu1604
           #- gha-runner-ubuntu1804
@@ -91,8 +92,8 @@ jobs:
       matrix:
         boxes: 
           - centos7
-          - debian9
-          - debian10
+            #- debian9
+            #- debian10
           #- debian11
           #- ubuntu1604
           #- ubuntu1804
