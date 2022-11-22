@@ -53,8 +53,8 @@ jobs:
         
         apt -y update
         apt -y install jq curl virtualbox
-        curl -O https://releases.hashicorp.com/vagrant/2.3.2/vagrant_2.3.2-1_x86_64.deb
-        apt install ./vagrant_2.3.2-1_x86_64.deb
+        curl -O https://releases.hashicorp.com/vagrant/2.3.2/vagrant_2.3.2-1_amd64.deb
+        apt install -y ./vagrant_2.3.2-1_amd64.deb
         useradd -m gha-runner 
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
         export RUNNER_CFG_PAT="${{ secrets.ACCESS_TOKEN }}"
