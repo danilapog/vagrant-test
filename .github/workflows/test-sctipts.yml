@@ -138,20 +138,6 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: install virtualbox
-      run: |
-        add-apt-repository universe
-        add-apt-repository multiverse
-        add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib"
-        apt-get update
-        apt-get upgrade
-        apt-get install libpng16-16 libqt5core5a libqt5printsupport5 libqt5widgets5 libqt5x11extras5
-        wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-        wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-        sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
-        sudo apt update -y
-        sudo apt install -y virtualbox-6.0 
-
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
       
