@@ -57,7 +57,7 @@ jobs:
         wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
         add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib"
         sudo apt update -y
-        sudo apt install -y virtualbox-6.1
+        sudo apt install -y virtualbox-6.0
 
         apt -y update
         apt -y install jq curl
