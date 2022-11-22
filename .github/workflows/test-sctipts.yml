@@ -138,7 +138,7 @@ jobs:
         wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
         sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
         sudo apt update -y
-        sudo apt install -y virtualbox-6.0 
+        sudo apt install -f -y virtualbox-6.0 
 
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
