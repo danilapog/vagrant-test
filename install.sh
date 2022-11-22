@@ -82,21 +82,12 @@ function prepare_vm() {
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
   
-  #if [ -z ${DOCKER_INSTALLATION} ]; then
-
   bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
   "
-  #   else 
-  #bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "Y
-  #N
-  #"
-  #   fi
 }
 
 function healthcheck_systemd_services() {
  
-  sleep 60s 
-
   for service in ${SERVICES_SYSTEMD[@]} 
   do 
     if systemctl is-active --quiet ${service}; then
@@ -128,22 +119,19 @@ function healthcheck_general_status() {
 }
 
 
-function healthcheck_docker_installation() {
-	exit 0
-}
+#function healthcheck_docker_installation() {
+#	exit 0
+#}
 
 main() {
   common::get_colors
   prepare_vm
   check_hw
   install_workspace
-  if [ -z ${DOCKER_INSTALLATION} ]; then
-    healthcheck_systemd_services
-    healthcheck_supervisor_services
-    healthcheck_general_status
-  else
-    healthcheck_docker_installation
-  fi
+  healthcheck_systemd_services
+  healthcheck_supervisor_services
+  healthcheck_general_status
+  healthcheck_docker_installation
 }
 
 

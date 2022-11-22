@@ -1,6 +1,6 @@
 name: vagrant-up
 
-on: [push]
+#on: [push]
 
 #on:
 #  pull_request:
@@ -24,14 +24,16 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-          #- gha-runner-centos7
-          #- gha-runner-debian9
+          - gha-runner-centos7
+            #- gha-runner-centos8
+            #- gha-runner-centos9
+            #- gha-runner-debian9
           - gha-runner-debian10
-          #- gha-runner-debian11
-          #- gha-runner-ubuntu1604
-          - gha-runner-ubuntu1804
-          #- gha-runner-ubuntu2004
-          #- gha-runner-ubuntu2204
+            #- gha-runner-debian11
+            #- gha-runner-ubuntu1604
+            #- gha-runner-ubuntu1804
+          - gha-runner-ubuntu2004
+            #- gha-runner-ubuntu2204
     steps:
     # Install Doctl
     - name: Install doctl
@@ -39,12 +41,11 @@ jobs:
       with:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
         
-    - name: Move instance name in output
+    - name: Get instance name
       id: get-name
       run: echo "name=${{ matrix.name }}" >> $GITHUB_OUTPUT
-  
         
-    # Template out the file for user-data
+    # Template for cloud-init install vagrant
     - name: Template out file
       run: |
         cat << EOF > ./user-data
@@ -83,7 +84,7 @@ jobs:
 
   vagrant-up:
     needs: spin-up
-    name: "${{ matrix.boxes }}-${{ matrix.installation }} installation"
+    name: "Run tests on ${{ matrix.boxes }}"
     runs-on: self-hosted
     defaults:
       run:
@@ -92,14 +93,16 @@ jobs:
       fail-fast: false
       matrix:
         boxes: 
-          #- centos7
-          #- debian9
+          - centos7
+            #- centos8
+            #- centos9
+            #- debian9
           - debian10
-          #- debian11
-          #- ubuntu1604
-          - ubuntu1804
-          #- ubuntu2004
-          #- ubuntu2204
+            #- debian11
+            #- ubuntu1604
+            #- ubuntu1804
+          - ubuntu2004
+            #- ubuntu2204
         #installation: 
         #  - default
         #  - docker
@@ -125,8 +128,8 @@ jobs:
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
       
-   #- name: setting-up Docker install if present
-     #run: |
+      #- name: setting-up Docker install if present
+      #run: |
       # if [ ${{ matrix.installation }} == 'docker' ]; then
       #   gsed -i "s!'./install.sh'!'./install.sh', :args => \"-d true\"!" Vagrantfile
       # fi
@@ -146,11 +149,16 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-        #- gha-runner-centos7
+          - gha-runner-centos7
+            #- gha-runner-centos8
+            #- gha-runner-centos9
             #- gha-runner-debian9
           - gha-runner-debian10
-          - gha-runner-ubuntu1804
-
+            #- gha-runner-debian11
+            #- gha-runner-ubuntu1604
+            #- gha-runner-ubuntu1804
+          - gha-runner-ubuntu2004
+            # - gha-runner-ubuntu2204
         
     steps:
     # Install Doctl
