@@ -28,7 +28,7 @@ jobs:
             #- gha-runner-centos8
             #- gha-runner-centos9
             #- gha-runner-debian9
-          - gha-runner-debian10
+          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian11
             #- gha-runner-ubuntu1604
             #- gha-runner-ubuntu1804
@@ -52,9 +52,17 @@ jobs:
         #!/bin/bash
         
         apt -y update
-        apt -y install jq curl virtualbox
-        curl -O https://releases.hashicorp.com/vagrant/2.3.2/vagrant_2.3.2-1_amd64.deb
-        apt install -y ./vagrant_2.3.2-1_amd64.deb
+        apt -y install jq curl
+        sudo apt-get update -y  
+        sudo apt-get -y install wget
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update -y && sudo apt install vagrant -y
+        wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+        wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+        sudo apt update -y 
+        sudo apt install virtualbox-6.0 -y
         useradd -m gha-runner 
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
         export RUNNER_CFG_PAT="${{ secrets.ACCESS_TOKEN }}"
@@ -154,7 +162,7 @@ jobs:
             #- gha-runner-centos8
             #- gha-runner-centos9
             #- gha-runner-debian9
-          - gha-runner-debian10
+          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian11
             #- gha-runner-ubuntu1604
             #- gha-runner-ubuntu1804
