@@ -10,7 +10,7 @@ on: [push]
     
 env: 
   BOX_DISTRIBUTION: generic
-  RUNNER_IMAGE: ubuntu-20-04-x64
+  RUNNER_IMAGE: ubuntu-18-04-x64
   RUNNER_REGION: fra1
   RUNNER_SIZE: s-4vcpu-8gb-intel
 
