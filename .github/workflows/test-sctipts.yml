@@ -52,11 +52,9 @@ jobs:
         #!/bin/bash
         
         apt -y update
-        apt -y install jq virtualbox
-        apt-get install -y wget 
-        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-        apt -y update && apt install vagrant -y
+        apt -y install jq curl virtualbox
+        curl -O https://releases.hashicorp.com/vagrant/2.3.2/vagrant_2.3.2-1_x86_64.deb
+        apt install ./vagrant_2.3.2-1_x86_64.deb
         useradd -m gha-runner 
         echo "gha-runner ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gha-runner
         export RUNNER_CFG_PAT="${{ secrets.ACCESS_TOKEN }}"
@@ -139,6 +137,9 @@ jobs:
 
     - name: Run vagrant up
       run: vagrant up
+
+    - name: check logs
+      run: vagrant ssh -c "cat /var/log/apt/term.log"
       
   tear-down:
     name: Destroy instance ${{ matrix.name }}
