@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |v|
              v.memory = 8192
              v.customize ["modifyvm", :id, "--ioapic", "on"]
-             v.cpus = 3
+             v.cpus = 4
     end
 
     config.vm.define 'ubuntu'

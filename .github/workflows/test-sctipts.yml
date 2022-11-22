@@ -24,12 +24,12 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-          - gha-runner-centos7
+          #- gha-runner-centos7
           #- gha-runner-debian9
-          #- gha-runner-debian10
+          - gha-runner-debian10
           #- gha-runner-debian11
           #- gha-runner-ubuntu1604
-          #- gha-runner-ubuntu1804
+          - gha-runner-ubuntu1804
           #- gha-runner-ubuntu2004
           #- gha-runner-ubuntu2204
     steps:
@@ -92,12 +92,12 @@ jobs:
       fail-fast: false
       matrix:
         boxes: 
-          - centos7
+          #- centos7
           #- debian9
-          #- debian10
+          - debian10
           #- debian11
           #- ubuntu1604
-          #- ubuntu1804
+          - ubuntu1804
           #- ubuntu2004
           #- ubuntu2204
         #installation: 
@@ -146,9 +146,11 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-          - gha-runner-centos7
+        #- gha-runner-centos7
             #- gha-runner-debian9
-            #- gha-runner-debian10
+          - gha-runner-debian10
+          - gha-runner-ubuntu1804
+
         
     steps:
     # Install Doctl
