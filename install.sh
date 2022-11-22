@@ -123,9 +123,9 @@ function healthcheck_general_status() {
 }
 
 
-#function healthcheck_docker_installation() {
-#	exit 0
-#}
+function healthcheck_docker_installation() {
+	exit 0
+}
 
 main() {
   common::get_colors
@@ -135,7 +135,6 @@ main() {
   healthcheck_systemd_services
   healthcheck_supervisor_services
   healthcheck_general_status
-  healthcheck_docker_installation
 }
 
 

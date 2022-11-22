@@ -11,6 +11,8 @@ Vagrant.configure("2") do |config|
     config.vm.define 'ubuntu'
 
     config.vm.hostname = "host4test"
+    
+    config.ssh.keep_alive = "true"
 
     config.vm.provision "shell", path: './install.sh'
     
