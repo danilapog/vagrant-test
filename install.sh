@@ -61,6 +61,12 @@ function common::get_colors() {
 }
 
 function check_hw() {
+	echo "${COLOR_BLUE} vgdisplay ${COLOR_RESET}"
+	vgdisplay
+	echo "${COLOR_BLUE} lsblk result ${COLOR_RESET}"
+	lsblk
+	echo "${COLOR_BLUE} df -h result ${COLOR_RESET}"
+	df -h 
         local FREE_RAM=$(free -h)
 	local FREE_CPU=$(nproc)
 	echo "${COLOR_RED} ${FREE_RAM} ${COLOR_RESET}"
