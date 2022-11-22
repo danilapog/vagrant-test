@@ -51,17 +51,13 @@ jobs:
         cat << EOF > ./user-data
         #!/bin/bash
         
-        add-apt-repository universe -y
-        add-apt-repository multiverse -y
-        add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib" -y
-        apt-get update -y
-        apt-get upgrade -y
-        apt-get install -y libpng16-16 libqt5core5a libqt5printsupport5 libqt5widgets5 libqt5x11extras5
+        apt update
+        apt upgrade
         wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
         wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-        sudo add-apt-repository "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+        add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib"
         sudo apt update -y
-        sudo apt install virtualbox-6.0 -y
+        sudo apt install -y virtualbox-6.1
 
         apt -y update
         apt -y install jq curl
