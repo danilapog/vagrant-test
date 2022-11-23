@@ -1,6 +1,6 @@
 name: Shell script testing
 
-on: [push]
+#on: [push]
 
 #on:
 #  pull_request:
@@ -28,8 +28,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-rhel7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
+          #- gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
+          #- gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
@@ -101,8 +101,8 @@ jobs:
       matrix:
         boxes: 
           - rhel7
-          - rhel8
-          - rhel9
+          #- rhel8
+          #- rhel9
           #- debian9
           #- debian10
           #- debian11
@@ -141,8 +141,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-rhel7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
+          #- gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
+          #- gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
