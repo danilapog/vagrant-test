@@ -10,7 +10,7 @@ on: [push]
     
 env: 
   BOX_DISTRIBUTION: generic
-  RUNNER_IMAGE: ubuntu-18-04-x64
+  RUNNER_IMAGE: ubuntu-22-04-x64
   RUNNER_REGION: fra1
   RUNNER_SIZE: s-4vcpu-8gb-intel
 
@@ -51,13 +51,14 @@ jobs:
         cat << EOF > ./user-data
         #!/bin/bash
         
-        apt update
-        apt upgrade
+        apt update -y
+        apt upgrade -y
+        apt-get install -y dkms build-essential linux-headers-`uname -r`
         wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
         wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-        add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian bionic contrib"
+        add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian jammy contrib"
         sudo apt update -y
-        sudo apt install -y virtualbox-6.1
+        sudo apt install -y virtualbox-7.0
 
         apt -y update
         apt -y install jq curl
