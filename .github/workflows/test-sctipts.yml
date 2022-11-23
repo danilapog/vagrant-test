@@ -1,4 +1,4 @@
-name: vagrant-up
+name: Shell script testing
 
 on: [push]
 
@@ -7,10 +7,13 @@ on: [push]
 #    types: [opened, reopened, edited]
 #    paths:
 #    - 'sub-project/**'
+#on:
+#  schedule:
+#    - cron: '00 21 * * 6'  # At 21:00 on Saturday.
     
 env: 
   BOX_DISTRIBUTION: generic
-  RUNNER_IMAGE: ubuntu-20-04-x64
+  RUNNER_IMAGE: ubuntu-22-04-x64
   RUNNER_REGION: fra1
   RUNNER_SIZE: s-4vcpu-8gb-intel
 
@@ -24,16 +27,16 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-            #- gha-runner-centos7
-            #- gha-runner-centos8
-            #- gha-runner-centos9
-            #- gha-runner-debian9
-          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-debian11
-            #- gha-runner-ubuntu1604
-            #- gha-runner-ubuntu1804
-            #- gha-runner-ubuntu2004
-            #- gha-runner-ubuntu2204
+          - gha-runner-rhel7-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
     steps:
     # Install Doctl
     - name: Install doctl
@@ -51,11 +54,11 @@ jobs:
         cat << EOF > ./user-data
         #!/bin/bash
         
-        apt update
-        sudo apt install -y virtualbox
-
+        #install virtualbox latest version
         apt -y update
-        apt -y install jq curl
+        apt -y install jq curl virtualbox
+
+        #install vagrant latest version
         wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
         apt update -y 
@@ -97,26 +100,16 @@ jobs:
       fail-fast: false
       matrix:
         boxes: 
-        #- centos7
-            #- centos8
-            #- centos9
-            #- debian9
-          - debian10
-            #- debian11
-            #- ubuntu1604
-            #- ubuntu1804
-            #- ubuntu2004
-            #- ubuntu2204
-        #installation: 
-        #  - default
-        #  - docker
-        #exclude:
-        #  - boxes: debian9
-        #    installation: docker
-        #  - boxes: centos7
-        #    installation: docker
-        #  - boxes: ubuntu1604
-        #    installation: docker
+        - rhel7
+        - rhel8
+       #- rhel9
+       #- debian9
+       #- debian10
+       #- debian11
+       #- ubuntu1604
+       #- ubuntu1804
+       #- ubuntu2004
+       #- ubuntu2204
 
     steps:
     - name: Checkout code      
@@ -144,9 +137,6 @@ jobs:
     - name: Run vagrant up
       run: vagrant up
 
-    - name: check logs
-      run: vagrant ssh -c "cat /var/log/apt/term.log"
-      
   tear-down:
     name: Destroy instance ${{ matrix.name }}
     needs: [vagrant-up]
@@ -156,16 +146,16 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-        #- gha-runner-centos7
-            #- gha-runner-centos8
-            #- gha-runner-centos9
-            #- gha-runner-debian9
-          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-debian11
-            #- gha-runner-ubuntu1604
-            #- gha-runner-ubuntu1804
-            #- gha-runner-ubuntu2004
-            # - gha-runner-ubuntu2204
+          - gha-runner-rhel7-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-rhel8-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-rhel9-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
+        # - gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
         
     steps:
     # Install Doctl
