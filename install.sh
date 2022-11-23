@@ -69,7 +69,7 @@ function check_hw() {
 
 
 function prepare_vm() {
-  if [ ! -f /etc/centos-release ]; then 
+  if [ ! -f /etc/centos-release ] || [ ! -f /etc/redhat-release ]; then 
     apt-get remove postfix -y 
     echo "${COLOR_GREEN}☑ PREPAVE_VM: Postfix was removed${COLOR_RESET}"
   fi
