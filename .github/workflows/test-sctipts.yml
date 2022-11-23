@@ -58,11 +58,7 @@ jobs:
         wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
         add-apt-repository "deb http://download.virtualbox.org/virtualbox/debian jammy contrib"
         sudo apt update -y
-<<<<<<< HEAD
         sudo apt install -y virtualbox-7.0
-=======
-        sudo apt install -y virtualbox-6.0
->>>>>>> a3d360900b80d1607baccc3a2c0e88ee52fcf495
 
         apt -y update
         apt -y install jq curl
