@@ -69,7 +69,7 @@ function check_hw() {
 
 
 function prepare_vm() {
-  if [ ! -f /etc/centos-release ] && [ ! -f /etc/redhat-release ]
+  if [ ! -f /etc/centos-release ] 
   then 
   	apt-get remove postfix -y 
   	echo "${COLOR_GREEN}☑ PREPAVE_VM: Postfix was removed${COLOR_RESET}"
@@ -113,7 +113,7 @@ function healthcheck_supervisor_services() {
 }
 
 function healthcheck_general_status() {
-  if [ ! -z "${SYSTEMD_SVC_FAILED}" ] || [ ! -z ${SUPERVISOR_SVC_FAILED} ]; then
+  if [ ! -z "${SYSTEMD_SVC_FAILED}" ] || [ ! -z "${SUPERVISOR_SVC_FAILED}" ]; then
     echo "${COLOR_YELLOW}⚠ ⚠  ATTENTION: Some sevices is not running ⚠ ⚠ ${COLOR_RESET}"
     exit 1
   fi
