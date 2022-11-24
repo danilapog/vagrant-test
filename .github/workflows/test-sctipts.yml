@@ -26,7 +26,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
@@ -98,7 +99,8 @@ jobs:
       matrix:
         boxes: 
           - centos7
-          - centos8
+          - centos8s
+          - centos9s
           - debian9
           - debian10
           - debian11
@@ -137,7 +139,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}

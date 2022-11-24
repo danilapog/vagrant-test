@@ -69,11 +69,12 @@ function check_hw() {
 
 
 function prepare_vm() {
-  if [ ! -f /etc/centos-release ] 
-  then 
+  if [ ! -f /etc/centos-release ]; then 
   	apt-get remove postfix -y 
   	echo "${COLOR_GREEN}☑ PREPAVE_VM: Postfix was removed${COLOR_RESET}"
   fi
+
+  if [ -f /etc/centos-release ]
 
   echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts   
   echo "${COLOR_GREEN}☑ PREPAVE_VM: Hostname was setting up${COLOR_RESET}"   
