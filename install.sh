@@ -60,6 +60,15 @@ function common::get_colors() {
     export COLOR_YELLOW
 }
 
+#############################################################################################
+# Checking available resources for a virtual machine
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   None
+#############################################################################################
 function check_hw() {
         local FREE_RAM=$(free -h)
 	local FREE_CPU=$(nproc)
@@ -68,28 +77,51 @@ function check_hw() {
 }
 
 
+#############################################################################################
+# Prepare vagrant boxes like: set hostname/remove postfix for DEB distributions
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   ☑ PREPAVE_VM: **<prepare_message>**
+#############################################################################################
 function prepare_vm() {
   if [ ! -f /etc/centos-release ]; then 
   	apt-get remove postfix -y 
   	echo "${COLOR_GREEN}☑ PREPAVE_VM: Postfix was removed${COLOR_RESET}"
   fi
 
-  if [ -f /etc/centos-release ]
-
   echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts   
   echo "${COLOR_GREEN}☑ PREPAVE_VM: Hostname was setting up${COLOR_RESET}"   
 
 }
 
+#############################################################################################
+# Install workspace and then healthcheck
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   Script log
+#############################################################################################
 function install_workspace() {
   wget https://download.onlyoffice.com/install/workspace-install.sh 
-  
   bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
   "
 }
 
+#############################################################################################
+# Healthcheck function for systemd services
+# Globals:
+#   SERVICES_SYSTEMD
+# Arguments:
+#   None
+# Outputs:
+#   Message about service status 
+#############################################################################################
 function healthcheck_systemd_services() {
- 
   for service in ${SERVICES_SYSTEMD[@]} 
   do 
     if systemctl is-active --quiet ${service}; then
@@ -101,6 +133,15 @@ function healthcheck_systemd_services() {
   done
 }
 
+#############################################################################################
+# Healthcheck function for supervisor services 
+# Globals:
+#   SERVICES_SUPERVISOR
+# Arguments:
+#   None
+# Outputs:
+#   Message about service status 
+#############################################################################################
 function healthcheck_supervisor_services() {
   for service in ${SERVICES_SUPERVISOR[@]}
     do
@@ -113,6 +154,17 @@ function healthcheck_supervisor_services() {
     done
 }
 
+#############################################################################################
+# Set output if some services failed
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   ⚠ ⚠  ATTENTION: Some sevices is not running ⚠ ⚠ 
+# Returns
+# 0 if all services is start correctly, non-zero if some failed
+#############################################################################################
 function healthcheck_general_status() {
   if [ ! -z "${SYSTEMD_SVC_FAILED}" ] || [ ! -z "${SUPERVISOR_SVC_FAILED}" ]; then
     echo "${COLOR_YELLOW}⚠ ⚠  ATTENTION: Some sevices is not running ⚠ ⚠ ${COLOR_RESET}"
@@ -134,6 +186,5 @@ main() {
   healthcheck_supervisor_services
   healthcheck_general_status
 }
-
 
 main
