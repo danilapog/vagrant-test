@@ -30,13 +30,13 @@ jobs:
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
     steps:
     # Install Doctl
     - name: Install doctl
@@ -103,13 +103,13 @@ jobs:
           - centos7
           - centos8
           - centos9s
-          #- debian9
-          #- debian10
-          #- debian11
-          #- ubuntu1604
-          #- ubuntu1804
-          #- ubuntu2004
-          #- ubuntu2204
+          - debian9
+          - debian10
+          - debian11
+          - ubuntu1604
+          - ubuntu1804
+          - ubuntu2004
+          - ubuntu2204
 
     steps:
     - name: Checkout code      
@@ -143,13 +143,13 @@ jobs:
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
-          #- gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
         
     steps:
     # Install Doctl
