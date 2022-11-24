@@ -27,7 +27,6 @@ jobs:
         name: 
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
@@ -100,7 +99,6 @@ jobs:
         boxes: 
           - centos7
           - centos8
-          - centos9s
           - debian9
           - debian10
           - debian11
@@ -140,7 +138,6 @@ jobs:
         name: 
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-centos8-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
           - gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
