@@ -106,7 +106,7 @@ function prepare_vm() {
 }
 
 #############################################################################################
-# Install workspace and then healthcheck
+# Install WORKSPACE and then healthcheck
 # Globals:
 #   None
 # Arguments:
@@ -115,9 +115,16 @@ function prepare_vm() {
 #   Script log
 #############################################################################################
 function install_workspace() {
-  wget https://download.onlyoffice.com/install/workspace-install.sh 
-  bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
+	if [ ${TESTS_TYPE} == 'prod' ]; then
+  		wget https://download.onlyoffice.com/install/workspace-install.sh 
+  		bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
   "
+        fi
+
+	if [ ${TESTS_TYPE} == 'local' ]; then
+		bash workspace-install.sh --skiphardwarecheck true --makeswap false --localscripts true <<< "N
+  "
+        fi
 }
 
 #############################################################################################

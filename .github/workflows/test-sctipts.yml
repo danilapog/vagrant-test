@@ -1,7 +1,7 @@
 name: Shell script testing
 
-on:
-  push:
+#on:
+#  push:
 
 #on:
 #  pull_request:
@@ -28,9 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-        #- gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
+        #- gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
+        #- gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
@@ -101,9 +101,9 @@ jobs:
       fail-fast: false
       matrix:
         boxes: 
-        #- centos7
-          - centos8s
-          - centos9s
+          - centos7
+        #- centos8s
+        #- centos9s
             #- debian9
             #- debian10
             #- debian11
@@ -122,6 +122,16 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+    
+    - name: Setting test case
+      run: |
+               if [ ${{ github.event_name }} = 'shedule' ]; then
+                        echo "TESTS_TYPE=prod" >> $GITHUB_ENV
+               fi
+
+               if [ ${{ github.event_name }} = 'pull_request' ]; then
+                        echo "TESTS_TYPE=local" >> $GITHUB_ENV
+               fi
 
     - name: Replace os image
       run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
@@ -141,9 +151,9 @@ jobs:
       fail-fast: false
       matrix:
         name: 
-        #- gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
-          - gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
+          - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
+            #- gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
+            #- gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
