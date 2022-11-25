@@ -92,6 +92,14 @@ function prepare_vm() {
   	echo "${COLOR_GREEN}☑ PREPAVE_VM: Postfix was removed${COLOR_RESET}"
   fi
 
+  if [ -f /etc/centos-release ]; then
+	  local REV=$(cat /etc/redhat-release | sed 's/[^0-9.]*//g')
+	  if [[ "${REV}" =~ ^9 ]]; then
+		  update-crypto-policies --set LEGACY
+		  echo "${COLOR_GREEN}☑ PREPAVE_VM: sha1 gpg key chek enabled${COLOR_RESET}"
+	  fi
+  fi
+
   echo '127.0.0.1 host4test' | sudo tee -a /etc/hosts   
   echo "${COLOR_GREEN}☑ PREPAVE_VM: Hostname was setting up${COLOR_RESET}"   
 
