@@ -17,10 +17,12 @@ Vagrant.configure("2") do |config|
     end
 
     if ENV['TEST_CASE'] == 'install-local'
+    config.vm.provision "file", source: "../../../OneClickInstall-Workspace/.", destination: "/home/vagrant"
     config.vm.provision "shell", path: './install.sh', :args => "--local-install true"
     end
 
     if ENV['TEST_CASE'] == 'update-local'
+    config.vm.provision "file", source: "../../../OneClickInstall-Workspace/.", destination: "/home/vagrant"
     config.vm.provision "shell", path: './install.sh', :args => "--local-update true"
     end
 
