@@ -45,10 +45,6 @@ jobs:
       with:
         token: ${{ secrets.DO_ACCESS_TOKEN }}
         
-    - name: Get instance name
-      id: get-name
-      run: echo "name=${{ matrix.name }}" >> $GITHUB_OUTPUT
-        
     # Template for cloud-init install vagrant
     - name: Template out file
       run: |
@@ -123,6 +119,12 @@ jobs:
       with:
         python-version: '3.x'
     
+<<<<<<< HEAD
+=======
+    - name: Replace os image
+      run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
+        
+>>>>>>> d14e9dabcae82306cf11502d98ca3232bc819e9b
     - name: Show Vagrant version
       run: vagrant --version
       
@@ -141,12 +143,26 @@ jobs:
               sleep 10
               vagrant destroy --force
 
+<<<<<<< HEAD
     - name: Update from local scripts
       if: ${{ github.event_name == 'pull_request' }}
       run: |      
               DISTR=onlyoffice OS=${{ matrix.boxes }} ENV=dev TYPE=update vagrant up 
               sleep 10
               vagrant destroy --force 
+=======
+    - name: Run vagrant up
+      run:  |
+               if [ ${{ github.event_name }} = 'shedule' ]; then
+                        echo "TESTS_TYPE=prod" >> $GITHUB_ENV
+                        vagrant up << workspace prod-test arguments >>
+               fi
+               
+               if [ ${{ github.event_name }} = 'pull_request' ]; then
+                        echo "TESTS_TYPE=local" >> $GITHUB_ENV
+                        vagrant up << workspace local-test arguments >>
+               fi
+>>>>>>> d14e9dabcae82306cf11502d98ca3232bc819e9b
 
   tear-down:
     name: Destroy instance ${{ matrix.name }}
