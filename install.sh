@@ -5,13 +5,29 @@ set -e
 while [ "$1" != "" ]; do
 	case $1 in
 
-		-d | --docker_installation )
-			if [ "$2" != "" ]; then
-				DOCKER_INSTALLATION=$2
-				shift
-			fi
-		;;
-        esac
+		-pi | --production-install )
+                        if [ "$2" != "" ]; then
+                                PRODUCTION_INSTALL=$2
+                                shift
+                        fi
+                ;;
+
+                -li | --local-install )
+                        if [ "$2" != "" ]; then
+                                LOCAL_INSTALL=$2
+                                shift
+                        fi
+                ;;
+
+                -lu | --local-update )
+                        if [ "$2" != "" ]; then
+                                LOCAL_UPDATE=$2
+                                shift
+                        fi
+                ;;
+
+        
+	esac
 	shift
 done
 
