@@ -12,8 +12,18 @@ Vagrant.configure("2") do |config|
 
     config.vm.hostname = "host4test"
     
-    config.vm.provision "shell", path: './install.sh'
-    
+    if ENV['TEST_CASE'] == 'install-prod'
+    config.vm.provision "shell", path: './install.sh', :args => "--production-install true"
+    end
+
+    if ENV['TEST_CASE'] == 'install-local'
+    config.vm.provision "shell", path: './install.sh', :args => "--local-install true"
+    end
+
+    if ENV['TEST_CASE'] == 'update-local'
+    config.vm.provision "shell", path: './install.sh', :args => "--local-update true"
+    end
+
     # Prevent SharedFoldersEnableSymlinksCreate errors
     config.vm.synced_folder ".", "/vagrant", disabled: true
 end

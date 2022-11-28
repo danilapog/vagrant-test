@@ -128,7 +128,7 @@ jobs:
       run: |
               set -eux
 
-              DISTR=generic OS=${{ matrix.boxes }} ENV=prod TYPE=install vagrant up
+              TEST_CASE=install-prod DISTR=generic OS=${{ matrix.boxes }} ENV=prod vagrant up
               sleep 10
               vagrant destroy --force
 
@@ -137,7 +137,7 @@ jobs:
       run: |
               set -eux 
 
-              DISTR=generic OS=${{ matrix.boxes }} ENV=dev TYPE=install vagrant up 
+              TEST_CASE=install-local DISTR=generic OS=${{ matrix.boxes }} ENV=dev vagrant up 
               sleep 10
               vagrant destroy --force
 
@@ -146,7 +146,7 @@ jobs:
       run: |  
               set -eux
 
-              DISTR=onlyoffice OS=${{ matrix.boxes }} ENV=dev TYPE=update vagrant up 
+              TEST_CASE=update-local DISTR=onlyoffice OS=${{ matrix.boxes }} ENV=dev vagrant up 
               sleep 10
               vagrant destroy --force 
     

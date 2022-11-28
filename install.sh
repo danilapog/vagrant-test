@@ -115,16 +115,21 @@ function prepare_vm() {
 #   Script log
 #############################################################################################
 function install_workspace() {
-	if [ ${TESTS_TYPE} == 'prod' ]; then
-  		wget https://download.onlyoffice.com/install/workspace-install.sh 
-  		bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
-  "
-        fi
+         	if [ ${PRODUCTION_INSTALL} == 'true' ]; then
+                        wget https://download.onlyoffice.com/install/workspace-install.sh
+                        bash workspace-install.sh --skiphardwarecheck true --makeswap false <<< "N
+                        "
+                fi
 
-	if [ ${TESTS_TYPE} == 'local' ]; then
-		bash workspace-install.sh --skiphardwarecheck true --makeswap false --localscripts true <<< "N
-  "
-        fi
+                if [ ${LOCAL_INSTALL} == 'true' ]; then
+                        bash workspace-install.sh --skiphardwarecheck true --makeswap false --localscripts true <<< "N
+                        "
+                fi
+
+                if [ ${LOCAL_UPDATE} == 'true' ]; then
+                        bash workspace-install.sh --skiphardwarecheck true --makeswap false --localscripts true --update true <<< "N
+                        "
+                fi
 }
 
 #############################################################################################
