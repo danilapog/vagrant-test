@@ -126,6 +126,8 @@ jobs:
     - name: Install from production scripts
       if: ${{ github.event_name == 'shedule' }}
       run: |
+              set -eux
+
               DISTR=generic OS=${{ matrix.boxes }} ENV=prod TYPE=install vagrant up
               sleep 10
               vagrant destroy --force
@@ -133,13 +135,17 @@ jobs:
     - name: Install from local scripts
       if:  ${{ github.event_name == 'pull_request' }}
       run: |
+              set -eux 
+
               DISTR=generic OS=${{ matrix.boxes }} ENV=dev TYPE=install vagrant up 
               sleep 10
               vagrant destroy --force
 
     - name: Update from local scripts
       if: ${{ github.event_name == 'pull_request' }}
-      run: |      
+      run: |  
+              set -eux
+
               DISTR=onlyoffice OS=${{ matrix.boxes }} ENV=dev TYPE=update vagrant up 
               sleep 10
               vagrant destroy --force 
