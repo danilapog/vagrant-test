@@ -29,8 +29,8 @@ jobs:
       matrix:
         name: 
           - gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-        #- gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
-        #- gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
+            #- gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
+            #- gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
             #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
@@ -123,24 +123,30 @@ jobs:
       with:
         python-version: '3.x'
     
-    - name: Setting test case
-      run: |
-               if [ ${{ github.event_name }} = 'shedule' ]; then
-                        echo "TESTS_TYPE=prod" >> $GITHUB_ENV
-               fi
-
-               if [ ${{ github.event_name }} = 'pull_request' ]; then
-                        echo "TESTS_TYPE=local" >> $GITHUB_ENV
-               fi
-
-    - name: Replace os image
-      run: sed -i "s!%BOX_IMAGE%!$BOX_DISTRIBUTION/${{ matrix.boxes }}!" Vagrantfile
-        
     - name: Show Vagrant version
       run: vagrant --version
+      
+      # Run tests with production scripts
+    - name: Install from production scripts
+      if: ${{ github.event_name == 'shedule' }}
+      run: |
+              DISTR=generic OS=${{ matrix.boxes }} ENV=prod TYPE=install vagrant up
+              sleep 10
+              vagrant destroy --force
 
-    - name: Run vagrant up
-      run: vagrant up
+    - name: Install from local scripts
+      if:  ${{ github.event_name == 'pull_request' }}
+      run: |
+              DISTR=generic OS=${{ matrix.boxes }} ENV=dev TYPE=install vagrant up 
+              sleep 10
+              vagrant destroy --force
+
+    - name: Update from local scripts
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |      
+              DISTR=onlyoffice OS=${{ matrix.boxes }} ENV=dev TYPE=update vagrant up 
+              sleep 10
+              vagrant destroy --force 
 
   tear-down:
     name: Destroy instance ${{ matrix.name }}
