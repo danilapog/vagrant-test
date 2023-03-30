@@ -45,12 +45,12 @@ jobs:
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
      
       - name: lint
-        if: ${{ github.event.inputs.enable_yaml_lint == true }}
+        if: ${{ inputs.enable_yaml_lint == true }}
         run: |
           ./ct lint --charts . --validate-maintainers=false
            
       - name: Scan chart with kube-linter
-        if: ${{ github.event.inputs.enable_kube_lint == true }} 
+        if: ${{ inputs.enable_kube_lint == true }} 
         uses: stackrox/kube-linter-action@v1.0.4
         with:
           directory: .
