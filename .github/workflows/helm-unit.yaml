@@ -20,7 +20,8 @@ on:
 jobs:
   lint-test:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    strategy: 
+      fail-fast: false
     steps:
       - name: Checkout chart
         uses: actions/checkout@v3
