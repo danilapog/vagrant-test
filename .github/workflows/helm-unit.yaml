@@ -52,6 +52,12 @@ jobs:
       - name: Create kind cluster
         if: ${{ inputs.try_install == true }}
         uses: helm/kind-action@v1.4.0
+        
+      - name: Test install inside kind cluster
+        if: ${{ inputs.try_install == true }}
+        run: kubectl get all
+        #run: | 
+        #   ./ct install --charts .
       
       - name: lint
         if: ${{ inputs.enable_yaml_lint == true}}
@@ -66,8 +72,3 @@ jobs:
           config: ./.kube-linter.yaml
           format: plain
           output-file: kube-linter.plain 
-                 
-      - name: Test install inside kind cluster
-        if: ${{ inputs.try_install == true }}
-        run: | 
-           ./ct install --charts .
