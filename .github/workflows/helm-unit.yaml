@@ -50,20 +50,17 @@ jobs:
         uses: helm/kind-action@v1.4.0
         
       - name: lint
-        continue-on-error: true
         if: ${{ inputs.enable_yaml_lint == true }}
         run: |
            ./ct lint --charts . --validate-maintainers=false
         
       - name: Test install inside kind cluster
-        continue-on-error: true
         if: ${{ inputs.enable_yaml_lint == true }}
         run: | 
            ./ct install --charts .
            
       - name: Scan chart with kube-linter
-        continue-on-error: true
-        if: ${{ inputs.enable_kube_lint == true }} 
+        if: ${{ inputs.enable_kube_lint == true }} && always()
         uses: stackrox/kube-linter-action@v1.0.4
         with:
           directory: .
