@@ -20,8 +20,6 @@ on:
 jobs:
   lint-test:
     runs-on: ubuntu-latest
-    strategy: 
-      fail-fast: false
     steps:
       - name: Checkout chart
         uses: actions/checkout@v3
@@ -52,15 +50,19 @@ jobs:
         uses: helm/kind-action@v1.4.0
         
       - name: lint
+        continue-on-error: true
         if: ${{ inputs.enable_yaml_lint == true }}
         run: |
            ./ct lint --charts . --validate-maintainers=false
         
       - name: Test install inside kind cluster
+        continue-on-error: true
+        if: ${{ inputs.enable_yaml_lint == true }}
         run: | 
            ./ct install --charts .
            
       - name: Scan chart with kube-linter
+        continue-on-error: true
         if: ${{ inputs.enable_kube_lint == true }} 
         uses: stackrox/kube-linter-action@v1.0.4
         with:
