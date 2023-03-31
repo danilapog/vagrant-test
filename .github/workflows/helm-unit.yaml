@@ -9,13 +9,13 @@ on:
         type: string
         default: '3.8.0'
       enable_yaml_lint: 
-        type: string
+        type: boolean
         description: 'Enable or disable yaml linter'
-        default: 'always()'
+        default: true
       enable_kube_lint:
-        type: string
+        type: boolean
         description: 'Enable or disable kube manifests linter'
-        default: 'always()'
+        default: true
 
 jobs:
   lint-test:
@@ -46,24 +46,24 @@ jobs:
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
        
       - name: Create kind cluster
-        if: ${{ inputs.enable_yaml_lint }}
+        if: ${{ inputs.enable_yaml_lint == true }}
         uses: helm/kind-action@v1.4.0
-        
-      - name: lint
-        if: ${{ inputs.enable_yaml_lint }}
-        run: |
-           ./ct lint --charts . --validate-maintainers=false
-        
-      - name: Test install inside kind cluster
-        if: ${{ inputs.enable_yaml_lint }}
-        run: | 
-           ./ct install --charts .
-           
+      
       - name: Scan chart with kube-linter
-        if: ${{ inputs.enable_kube_lint }}
+        if: ${{ inputs.enable_kube_lint == true }}
         uses: stackrox/kube-linter-action@v1.0.4
         with:
           directory: .
           config: ./.kube-linter.yaml
           format: plain
-          output-file: kube-linter.plain
+          output-file: kube-linter.plain 
+          
+      - name: lint
+        if: ${{ inputs.enable_yaml_lint == true}}
+        run: |
+           ./ct lint --charts . --validate-maintainers=false
+        
+      - name: Test install inside kind cluster
+        if: ${{ inputs.enable_yaml_lint == true }}
+        run: | 
+           ./ct install --charts .
