@@ -16,6 +16,10 @@ on:
         type: boolean
         description: 'Enable or disable kube manifests linter'
         default: true
+      try_install:
+        type: boolean
+        description: 'Try  install chart into the k8s'
+        default: false
 
 jobs:
   lint-test:
@@ -46,10 +50,15 @@ jobs:
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
        
       - name: Create kind cluster
-        if: ${{ inputs.enable_yaml_lint == true }}
+        if: ${{ try_install == true }}
         uses: helm/kind-action@v1.4.0
       
-      - name: Scan chart with kube-linter
+      - name: lint
+        if: ${{ inputs.enable_yaml_lint == true}}
+        run: |
+           ./ct lint --charts . --validate-maintainers=false
+           
+      - name: Scan manifests with kube-linter
         if: ${{ inputs.enable_kube_lint == true }}
         uses: stackrox/kube-linter-action@v1.0.4
         with:
@@ -57,13 +66,8 @@ jobs:
           config: ./.kube-linter.yaml
           format: plain
           output-file: kube-linter.plain 
-          
-      - name: lint
-        if: ${{ inputs.enable_yaml_lint == true}}
-        run: |
-           ./ct lint --charts . --validate-maintainers=false
-        
+                 
       - name: Test install inside kind cluster
-        if: ${{ inputs.enable_yaml_lint == true }}
+        if: ${{ try_install == true }}
         run: | 
            ./ct install --charts .
