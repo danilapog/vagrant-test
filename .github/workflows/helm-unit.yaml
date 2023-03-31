@@ -50,7 +50,7 @@ jobs:
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
        
       - name: Create kind cluster
-        if: ${{ try_install == true }}
+        if: ${{ inputs.try_install == true }}
         uses: helm/kind-action@v1.4.0
       
       - name: lint
@@ -68,6 +68,6 @@ jobs:
           output-file: kube-linter.plain 
                  
       - name: Test install inside kind cluster
-        if: ${{ try_install == true }}
+        if: ${{ inputs.try_install == true }}
         run: | 
            ./ct install --charts .
