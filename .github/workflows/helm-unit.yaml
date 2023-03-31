@@ -42,6 +42,7 @@ jobs:
            wget https://github.com/helm/chart-testing/releases/download/v${{ inputs.ct_version }}/chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
            wget https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/.kube-linter.yaml
            tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz 
+           rm -rf ./chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
        
       - name: Create kind cluster
