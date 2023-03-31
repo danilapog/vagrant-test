@@ -51,13 +51,11 @@ jobs:
         
       - name: lint
         if: ${{ inputs.enable_yaml_lint == true }}
-        continue-on-error: false
         run: |
            ./ct lint --charts . --validate-maintainers=false
         
       - name: Test install inside kind cluster
         if: ${{ inputs.enable_yaml_lint == true }}
-        continue-on-error: false
         run: | 
            ./ct install --charts .
            
