@@ -43,11 +43,19 @@ jobs:
            wget https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/.kube-linter.yaml
            tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz 
            cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
-     
+       
+      - name: Create kind cluster
+        if: ${{ inputs.enable_yaml_lint ==  true }} 
+        uses: helm/kind-action@v1.4.0
+        
       - name: lint
         if: ${{ inputs.enable_yaml_lint == true }}
         run: |
-          ./ct lint --charts . --validate-maintainers=false
+           ./ct lint --charts . --validate-maintainers=false
+        
+      - name: Test install inside kind cluster
+        run: | 
+           ./ct install --charts .
            
       - name: Scan chart with kube-linter
         if: ${{ inputs.enable_kube_lint == true }} 
