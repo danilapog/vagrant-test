@@ -47,18 +47,17 @@ jobs:
        
       - name: Create kind cluster
         if: ${{ inputs.enable_yaml_lint ==  true }}
-        continue-on-error: true
         uses: helm/kind-action@v1.4.0
         
       - name: lint
         if: ${{ inputs.enable_yaml_lint == true }}
-        continue-on-error: true
+        continue-on-error: false
         run: |
            ./ct lint --charts . --validate-maintainers=false
         
       - name: Test install inside kind cluster
         if: ${{ inputs.enable_yaml_lint == true }}
-        continue-on-error: true
+        continue-on-error: false
         run: | 
            ./ct install --charts .
            
