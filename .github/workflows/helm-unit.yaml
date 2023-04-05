@@ -53,6 +53,8 @@ jobs:
            wget ${KUBELINT_CONF} ${LINT_CONF} ${CHART_SCHEMA}
            tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz ct 
            rm -rf ./chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
+           pwd 
+           ls -la 
        
       - name: Create kind cluster
         if: ${{ inputs.try_install == true }}
