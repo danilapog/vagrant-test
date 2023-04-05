@@ -22,10 +22,9 @@ on:
         default: false
 
 env: 
-   BASE_URL: "https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config"
-   LINT_CONF: "${BASE_URL}/lintconf.yaml"
-   KUBELINT_CONF: "${BASE_URL}/.kube-linter.yaml"
-   CHART_SCHEMA: "${BASE_URL}/chart_schema.yaml"
+   LINT_CONF: "https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/lintconf.yaml"
+   KUBELINT_CONF: "https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/.kube-linter.yaml"
+   CHART_SCHEMA: "https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/chart_schema.yaml"
    
 jobs:
   lint-test:
