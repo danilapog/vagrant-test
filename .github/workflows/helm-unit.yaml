@@ -21,6 +21,12 @@ on:
         description: 'Try  install chart into the k8s'
         default: false
 
+env: 
+   BASE_URL: "https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config"
+   LINT_CONF: "${BASE_URL}/lintconf.yaml"
+   KUBELINT_CONF: "${BASE_URL}/.kube-linter.yaml"
+   CHART_SCHEMA: "${BASE_URL}/chart_schema.yaml"
+   
 jobs:
   lint-test:
     runs-on: ubuntu-latest
@@ -44,10 +50,9 @@ jobs:
            sudo apt-get install -y yamllint
            pip install yamale
            wget https://github.com/helm/chart-testing/releases/download/v${{ inputs.ct_version }}/chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
-           wget https://github.com/danilapog/vagrant-test/blob/master/.github/kube-linter-config/.kube-linter.yaml
-           tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz 
+           wget ${KUBELINT_CONF} ${LINT_CONF} ${CHART_SCHEMA}
+           tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz ct 
            rm -rf ./chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
-           cp ./etc/chart_schema.yaml ./etc/lintconf.yaml .
        
       - name: Create kind cluster
         if: ${{ inputs.try_install == true }}
