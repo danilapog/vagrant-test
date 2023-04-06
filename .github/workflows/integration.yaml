@@ -78,17 +78,29 @@ jobs:
       - name: Get storageclasses again
         run: kubectl get storageclass
         
-      - name: Get all pods
+      - name: lint chart ${{ github.event.repository.name }}
+        uses: ONLYOFFICE/ga-common/.github/workflows/helm-lint.yaml@master
+        with: 
+          ct_version: 3.8.0
+          enable_yaml_lint: true
+          enable_kube_lint: true
+          
+      - name: CT install test
         run: |
-             sleep 120
-             kubectl get all
+            ./ct install --charts .
+        
+        
+      #- name: Get all pods
+      #  run: |
+      #       sleep 120
+      #       kubectl get all
              
-      - name: Install K8s-Docs
-        run: |
-             helm install documentserver onlyoffice/docs
+      #- name: Install K8s-Docs
+      #  run: |
+      #       helm install documentserver onlyoffice/docs
              
-      - name: Get Deployments status
-        run: |
-             sleep 120
-             kubectl get all
+      #- name: Get Deployments status
+      #  run: |
+      #       sleep 120
+      #       kubectl get all
           
