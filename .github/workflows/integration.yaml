@@ -105,7 +105,7 @@ jobs:
         run: |
             set -euo pipefail 
             
-            /tmp/ct_tool/ct install --helm-extra-args "--timeout 500s" --charts .
+            /tmp/ct_tool/ct install --charts .
         shell: bash
         
         
