@@ -7,14 +7,25 @@ env:
   K8S_CONFIG: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github/kube-linter-config/kind-config.yaml'
   K8S_STORAGE_CLASS: 'standard'
   NFS_PERSISTANCE_SIZE: '4G'
+  LINT_CONF: 'https://raw.githubusercontent.com/ONLYOFFICE/ga-common/master/.github/config/lintconf.yaml'
+  KUBELINT_CONF: 'https://raw.githubusercontent.com/ONLYOFFICE/ga-common/master/.github/config/.kube-linter.yaml'
+  CHART_SCHEMA: 'https://raw.githubusercontent.com/ONLYOFFICE/ga-common/master/.github/config/chart_schema.yaml'
   
 jobs:
   spin-up:
     name: integration-test
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout chart
+        uses: actions/checkout@v3
+        
       - name: Get kind config
         run: wget ${K8S_CONFIG} 
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          check-latest: true
         
       - uses: azure/setup-helm@v3
         id: setup-helm
@@ -27,6 +38,16 @@ jobs:
         uses: helm/kind-action@v1.4.0
         with: 
           config: ./kind-config.yaml
+          
+      - name: Prepare unit tests environment
+        run: |
+           sudo apt-get update -y
+           sudo apt-get install -y yamllint
+           pip install yamale
+           wget https://github.com/helm/chart-testing/releases/download/v${{ inputs.ct_version }}/chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
+           wget ${LINT_CONF} ${KUBELINT_CONF} ${CHART_SCHEMA}
+           tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz ct
+           rm -rf ./chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
           
       - name: Wait k8s workers
         timeout-minutes: 2
@@ -77,14 +98,8 @@ jobs:
       
       - name: Get storageclasses again
         run: kubectl get storageclass
-        
-      - name: lint chart ${{ github.event.repository.name }}
-        uses: ONLYOFFICE/ga-common/.github/workflows/helm-lint.yaml@master
-        with: 
-          ct_version: 3.8.0
-          enable_yaml_lint: true
-          enable_kube_lint: true
-          
+           
+      
       - name: CT install test
         run: |
             ./ct install --charts .
