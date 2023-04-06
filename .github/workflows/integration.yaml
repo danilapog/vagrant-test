@@ -98,7 +98,9 @@ jobs:
                  --set metrics.enabled=false
       
       - name: Get storageclasses again
-        run: kubectl get storageclass
+        run: |
+            kubectl get storageclass
+            kubectl get service --all-namespaces
       
       - name: CT install test
         run: |
