@@ -31,12 +31,16 @@ jobs:
         run: | 
           for i in {1..10}; do
             echo "Get k8s workers status ${i}"
-            STATUS=$(kubectl get nodes | grep -o NotReady)
+            STATUS=$(kubectl get nodes —selector \
+            '!node-role.kubernetes.io/master' \
+            —output jsonpath="{range .items[?(@.status.conditions[-1].type=='Ready')]}{.metadata.name}\
+            {.status.conditions[-1].type}{'\n'}{end}")
             if [[ -z "${STATUS}" ]]; then
               echo "K8s workers is ready. Continue..."
               k8s_ready='true'
-              exit 0 
+              break
             else
+              echo ${STATUS}
               sleep 20
             fi
           done
@@ -44,3 +48,4 @@ jobs:
       - name: Get nodes status 
         run: |
           kubectl get nodes
+          kubectl get storagesclass
