@@ -28,7 +28,7 @@ jobs:
           
       - name: Get nodes status
         run: | 
-          for i in {1..20}; do
+          for i in {1..10}; do
             echo "Get k8s workers status ${i}"
             STATUS=$(kubectl get nodes | grep -o NotReady)
             if [[ -z "${STATUS}" ]]; then
@@ -36,7 +36,7 @@ jobs:
               k8s_ready='true'
               break 
             else
-              sleep 10
+              sleep 20
             fi
           done
           if [[ ${k8s_ready} != "true" ]]; then
