@@ -31,7 +31,7 @@ jobs:
         run: | 
           for i in {1..20}; do
             echo "Get k8s workers status ${i}"
-            STATUS=$(kubectl get nodes -o json | jq -r '.items[] | select(.status.conditions[].type=="NotReady") | .metadata.name ')
+            STATUS=$(kubectl get nodes -o json | jq -r '.items[] | select ( .status.conditions[] | select( .type=="Ready" and .status=="False")) | .metadata.name')
             if [[ -z "${STATUS}"  ]]; then
               echo "K8s workers is ready. Continue..."
               k8s_ready='true'
