@@ -18,8 +18,9 @@ jobs:
         id: setup-kind-k8s
         uses: helm/kind-action@v1.4.0
         with: 
-          config: ./.github/config/kind-config.yaml
-       
-      - name: Prepare environment
-        run: |
+          config: ./.github/kube-linter-config/kind-config.yaml
           
+      - name: Get nodes and other info
+        run: | 
+          kubectl get all 
+          kubectl get nodes
