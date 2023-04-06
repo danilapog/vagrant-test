@@ -29,16 +29,16 @@ jobs:
       - name: Get nodes status
         timeout-minutes: 2
         run: | 
-          for i in {1..10}; do
+          for i in {1..20}; do
             echo "Get k8s workers status ${i}"
-            STATUS=$(kubectl get nodes | grep -q -o NotReady 2> /dev/null)
+            STATUS=$(kubectl get nodes | { grep -q -o NotReady || true; })
             if [[ -z "${STATUS}" ]]; then
               echo "K8s workers is ready. Continue..."
               k8s_ready='true'
               break
             else
               echo ${STATUS}
-              sleep 20
+              sleep 5
             fi
           done
         shell: bash
