@@ -44,10 +44,10 @@ jobs:
            sudo apt-get update -y
            sudo apt-get install -y yamllint
            pip install yamale
-           wget https://github.com/helm/chart-testing/releases/download/v${{ inputs.ct_version }}/chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
+           wget https://github.com/helm/chart-testing/releases/download/v3.8.0/chart-testing_3.8.0_linux_amd64.tar.gz
            wget ${LINT_CONF} ${KUBELINT_CONF} ${CHART_SCHEMA}
-           tar -xvzf chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz ct
-           rm -rf ./chart-testing_${{ inputs.ct_version }}_linux_amd64.tar.gz
+           tar -xvzf chart-testing_3.8.0_linux_amd64.tar.gz ct
+           rm -rf ./chart-testing_3.8.0_linux_amd64.tar.gz
           
       - name: Wait k8s workers
         timeout-minutes: 2
