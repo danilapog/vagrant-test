@@ -1,0 +1,25 @@
+name: Integration test
+
+on:
+  workflow_call:
+
+jobs:
+  spin-up:
+    name: integration-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/setup-helm@v3
+        id: setup-helm
+        with:
+          version: 'latest' # default is latest (stable)
+          token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+ 
+      - name: setup kind k8s
+        id: setup-kind-k8s
+        uses: helm/kind-action@v1.4.0
+        with: 
+          config: ./.github/config/kind-config.yaml
+       
+      - name: Prepare environment
+        run: |
+          
