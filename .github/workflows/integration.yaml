@@ -30,7 +30,7 @@ jobs:
         run: | 
           for i in {1..30}; do
             echo "Get k8s workers status ${i}"
-            STATUS=${kubectl get nodes | grep -o NotReady)
+            STATUS=$(kubectl get nodes | grep -o NotReady)
             if [[ -z "${STATUS}" ]]; then
               echo "K8s workers is ready. Continue..."
               k8s_ready='true'
