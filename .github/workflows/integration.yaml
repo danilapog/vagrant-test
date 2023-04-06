@@ -47,7 +47,7 @@ jobs:
            wget https://github.com/helm/chart-testing/releases/download/v3.8.0/chart-testing_3.8.0_linux_amd64.tar.gz
            wget ${LINT_CONF} ${KUBELINT_CONF} ${CHART_SCHEMA}
            mkdir -p /tmp/ct_tool
-           tar -xvzf chart-testing_3.8.0_linux_amd64.tar.gz ct -C /tmp/ct_tool
+           tar -xvzf chart-testing_3.8.0_linux_amd64.tar.gz -C /tmp/ct_tool ct
            rm -rf ./chart-testing_3.8.0_linux_amd64.tar.gz
           
       - name: Wait k8s workers
