@@ -27,6 +27,7 @@ jobs:
           config: ./kind-config.yaml
           
       - name: Get nodes status
+        timeout-minutes: 2
         run: | 
           for i in {1..10}; do
             echo "Get k8s workers status ${i}"
@@ -39,11 +40,7 @@ jobs:
               sleep 20
             fi
           done
-          if [[ "${k8s_ready}" != 'true' ]]; then
-            echo "Something goes wrong K8s workers timeout.." 
-            exit 1
-          fi
-          kubectl get nodes
           
-      - name: Setting nfs server 
+      - name: Get nodes status 
         run: |
+          kubectl get nodes
