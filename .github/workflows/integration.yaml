@@ -82,4 +82,13 @@ jobs:
         run: |
              sleep 120
              kubectl get all
+             
+      - name: Install K8s-Docs
+        run: |
+             helm install documentserver onlyoffice/docs
+             
+      - name: Get Deployments status
+        run: |
+             sleep 120
+             kubectl get all
           
