@@ -65,4 +65,9 @@ jobs:
       
       - name: Get storageclasses again
         run: kubectl get storageclass
+        
+      - name: Get all pods
+        run: |
+             sleep 120
+             kubectl get all
           
