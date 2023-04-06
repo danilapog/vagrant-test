@@ -1,4 +1,4 @@
-name: Integration test
+run-name: Integration test ${{ github.event.repository.name }}
 
 on:
   workflow_call:
