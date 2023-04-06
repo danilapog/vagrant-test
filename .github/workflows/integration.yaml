@@ -39,7 +39,7 @@ jobs:
               sleep 20
             fi
           done
-          if [[ ${k8s_ready} != "true" ]]; then
+          if [[ "${k8s_ready}" != 'true' ]]; then
             echo "Something goes wrong K8s workers timeout.." 
             exit 1
           fi
