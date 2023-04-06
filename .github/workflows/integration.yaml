@@ -6,7 +6,7 @@ on:
 env: 
   K8S_CONFIG: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github/kube-linter-config/kind-config.yaml'
   K8S_STORAGE_CLASS: 'standard'
-  K8S_PERSISTANCE_SIZE: '2G'
+  NFS_PERSISTANCE_SIZE: '4G'
   
 jobs:
   spin-up:
@@ -28,7 +28,7 @@ jobs:
         with: 
           config: ./kind-config.yaml
           
-      - name: Get nodes status
+      - name: Wait k8s workers
         timeout-minutes: 2
         run: | 
           for i in {1..20}; do
@@ -61,7 +61,19 @@ jobs:
             helm install nfs-server nfs-server-provisioner/nfs-server-provisioner \
                  --set persistence.enabled=true \
                  --set persistence.storageClass=${K8S_STORAGE_CLASS} \
-                 --set persistence.size=${K8S_PERSISTANCE_SIZE}
+                 --set persistence.size=${NFS_PERSISTANCE_SIZE}
+            
+            helm install rabbitmq bitnami/rabbitmq \
+                 --set metrics.enabled=false
+                 
+            helm install redis bitnami/redis \
+                 --set architecture=standalone \
+                 --set metrics.enabled=false
+                 
+            helm install postgresql bitnami/postgresql \
+                 --set auth.database=postgres \
+                 --set primary.persistence.size=2G \
+                 --set metrics.enabled=false
       
       - name: Get storageclasses again
         run: kubectl get storageclass
