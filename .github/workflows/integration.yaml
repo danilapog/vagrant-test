@@ -103,7 +103,7 @@ jobs:
       
       - name: CT install test
         run: |
-            /tmp/ct_tool/ct install --timeout 500s --charts .
+            /tmp/ct_tool/ct install --helm-extra-args "--timeout 500s" --charts .
         
         
       #- name: Get all pods
