@@ -46,7 +46,8 @@ jobs:
            pip install yamale
            wget https://github.com/helm/chart-testing/releases/download/v3.8.0/chart-testing_3.8.0_linux_amd64.tar.gz
            wget ${LINT_CONF} ${KUBELINT_CONF} ${CHART_SCHEMA}
-           tar -xvzf chart-testing_3.8.0_linux_amd64.tar.gz ct
+           mkdir -p /tmp/ct_tool
+           tar -xvzf chart-testing_3.8.0_linux_amd64.tar.gz ct -C /tmp/ct_tool
            rm -rf ./chart-testing_3.8.0_linux_amd64.tar.gz
           
       - name: Wait k8s workers
@@ -102,7 +103,7 @@ jobs:
       
       - name: CT install test
         run: |
-            ./ct install --charts .
+            /tmp/ct_tool/ct install --charts .
         
         
       #- name: Get all pods
