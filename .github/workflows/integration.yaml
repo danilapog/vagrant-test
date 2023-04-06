@@ -41,6 +41,7 @@ jobs:
               sleep 20
             fi
           done
+        shell: bash
           
       - name: Get nodes status 
         run: |
