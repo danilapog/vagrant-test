@@ -46,4 +46,4 @@ jobs:
       - name: Get nodes status 
         run: |
           kubectl get nodes
-          kubectl get storagesclass
+          kubectl get storageclass
