@@ -4,7 +4,9 @@ on:
   workflow_call:
 
 env: 
-  K8S_CONF: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github/kube-linter-config/kind-config.yaml'
+  K8S_CONFIG: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github/kube-linter-config/kind-config.yaml'
+  K8S_STORAGE_CLASS: 'standard'
+  K8S_PERSISTANCE_SIZE: '2G'
   
 jobs:
   spin-up:
@@ -12,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get kind config
-        run: wget ${K8S_CONF} 
+        run: wget ${K8S_CONFIG} 
         
       - uses: azure/setup-helm@v3
         id: setup-helm
@@ -47,3 +49,20 @@ jobs:
         run: |
           kubectl get nodes
           kubectl get storageclass
+          
+      - name: Set-up dependency
+        run: |
+            helm repo add bitnami https://charts.bitnami.com/bitnami
+            helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+            helm repo add nfs-server-provisioner https://kubernetes-sigs.github.io/nfs-ganesha-server-and-external-provisioner
+            helm repo add onlyoffice https://download.onlyoffice.com/charts/stable
+            helm repo update
+            
+            helm install nfs-server nfs-server-provisioner/nfs-server-provisioner \
+                 --set persistence.enabled=true \
+                 --set persistence.storageClass=${K8S_STORAGE_CLASS} \
+                 --set persistence.size=${K8S_PERSISTANCE_SIZE}
+      
+      - name: Get storageclasses again
+        run: kubectl get storageclass
+          
