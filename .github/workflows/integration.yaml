@@ -103,7 +103,10 @@ jobs:
       
       - name: CT install test
         run: |
+            set -euo pipefail 
+            
             /tmp/ct_tool/ct install --helm-extra-args "--timeout 500s" --charts .
+        shell: bash
         
         
       #- name: Get all pods
