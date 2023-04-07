@@ -91,7 +91,7 @@ function k8s_wait_deps() {
      }
      
 function k8s_ct_install() {
-            echo "${COLOR_YELLOW}Attention: Start ct install test${COLOR_RESET}"
+            echo "${COLOR_YELLOW}⚠ Attention: Start ct install test${COLOR_RESET}"
             ct install --charts .
             if [[ "$?" == 0 ]]; then
                echo "${COLOR_GREEN}☑ OK: Install tests successfull finished${COLOR_RESET}"
