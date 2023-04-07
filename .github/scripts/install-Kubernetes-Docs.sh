@@ -83,10 +83,11 @@ function k8s_deploy_deps() {
 function k8s_wait_deps() {
 
             echo "${COLOR_YELLOW}Wait that all dependency is ready${COLOR_RESET}" 
-            sleep 60
+            sleep 120
      }
      
 function k8s_ct_install() {
+            echo "${COLOR_YELLOW}Attention❗: Start ct install test${COLOR_RESET}"
             ct install --charts .
      }
           
