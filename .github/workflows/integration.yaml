@@ -6,7 +6,7 @@ on:
 env: 
   BASE_URL: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github'
   K8S_CONFIG: 'kube-linter-config/kind-config.yaml'
-  INSTALL_SCRIPT: 'install-${{ github.repository.repo.name }}.sh'
+  INSTALL_SCRIPT: 'install-${{ github.event.repository.name }}.sh'
   K8S_STORAGE_CLASS: 'standard'
   NFS_PERSISTANCE_SIZE: '4G'
   LINT_CONF: 'https://raw.githubusercontent.com/ONLYOFFICE/ga-common/master/.github/config/lintconf.yaml'
