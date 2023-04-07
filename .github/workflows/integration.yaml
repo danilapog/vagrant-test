@@ -106,7 +106,7 @@ jobs:
         run: |
             sleep 60s
             helm install documentserver onlyoffice/docs --timeout 2m30s
-            sleep 60s
+            sleep 180s
             kubectl get all
       
       #- name: CT install test
