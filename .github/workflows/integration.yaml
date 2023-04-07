@@ -62,7 +62,7 @@ jobs:
             export K8S_STORAGE_CLASS=standard
             export NFS_PERSISTANCE_SIZE=8Gi
             sudo chmod +x ${INSTALL_SCRIPT}
-            sudo bash ./${INSTALL_SCRIPT}            
+            bash ./${INSTALL_SCRIPT}            
         
       #- name: CT install test
       #  run: |
