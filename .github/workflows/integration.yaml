@@ -14,7 +14,7 @@ env:
 jobs:
   spin-up:
     name: integration-test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout chart
         uses: actions/checkout@v3
@@ -33,11 +33,24 @@ jobs:
           version: 'latest' # default is latest (stable)
           token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
  
-      - name: setup kind k8s
-        id: setup-kind-k8s
-        uses: helm/kind-action@v1.4.0
-        with: 
-          config: ./kind-config.yaml
+      #- name: setup kind k8s
+      #  id: setup-kind-k8s
+      #  uses: helm/kind-action@v1.4.0
+      #  with: 
+      #    config: ./kind-config.yaml
+      
+      - name: Setup minikube
+        run: |
+           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+           chmod +x ./kubectl
+           sudo mv ./kubectl /usr/local/bin/kubectl
+           kubectl version --client
+
+           curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+           && chmod +x minikube
+           sudo mkdir -p /usr/local/bin/
+           sudo install minikube /usr/local/bin/
+           minikube start --nodes 2 -p multinode-demo --force
           
       - name: Prepare unit tests environment
         run: |
