@@ -24,7 +24,7 @@ function common::get_colors() {
 
 function k8s_w8_workers() {
          for i in {1..20}; do
-            echo "${COLOR_YELLOW}Get k8s workers status ${i}${COLOR_RESET}"
+            echo "${COLOR_BLUE}Get k8s workers status ${i}${COLOR_RESET}"
             STATUS=$(kubectl get nodes -o json | jq -r '.items[] | select ( .status.conditions[] | select( .type=="Ready" and .status=="False")) | .metadata.name')
             if [[ -z "${STATUS}"  ]]; then
               echo "${COLOR_GREEN}☑ OK: K8s workers is ready. Continue...${COLOR_RESET}"
@@ -42,6 +42,7 @@ function k8s_w8_workers() {
 }
 
 function k8s_get_info() {
+            echo "${COLOR_BLUE}Get cluster info${COLOR_RESET}"
             kubectl get all
             kubectl get sc
             kubectl get nodes
@@ -90,8 +91,13 @@ function k8s_wait_deps() {
      }
      
 function k8s_ct_install() {
-            echo "${COLOR_YELLOW}Attention❗: Start ct install test${COLOR_RESET}"
+            echo "${COLOR_YELLOW}Attention: Start ct install test${COLOR_RESET}"
             ct install --charts .
+            if [[ "$?" == 0 ]]; then
+               echo "${COLOR_GREEN}☑ OK: Install tests successfull finished${COLOR_RESET}"
+            else 
+               echo "${COLOR_RED}Fail. Exit with 1${COLOR_RESET}"
+            fi
      }
           
 function k8s_deploy_docs(){
@@ -102,7 +108,7 @@ function k8s_deploy_docs(){
 function main () {
    common::get_colors
    k8s_get_info
-   #k8s_w8_workers
+   k8s_w8_workers
    k8s_deploy_deps
    k8s_wait_deps
    k8s_ct_install
