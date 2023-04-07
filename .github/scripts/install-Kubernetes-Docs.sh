@@ -49,6 +49,7 @@ function k8s_get_info() {
 }
 
 function k8s_deploy_deps() {
+            echo "${COLOR_BLUE}🔨Lets deploy dependency...${COLOR_RESET}"
             # Add dependency helm charts
             helm repo add bitnami https://charts.bitnami.com/bitnami
             helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -61,25 +62,25 @@ function k8s_deploy_deps() {
             helm install nfs-server nfs-server-provisioner/nfs-server-provisioner \
                  --set persistence.enabled=true \
                  --set persistence.storageClass=${K8S_STORAGE_CLASS} \
-                 --set persistence.size=${NFS_PERSISTANCE_SIZE}
+                 --set persistence.size=${NFS_PERSISTANCE_SIZE} > /dev/null 2>&1
             echo "${COLOR_GREEN}☑ OK: NFS Server was deployed${COLOR_RESET}"
             
             # Install rabbitmq
             helm install rabbitmq bitnami/rabbitmq \
-                 --set metrics.enabled=false
+                 --set metrics.enabled=false > /dev/null 2>&1
             echo "${COLOR_GREEN}☑ OK: Rabbitmq was deployed${COLOR_RESET}"
             
             # Install redis
             helm install redis bitnami/redis \
                  --set architecture=standalone \
-                 --set metrics.enabled=false
+                 --set metrics.enabled=false > /dev/null 2>&1
             echo "${COLOR_GREEN}☑ OK: Redis was deployed${COLOR_RESET}
             
             # Install postgresql
             helm install postgresql bitnami/postgresql \
                  --set auth.database=postgres \
                  --set primary.persistence.size=2G \
-                 --set metrics.enabled=false
+                 --set metrics.enabled=false > /dev/null 2>&1
             echo "${COLOR_GREEN}☑ OK: Postgresql was deployed${COLOR_RESET}
             
      }
