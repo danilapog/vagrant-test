@@ -117,8 +117,9 @@ jobs:
       
       - name: Deploy ${{ github.event.repository.name }} 
         run: |
-            helm install documentserver onlyoffice/docs
-            sleep 120
+            sleep 60s
+            helm install documentserver onlyoffice/docs --timeout 2m30s
+            sleep 60s
             kubectl get all
       
       #- name: CT install test
