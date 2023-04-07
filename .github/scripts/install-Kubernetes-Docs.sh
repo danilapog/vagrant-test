@@ -24,7 +24,7 @@ function common::get_colors() {
 
 function k8s_w8_workers() {
          for i in {1..20}; do
-            echo "${COLOR_BLUE}Get k8s workers status ${i}${COLOR_RESET}"
+            echo "${COLOR_BLUE}🔨⎈ Get k8s workers status ${i}...${COLOR_RESET}"
             STATUS=$(kubectl get nodes -o json | jq -r '.items[] | select ( .status.conditions[] | select( .type=="Ready" and .status=="False")) | .metadata.name')
             if [[ -z "${STATUS}"  ]]; then
               echo "${COLOR_GREEN}☑ OK: K8s workers is ready. Continue...${COLOR_RESET}"
@@ -42,7 +42,7 @@ function k8s_w8_workers() {
 }
 
 function k8s_get_info() {
-            echo "${COLOR_BLUE}🔨⎈ Get cluster info${COLOR_RESET}"
+            echo "${COLOR_BLUE}🔨⎈ Get cluster info...${COLOR_RESET}"
             kubectl get all
             kubectl get sc
             kubectl get nodes
