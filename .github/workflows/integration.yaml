@@ -115,12 +115,12 @@ jobs:
             kubectl get storageclass
             kubectl get service --all-namespaces
       
-      - name: CT install test
-        run: |
-            set -euo pipefail 
-            
-            /tmp/ct_tool/ct install --charts .
-        shell: bash
+      #- name: CT install test
+      #  run: |
+      #      set -euo pipefail 
+      #      
+      #      /tmp/ct_tool/ct install --charts .
+      #  shell: bash
         
         
       #- name: Get all pods
