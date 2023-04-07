@@ -113,7 +113,13 @@ jobs:
       - name: Get storageclasses again
         run: |
             kubectl get storageclass
-            kubectl get service --all-namespaces
+            kubectl get all
+      
+      - name: Deploy ${{ github.event.repository.name }} 
+        run: |
+            helm install documentserver onlyoffice/docs
+            sleep 120
+            kubectl get all
       
       #- name: CT install test
       #  run: |
