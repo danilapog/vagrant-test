@@ -59,8 +59,8 @@ jobs:
         run: | 
             set -euo pipefail 
             
-            export ${K8S_STORAGE_CLASS}
-            export ${NFS_PERSISTANCE_SIZE}
+            export K8S_STORAGE_CLASS=standard
+            export NFS_PERSISTANCE_SIZE=8Gi
             sudo chmod +x ${INSTALL_SCRIPT}
             sudo bash ./${INSTALL_SCRIPT}            
         
