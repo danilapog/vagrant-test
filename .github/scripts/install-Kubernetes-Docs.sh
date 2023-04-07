@@ -4,6 +4,9 @@
 
 set -euo pipefail 
 
+K8S_STORAGE_CLASS="standard"
+NFS_PERSISTANCE_SIZE="8Gi"
+
 export TERM=xterm-256color^M
 
 function common::get_colors() {
@@ -98,6 +101,7 @@ function k8s_deploy_docs(){
 
 function main () {
    common::get_colors
+   k8s_get_info
    #k8s_w8_workers
    k8s_deploy_deps
    k8s_wait_deps
