@@ -4,7 +4,9 @@ on:
   workflow_call:
 
 env: 
-  K8S_CONFIG: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github/kube-linter-config/kind-config.yaml'
+  BASE_URL: 'https://raw.githubusercontent.com/danilapog/vagrant-test/master/.github'
+  K8S_CONFIG: 'kube-linter-config/kind-config.yaml'
+  INSTALL_SCRIPT: 'install-${{ github.repository.repo.name }}.sh'
   K8S_STORAGE_CLASS: 'standard'
   NFS_PERSISTANCE_SIZE: '4G'
   LINT_CONF: 'https://raw.githubusercontent.com/ONLYOFFICE/ga-common/master/.github/config/lintconf.yaml'
@@ -20,7 +22,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Get kind config
-        run: wget ${K8S_CONFIG} 
+        run: wget ${BASE_URL}/${K8S_CONFIG} ${BASE_URL}/scripts/${INSTALL_SCRIPT}
       
       - uses: actions/setup-python@v4
         with:
@@ -30,8 +32,8 @@ jobs:
       - uses: azure/setup-helm@v3
         id: setup-helm
         with:
-          version: 'latest' # default is latest (stable)
-          token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+          version: 'latest'
+          token: ${{ secrets.GITHUB_TOKEN }} 
  
       - name: setup kind k8s
         id: setup-kind-k8s
@@ -39,76 +41,29 @@ jobs:
         with: 
           config: ./kind-config.yaml
           
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.4.0
+        
       - name: Prepare unit tests environment
         run: |
-           sudo apt-get update -y
-           sudo apt-get install -y yamllint
-           pip install yamale
-           wget https://github.com/helm/chart-testing/releases/download/v3.3.0/chart-testing_3.3.0_linux_amd64.tar.gz
+           #sudo apt-get update -y
+           #sudo apt-get install -y yamllint
+           #pip install yamale
+           #wget https://github.com/helm/chart-testing/releases/download/v3.3.0/chart-testing_3.3.0_linux_amd64.tar.gz
            wget ${LINT_CONF} ${KUBELINT_CONF} ${CHART_SCHEMA}
            mkdir -p /tmp/ct_tool
-           tar -xvzf chart-testing_3.3.0_linux_amd64.tar.gz -C /tmp/ct_tool ct
-           rm -rf ./chart-testing_3.3.0_linux_amd64.tar.gz
+           #tar -xvzf chart-testing_3.3.0_linux_amd64.tar.gz -C /tmp/ct_tool ct
+           #rm -rf ./chart-testing_3.3.0_linux_amd64.tar.gz
           
-      - name: Wait k8s workers
-        timeout-minutes: 2
+      - name: Start deploy
         run: | 
-          for i in {1..20}; do
-            echo "Get k8s workers status ${i}"
-            STATUS=$(kubectl get nodes -o json | jq -r '.items[] | select ( .status.conditions[] | select( .type=="Ready" and .status=="False")) | .metadata.name')
-            if [[ -z "${STATUS}"  ]]; then
-              echo "K8s workers is ready. Continue..."
-              k8s_ready='true'
-              break
-            else
-              echo ${STATUS}
-              sleep 5
-            fi
-          done
-        shell: bash
-          
-      - name: Get nodes status 
-        run: |
-          kubectl get nodes
-          kubectl get storageclass
-          
-      - name: Set-up dependency
-        run: |
-            helm repo add bitnami https://charts.bitnami.com/bitnami
-            helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-            helm repo add nfs-server-provisioner https://kubernetes-sigs.github.io/nfs-ganesha-server-and-external-provisioner
-            helm repo add onlyoffice https://download.onlyoffice.com/charts/stable
-            helm repo update
+            set -euo pipefail 
             
-            helm install nfs-server nfs-server-provisioner/nfs-server-provisioner \
-                 --set persistence.enabled=true \
-                 --set persistence.storageClass=${K8S_STORAGE_CLASS} \
-                 --set persistence.size=${NFS_PERSISTANCE_SIZE}
-            
-            helm install rabbitmq bitnami/rabbitmq \
-                 --set metrics.enabled=false
-                 
-            helm install redis bitnami/redis \
-                 --set architecture=standalone \
-                 --set metrics.enabled=false
-                 
-            helm install postgresql bitnami/postgresql \
-                 --set auth.database=postgres \
-                 --set primary.persistence.size=2G \
-                 --set metrics.enabled=false
-      
-      - name: Get storageclasses again
-        run: |
-            kubectl get storageclass
-            kubectl get all
-      
-      - name: Deploy ${{ github.event.repository.name }} 
-        run: |
-            sleep 60s
-            helm install documentserver onlyoffice/docs --timeout 2m30s
-            sleep 180s
-            kubectl get all
-      
+            export ${K8S_STORAGE_CLASS}
+            export ${NFS_PERSISTANCE_SIZE}
+            sudo chmod +x ${INSTALL_SCRIPT}
+            sudo bash ./${INSTALL_SCRIPT}            
+        
       #- name: CT install test
       #  run: |
       #      set -euo pipefail 
