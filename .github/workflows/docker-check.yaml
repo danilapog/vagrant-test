@@ -1,0 +1,22 @@
+name: check manifest
+
+on:
+  workflow_dispatch:
+  
+  
+env:
+  COMPANY_NAME: "onlyoffice"
+  PRODUCT_NAME: "documentserver" 
+  
+jobs:
+  build:
+    name: Check docker manifest
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Checkout code 
+        uses: actions/checkout@v3
+        
+      - name: Check manifest 
+        run: |
+          export TESTING_IMAGE=${COMPANY_NAME}/4testing-${PRODUCT_NAME}-ee:99.99.99.3202
+          docker manifest inspect ${TESTING_IMAGE}
