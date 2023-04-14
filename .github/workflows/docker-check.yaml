@@ -18,5 +18,5 @@ jobs:
         
       - name: Check manifest 
         run: |
-          export TESTING_IMAGE=${COMPANY_NAME}/4testing-${PRODUCT_NAME}-ee:99.99.99.3202
+          export TESTING_IMAGE=${COMPANY_NAME}/4testing-${PRODUCT_NAME}-ee:7.3.3
           docker manifest inspect ${TESTING_IMAGE}
