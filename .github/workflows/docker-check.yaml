@@ -5,7 +5,7 @@ on:
   
   
 env:
-  COMPANY_NAME: "onlyoffice"
+  COMPANY_NAME: "danilaworker"
   PRODUCT_NAME: "documentserver" 
   
 jobs:
