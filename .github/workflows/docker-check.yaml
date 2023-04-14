@@ -24,3 +24,5 @@ jobs:
           #docker manifest inspect ${TESTING_IMAGE_ONE}
           docker manifest inspect ${TESTING_IMAGE_TWO}
           docker manifest inspect ${TESTING_IMAGE_TRI}
+          
+          
