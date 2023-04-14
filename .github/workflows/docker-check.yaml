@@ -18,10 +18,10 @@ jobs:
         
       - name: Check manifest 
         run: |
-          TESTING_IMAGE_ONE=${COMPANY_NAME}/${PRODUCT_NAME}-ee:7.2
+          TESTING_IMAGE_ONE=${COMPANY_NAME}/${PRODUCT_NAME}-ee:7.3
           TESTING_IMAGE_TWO=${COMPANY_NAME}/${PRODUCT_NAME}-ee:latest
-          TESTING_IMAGE_TRI=${COMPANY_NAME}/${PRODUCT_NAME}-ee:7.2.2.56
-          #docker manifest inspect ${TESTING_IMAGE_ONE}
+          TESTING_IMAGE_TRI=${COMPANY_NAME}/${PRODUCT_NAME}-ee:7.3.3
+          docker manifest inspect ${TESTING_IMAGE_ONE}
           docker manifest inspect ${TESTING_IMAGE_TWO}
           docker manifest inspect ${TESTING_IMAGE_TRI}
           
