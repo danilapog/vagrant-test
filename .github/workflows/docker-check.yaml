@@ -22,7 +22,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
         with: 
-          version: 0.8.2
+          version: v0.8.2
         
       - name: check docker version
         run: |
