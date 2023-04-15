@@ -5,7 +5,7 @@ on:
   
   
 env:
-  COMPANY_NAME: "onlyoffice"
+  COMPANY_NAME: "danilaworker"
   PRODUCT_NAME: "documentserver" 
   
 jobs:
@@ -31,11 +31,11 @@ jobs:
         
       - name: Check manifest 
         run: |
-          TESTING_IMAGE_ONE=${COMPANY_NAME}/docs-docservice-ee:7.1.0-1
-          TESTING_IMAGE_TWO=${COMPANY_NAME}/docs-docservice-ee:7.2.0-1
-          TESTING_IMAGE_TRI=${COMPANY_NAME}/docs-docservice-ee:7.3.3-1
+          TESTING_IMAGE_ONE=${COMPANY_NAME}/documentserver-ee:7.3.3.49
+          #TESTING_IMAGE_TWO=${COMPANY_NAME}/documentserver-ee:7.2.0-1
+          #TESTING_IMAGE_TRI=${COMPANY_NAME}/documentserver-ee:7.3.3-1
           docker manifest inspect ${TESTING_IMAGE_ONE}
-          docker manifest inspect ${TESTING_IMAGE_TWO}
-          docker manifest inspect ${TESTING_IMAGE_TRI}
+          #docker manifest inspect ${TESTING_IMAGE_TWO}
+          #docker manifest inspect ${TESTING_IMAGE_TRI}
           
           
