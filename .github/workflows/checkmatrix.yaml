@@ -15,7 +15,10 @@ jobs:
     strategy:
       matrix:
         compose: [ "postgresql.yaml" ]
-        variables: [ "POSTGRESQL_VERSION=9, IMMORTAL=FOO, ANOTHER=BOO" ]
+        variables: [ "POSTGRESQL_VERSION=9 IMMORTAL=FOO ANOTHER=BOO" ]
+        include: 
+          - compose: "postgresql.yaml" 
+            variables: "POSGRESQL_VERSION=10 IMMORTAL=DUKE ANOTHER=NUKEM" 
     steps:
       - name: Checkout code 
         run: |
