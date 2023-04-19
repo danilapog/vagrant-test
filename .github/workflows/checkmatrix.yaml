@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Check docker manifest
-    if: ${{ github.actor == @danilapog }}
+    #if: ${{ github.actor == @danilapog }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,6 +25,7 @@ jobs:
     steps:
       - name: Checkout code 
         run: |
+            echo User is ${{ github.actor }}
             echo "export variables for ${{ matrix.compose }}"
             for v in ${{ matrix.variables }}; do
                 export ${v}
