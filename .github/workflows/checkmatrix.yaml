@@ -19,6 +19,7 @@ jobs:
         include: 
           - compose: "postgresql.yaml" 
             variables: "POSTGRESQL_VERSION=10 IMMORTAL=DUKE ANOTHER=NUKEM" 
+          
     steps:
       - name: Checkout code 
         run: |
