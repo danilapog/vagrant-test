@@ -1,0 +1,28 @@
+name: check matrix
+
+on:
+  push:
+  
+  
+env:
+  COMPANY_NAME: "danilaworker"
+  PRODUCT_NAME: "documentserver" 
+  
+jobs:
+  build:
+    name: Check docker manifest
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        - compose: postgresql.yaml
+          variables: ["POSTGRESQL_VERSION=9, IMMORTAL=7, ANOTHER=FOO"]
+    steps:
+      - name: Checkout code 
+        run: |
+            for v in ${{ matrix.variables }}; do
+                export ${v}
+            done
+            
+            echo ${POSTGRESQL_VERSION}
+            echo ${IMMORTAL}
+            echo ${ANOTHER}
