@@ -21,7 +21,7 @@ jobs:
         #  - compose: "postgresql.yaml" 
         #    variables: "POSTGRESQL_VERSION=10 IMMORTAL=DUKE ANOTHER=NUKEM" 
          compose: [ "postgresql.yaml" ]
-         variables: [ "POSTGRESQL_VERSION=10", "POSTGRESQL_VERSION=9", "POSTGRESQL_VERSION=8" ]
+         variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
       - name: Checkout code 
         run: |
@@ -32,5 +32,5 @@ jobs:
             done
             
             echo ${POSTGRESQL_VERSION}
-            #echo ${IMMORTAL}
-            #echo ${ANOTHER}
+            echo ${IMMORTAL}
+            echo ${ANOTHER}
