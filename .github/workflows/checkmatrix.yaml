@@ -14,11 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        - compose: postgresql.yaml
-          variables: ["POSTGRESQL_VERSION=9, IMMORTAL=7, ANOTHER=FOO"]
+        compose: [ "postgresql.yaml" ]
+        variables: [ "POSTGRESQL_VERSION=9, IMMORTAL=FOO, ANOTHER=BOO" ]
     steps:
       - name: Checkout code 
         run: |
+            echo "export variables for ${{ matrix.compose }}"
             for v in ${{ matrix.variables }}; do
                 export ${v}
             done
