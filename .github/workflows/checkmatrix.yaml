@@ -23,8 +23,11 @@ jobs:
          variables: [ "", "POSTGRESQL_VERSION=9", "POSTGRESQL_VERSION=10", "POSTGRESQL_VERSION=11", "POSTGRESQL_VERSION=12" ]
          compose: [ "postgresql.yaml" ]
          include: 
-           - variables: "MYSQL_VERSION=8 MYSQL_VERSION=5"
+           - variables: "MYSQL_VERSION=8"
              compose: "mysql.yaml"
+           - variables: "MYSQL_VERSION=5"
+             compose: "mysql.yaml"
+             
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
       - name: Checkout code 
