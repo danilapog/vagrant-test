@@ -11,7 +11,7 @@ env:
 jobs:
   build:
     name: Check docker manifest
-    if: github.actor == 'danilapog' || github.actor == 'svetlana'
+    if: github.actor == 'danilapog' || github.actor == 'agolubev' || github.actor == 'heatray' || github.actor == 'papacarlo'
     runs-on: ubuntu-latest
     strategy:
       matrix:
