@@ -20,7 +20,12 @@ jobs:
         #include: 
         #  - compose: "postgresql.yaml" 
         #    variables: "POSTGRESQL_VERSION=10 IMMORTAL=DUKE ANOTHER=NUKEM" 
-         variables: [ "", "POSTGRESQL_VERSION=9", "POSTGRESQL_VERSION=10", "POSTGRESQL_VERSION=11", "POSTGRESQL_VERSION=12" ]
+         variables: 
+           - "" 
+           - "POSTGRESQL_VERSION=9"
+           - "POSTGRESQL_VERSION=10"
+           - "POSTGRESQL_VERSION=11"
+           - "POSTGRESQL_VERSION=12" 
          compose: [ "postgresql.yaml" ]
          include: 
            - variables: "MYSQL_VERSION=8 DUKE=NUKEM" 
