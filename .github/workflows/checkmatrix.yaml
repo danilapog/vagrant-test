@@ -22,7 +22,7 @@ jobs:
            - "POSTGRESQL_VERSION=11"
            - "POSTGRESQL_VERSION=12" 
          compose: [ "postgresql.yaml" ]
-         name: [ "Test with postgresql versions ${{ matrix.variables }}" ]
+         name: [ "Postgresql different version" ]
          include: 
            - variables: "MYSQL_VERSION=8 DUKE=NUKEM" 
              compose: "mysql.yaml"
