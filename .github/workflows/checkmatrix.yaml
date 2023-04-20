@@ -10,16 +10,11 @@ env:
   
 jobs:
   build:
-    name: Test with ${{ matrix.variables }}
+    name: Test with ${{ matrix.name }}
 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        #compose: [ "postgresql.yaml" ]
-        #variables: [ "POSTGRESQL_VERSION=9 IMMORTAL=FOO ANOTHER=BOO" ]
-        #include: 
-        #  - compose: "postgresql.yaml" 
-        #    variables: "POSTGRESQL_VERSION=10 IMMORTAL=DUKE ANOTHER=NUKEM" 
          variables: 
            - "" 
            - "POSTGRESQL_VERSION=9"
@@ -27,6 +22,7 @@ jobs:
            - "POSTGRESQL_VERSION=11"
            - "POSTGRESQL_VERSION=12" 
          compose: [ "postgresql.yaml" ]
+         name: "Test with postgresql version: ${{ matrix.variables }}"
          include: 
            - variables: "MYSQL_VERSION=8 DUKE=NUKEM" 
              compose: "mysql.yaml"
