@@ -23,14 +23,14 @@ jobs:
          variables: [ "", "POSTGRESQL_VERSION=9", "POSTGRESQL_VERSION=10", "POSTGRESQL_VERSION=11", "POSTGRESQL_VERSION=12" ]
          compose: [ "postgresql.yaml" ]
          include: 
-           - variables: "MYSQL_VERSION=8"
+           - variables: "MYSQL_VERSION=8 DUKE=NUKEM" 
              compose: "mysql.yaml"
            - variables: "MYSQL_VERSION=5"
              compose: "mysql.yaml"
              
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
-      - name: Checkout code 
+      - name: Checkout ${{ matrix.variables }}
         run: |
             export config=${{ matrix.compose }}
             echo "export variables for ${{ matrix.compose }}"
@@ -40,3 +40,4 @@ jobs:
             echo config file is ${config}
             echo postgresql version is ${POSTGRESQL_VERSION}
             echo mysql version is ${MYSQL_VERSION}
+            echo duke version is ${DUKE}
