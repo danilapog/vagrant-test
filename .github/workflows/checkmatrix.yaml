@@ -10,7 +10,7 @@ env:
   
 jobs:
   build:
-    name: Test with ${{ matrix.name }}
+    name: ${{ matrix.name }}
 
     runs-on: ubuntu-latest
     strategy:
@@ -41,7 +41,7 @@ jobs:
              
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
-      - name: Checkout ${{ matrix.variables }}
+      - name: ${{ matrix.name }}
         run: |
             export config=${{ matrix.compose }}
             echo "export variables for ${{ matrix.compose }}"
