@@ -24,9 +24,12 @@ jobs:
          compose: [ "postgresql.yaml" ]
          name: [ "Postgresql different version" ]
          include: 
-           - variables: "MYSQL_VERSION=8 DUKE=NUKEM" 
+           - variables: "MYSQL_VERSION=8"
+             name: "Test with mysql 8"
              compose: "mysql.yaml"
+             
            - variables: "MYSQL_VERSION=5"
+             name: "Test with mysql 5"
              compose: "mysql.yaml"
              
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
