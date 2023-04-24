@@ -15,15 +15,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-         variables: 
-           - "" 
-           - "POSTGRESQL_VERSION=9"
-           - "POSTGRESQL_VERSION=10"
-           - "POSTGRESQL_VERSION=11"
-           - "POSTGRESQL_VERSION=12" 
-         compose: [ "postgresql.yaml" ]
-         name: [ "Postgresql different version" ]
+         variables: ["POSTGRESQL_VERSION=9"]
+         name: ["Test with postgresql 9"]
+         compose: ["postgresql.yaml"]
          include: 
+           - variables: "POSTGRESQL_VERSION=10 DUKE=NUKEN"
+             name: "test with postgresql 10"
+             compose: "postgresql.yaml"
+             
+           - variables: "POSTGRESQL_VERSION=11 DUKE=NUKEN"
+             name: "test with postgresql 11"
+             compose: "postgresql.yaml" 
+             
+           - variables: "POSTGRESQL_VERSION=12 DUKE=NUKEN"
+             name: "test with postgresql 12"
+             compose: "postgresql.yaml"
+             
            - variables: "MYSQL_VERSION=8"
              name: "Test with mysql 8"
              compose: "mysql.yaml"
