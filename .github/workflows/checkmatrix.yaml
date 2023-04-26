@@ -46,7 +46,8 @@ jobs:
             # postgresql custom values
            - compose: "postgres.yml"
              name: "custom param"
-             variables: "DB_NAME=mydb 
+             variables: -> "
+                    DB_NAME=mydb 
                     DB_USER=myuser 
                     DB_PWD=password 
                     POSTGRES_DB=mydb 
