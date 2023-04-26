@@ -39,6 +39,20 @@ jobs:
              name: "Test with mysql 5"
              compose: "mysql.yaml"
              
+           - compose: "postgres.yml"
+             variables: "POSTGRES_VERSION=12"                            # postgtres 12 version
+             name: "Test with Postgresql 12"
+
+            # postgresql custom values
+           - compose: "postgres.yml"
+             name: "custom param"
+             variables: | 
+                   "DB_NAME=mydb 
+                    DB_USER=myuser 
+                    DB_PWD=password 
+                    POSTGRES_DB=mydb 
+                    POSTGRES_USER=myuser"
+             
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
       - name: ${{ matrix.name }}
