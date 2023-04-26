@@ -62,6 +62,8 @@ jobs:
             for v in ${{ matrix.variables }}; do
                 export ${v}
             done
+            VARIABLES=${{ matrix.variables }}
+            echo ${VARIABLES[@]}
             echo config file is ${config}
             echo postgresql version is ${POSTGRESQL_VERSION}
             echo mysql version is ${MYSQL_VERSION}
