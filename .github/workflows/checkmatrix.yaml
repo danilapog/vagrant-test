@@ -65,6 +65,8 @@ jobs:
             echo ${DB_NAME}
             echo ${DB_USER}
             echo ${DB_PWD}
+            echo ${POSTGRES_DB}
+            echo ${POSTGRES_USER}
             echo config file is ${config}
             echo postgresql version is ${POSTGRESQL_VERSION}
             echo mysql version is ${MYSQL_VERSION}
