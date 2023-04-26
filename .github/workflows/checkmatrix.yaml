@@ -46,12 +46,11 @@ jobs:
             # postgresql custom values
            - compose: "postgres.yml"
              name: "custom param"
-             variables: | 
-                    DB_NAME=mydb 
+             variables: "DB_NAME=mydb 
                     DB_USER=myuser 
                     DB_PWD=password 
                     POSTGRES_DB=mydb 
-                    POSTGRES_USER=myuser
+                    POSTGRES_USER=myuser"
              
          #variables: [ "POSTGRESQL_VERSION=10", "IMMORTAL=9", "ANOTHER=8" ]
     steps:
