@@ -35,6 +35,7 @@ Now add a MacOS environment powered GitHub Actions `vagrant-up.yml`:
 ```yaml
 name: vagrant-up
 
+
 on: [push]
 
 jobs:
