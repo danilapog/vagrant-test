@@ -57,7 +57,7 @@ jobs:
     name: zap scan
     runs-on: ubuntu-latest
     needs: spin-up
-    if: "${{ github.event.inputs.community == true && needs.spin-up.outputs.value != develop }}"
+    if: ${{ github.event.inputs.community == true && needs.spin-up.outputs.value != "develop" }}
     steps:
     - name: cheeck action
       id: step1
