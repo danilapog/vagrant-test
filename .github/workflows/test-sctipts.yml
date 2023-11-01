@@ -51,7 +51,7 @@ jobs:
     steps:
     - name: check action
       id: get-name
-      run: echo "value=release" >> "$GITHUB_OUTPUT" 
+      run: echo "value=develop" >> "$GITHUB_OUTPUT" 
   
   zap:
     name: zap scan
