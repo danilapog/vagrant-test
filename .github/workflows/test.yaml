@@ -8,10 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branch: ${{ steps.build.outputs.branch }}
-    strategy:
-      matrix:
-        platform: [linux/amd64]
-        branch: ${{ github.event.client_payload.branches }}
     steps:
       - name: check
         run: |
