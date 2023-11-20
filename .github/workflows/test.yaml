@@ -1,0 +1,46 @@
+---
+name: 4testing multiarch-build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.build.outputs.branch }}
+    strategy:
+      matrix:
+        platform: [linux/amd64]
+        branch: ${{ github.event.client_payload.branches }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: check
+        run: |
+           set -e 
+           docker build .
+           
+           vetka="release/v1.0.0"
+           if [[ ${vetka} =~ release ]]; then
+            # Move build tag to output for use it with zap scanning for non-develop branches
+            echo "branch=${vetka}" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
+
+  zap:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    needs: [build]
+    if: ${{ startsWith(needs.build.outputs.branch, 'release/') }}
+    name: Scan DocSpace with zap
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: build-tools
+          ref: ${{ needs.build.outputs.branch }}
+
+      - name: check
+        run: ls build-tools/
