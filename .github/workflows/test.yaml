@@ -11,8 +11,7 @@ jobs:
     steps:
       - name: check
         run: |
-           #set -e 
-           docker build .
+           set -e 
            
            vetka="release/v1.0.0"
            if [[ ${vetka} =~ release ]]; then
