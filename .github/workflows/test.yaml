@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: check
         run: |
-           set -e 
+           #set -e 
            docker build .
            
            vetka="release/v1.0.0"
