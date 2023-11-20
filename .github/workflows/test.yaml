@@ -10,6 +10,7 @@ jobs:
       branch: ${{ steps.build.outputs.branch }}
     steps:
       - name: check
+        id: build
         run: |
            set -e 
            
@@ -18,7 +19,6 @@ jobs:
             # Move build tag to output for use it with zap scanning for non-develop branches
             echo "branch=${vetka}" >> "$GITHUB_OUTPUT"
            fi
-           echo 12345145
         shell: bash
 
   zap:
