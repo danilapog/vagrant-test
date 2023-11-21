@@ -9,6 +9,7 @@ on:
       branch:
         description: 'run zap?'
         type: boolean
+        required: true
 
 jobs:
   build:
