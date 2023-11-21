@@ -15,9 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         branch: ["release/v1.0.0", "develop"]
-        fail-fast: false
     outputs:
       branch: ${{ steps.build.outputs.branch }}
     steps:
