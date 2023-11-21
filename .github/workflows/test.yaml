@@ -2,6 +2,12 @@ name: 4testing multiarch-build
 
 on:
   push:
+  workflow_dispatch: 
+    inputs:
+      branch:
+        description: 'branch release/v1.0.0 for example'
+        type: string
+        required: true
 
 jobs:
   build:
@@ -12,11 +18,17 @@ jobs:
     outputs:
       branch: ${{ steps.build.outputs.branch }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: build-tools
+          ref: ${{ github.event.inputs.branch }}
+      
       - name: check
         id: build
         run: |
            set -e 
-           
+           ls -l ./build-tools/
            vetka="${{ matrix.branch }}"
            if [[ ${vetka} =~ release ]]; then
             # Move build tag to output for use it with zap scanning for non-develop branches
