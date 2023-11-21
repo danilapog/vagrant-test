@@ -29,7 +29,6 @@ jobs:
       
       - name: check
         id: build
-        continue-on-error: true
         env: 
           VERSION: ${{ github.event.inputs.branch || 'develop' }}
         run: |
