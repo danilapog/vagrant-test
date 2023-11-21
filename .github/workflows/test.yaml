@@ -1,0 +1,4 @@
+name: check matrix
+
+on:
+  workflow_dispatch:
