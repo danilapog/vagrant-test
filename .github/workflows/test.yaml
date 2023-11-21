@@ -1,5 +1,7 @@
 name: 4testing multiarch-build
 
+run-name: >
+    "Test on branch ${{ github.event.inputs.branch }} ${{ github.event.inputs.branch }}"
 on:
   push:
   workflow_dispatch: 
