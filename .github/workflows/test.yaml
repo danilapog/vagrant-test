@@ -14,17 +14,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      #fail-fast: false
       matrix:
         branch: ["release/v1.0.0", "develop"]
     outputs:
       branch: ${{ steps.build.outputs.branch }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: build-tools
-          ref: ${{ github.event.inputs.branch }}
+      #- name: Checkout
+      #  uses: actions/checkout@v3
+      #  with:
+      #    path: build-tools
+      #    ref: ${{ github.event.inputs.branch }}
       
       - name: check
         id: build
