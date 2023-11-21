@@ -31,25 +31,12 @@ jobs:
         env: 
           VERSION: ${{ github.event.inputs.branch || 'develop' }}
         run: |
+           exit 1
            echo ${VERSION}
            echo ${{ github.event.repository.name }}
            echo ${{ github.action_repository }}
            echo ${{ github.repository }}
         shell: bash
 
-  zap:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    needs: [build]
-    if: ${{ startsWith(needs.build.outputs.branch, 'release/') }}
-    name: Scan DocSpace with zap
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: build-tools
-          ref: ${{ needs.build.outputs.branch }}
-
-      - name: check
-        run: ls build-tools/
+      - name: checkanother
+        run: echo hello
