@@ -17,6 +17,7 @@ jobs:
     strategy:
       matrix:
         branch: ["release/v1.0.0", "develop"]
+        fail-fast: false
     outputs:
       branch: ${{ steps.build.outputs.branch }}
     steps:
