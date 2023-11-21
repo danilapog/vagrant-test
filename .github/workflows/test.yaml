@@ -32,7 +32,6 @@ jobs:
         env: 
           VERSION: ${{ github.event.inputs.branch || 'develop' }}
         run: |
-           exit 1
            echo ${VERSION}
            echo ${{ github.event.repository.name }}
            echo ${{ github.action_repository }}
