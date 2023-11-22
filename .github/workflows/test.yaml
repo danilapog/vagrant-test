@@ -16,8 +16,8 @@ jobs:
         run: |
            gh workflow run manual-action.yaml \
                  --repo ${{ github.repository }} \
+                 --ref ${BRANCH} \
                  -f branch=${BRANCH} \
                  -f version=${VERSION}
-           echo ${{ github.repository }}
         shell: bash
 
