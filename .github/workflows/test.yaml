@@ -19,5 +19,6 @@ jobs:
                  --ref \${BRANCH} \
                  -f branch=${BRANCH} \
                  -f version=${VERSION}
+                 
         shell: bash
 
