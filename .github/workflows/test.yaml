@@ -15,8 +15,8 @@ jobs:
           BRANCH: release/v1.0.0
         run: |
            gh workflow run manual-action.yaml \
-                 --repo \${{ github.repository }} \
-                 --ref \${BRANCH} \
+                 --repo ${{ github.repository }} \
+                 --ref ${BRANCH} \
                  -f branch=${BRANCH} \
                  -f version=${VERSION}
                  
