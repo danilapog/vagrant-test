@@ -1,42 +1,23 @@
 name: 4testing multiarch-build
 
-run-name: >
-    Test on branch ${{ github.event.inputs.branch }} ${{ github.event.inputs.branch }}
 on:
   push:
-  workflow_dispatch: 
-    inputs:
-      branch:
-        description: 'run zap?'
-        type: boolean
-        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      #fail-fast: false
-      matrix:
-        branch: ["release/v1.0.0", "develop"]
-    outputs:
-      branch: ${{ steps.build.outputs.branch }}
-    steps:
-      #- name: Checkout
-      #  uses: actions/checkout@v3
-      #  with:
-      #    path: build-tools
-      #    ref: ${{ github.event.inputs.branch }}
-      
+    steps:     
       - name: check
         id: build
         env: 
-          VERSION: ${{ github.event.inputs.branch || 'true' }}
+          GITHUB_TOKEN: ${{ secrets.MY_TOKEN }}
+          VERSION: v1.0.0
+          BRANCH: release/v1.0.0
         run: |
-           echo ${VERSION}
-           echo ${{ github.event.repository.name }}
-           echo ${{ github.action_repository }}
+           gh workflow run manual-action.yaml \
+                 --repo ${{ github.repository }} \
+                 -f branch=${BRANCH} \
+                 -f version=${VERSION}
            echo ${{ github.repository }}
         shell: bash
 
-      - name: checkanother
-        run: echo hello
