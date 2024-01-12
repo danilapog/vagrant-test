@@ -3,7 +3,6 @@ name: Scripts test
 run-name: Check ort secret
 on:
   push:
-
 jobs:
   vagrant-up:
     runs-on: ubuntu-latest
