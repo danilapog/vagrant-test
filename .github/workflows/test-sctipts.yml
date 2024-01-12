@@ -1,65 +1,22 @@
-name: Shell script testing
+name: Scripts test
+  
+run-name: Check ort secret
 
 on:
-  workflow_dispatch:
-    inputs:
-      build:
-        description: 'Build number (ex. 45)'
-        type: string
-        required: true
-      amd64:
-        type: boolean
-        description: 'Build AMD64'
-        default: true
-      arm64:
-        type: boolean
-        description: 'Build ARM64'
-        default: true
-      community:
-        type: boolean
-        description: 'Build Community Edition'
-        default: true
-      enterprise:
-        type: boolean
-        description: 'Build Enterprise Edition'
-        default: true
-      developer:
-        type: boolean
-        description: 'Build Developer Edition'
-        default: true
-      
-jobs:
-  spin-up:
-    name: set value
-    runs-on: ubuntu-latest
-    outputs: 
-      value: ${{ steps.get-name.outputs.value }}
-    strategy:
-      fail-fast: false
-      #matrix:
-        #name: 
-            #- gha-runner-centos7-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-centos8s-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-centos9s-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-debian9-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-debian10-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-debian11-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-ubuntu1604-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-ubuntu1804-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-ubuntu2004-${{ github.run_id }}-${{ github.run_number }}
-            #- gha-runner-ubuntu2204-${{ github.run_id }}-${{ github.run_number }}
-    steps:
-    - name: check action
-      id: get-name
-      run: echo "value=develop" >> "$GITHUB_OUTPUT" 
-  
-  zap:
-    name: zap scan
-    runs-on: ubuntu-latest
-    needs: spin-up
-    if: github.event.inputs.community == 'true' && needs.spin-up.outputs.value != 'develop' 
-    steps:
-    - name: cheeck action
-      id: step1
-      run: echo "hello from test action"
+  push:
 
+jobs:
+  vagrant-up:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        id: check
+        env:
+          SECRET: ${{ secrets.MY_ORG_SECRET }}
+        run: |
+           if [[ "${SECRET}" == "foo" ]]; then
+             exit 0
+           else 
+             exit 1
+           fi
