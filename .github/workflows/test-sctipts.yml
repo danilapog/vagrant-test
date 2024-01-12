@@ -1,7 +1,6 @@
 name: Scripts test
   
 run-name: Check ort secret
-
 on:
   push:
 
