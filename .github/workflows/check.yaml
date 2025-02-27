@@ -1,9 +1,10 @@
 name: Sync office-js-api
 
 on:
-  workflow_dispatch:
   schedule: 
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
+    
+  #workflow_dispatch:
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
