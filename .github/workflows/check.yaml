@@ -1,8 +1,9 @@
 name: Sync office-js-api
 
 on:
-  schedule: 
-    - cron: '*/15 * * * *'
+  push:
+  #schedule: 
+  #  - cron: '*/15 * * * *'
     
   #workflow_dispatch:
 
