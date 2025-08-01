@@ -1,7 +1,7 @@
 name: Sboam test
 
-#on:
-  #push:
+on:
+  push:
   
 jobs:
   sync:
@@ -26,3 +26,8 @@ jobs:
 
     - name: build
       run: docker buildx build --sbom=true -t danilaworker/sboam-nginx:1.0.0 --push .
+
+    - name: wait image
+      run: | 
+        chmod +x ./wait_image.sh
+        ./wait_image.sh danilaworker/sboam-nginx:1.0.0
