@@ -28,6 +28,7 @@ jobs:
       run: docker buildx build --sbom=true -t danilaworker/sboam-nginx:1.0.0 --push .
 
     - name: wait image
-      run: | 
+      run: |
+        curl -sSfL https://get.anchore.io/grype | sudo sh -s -- -b /usr/local/bin
         chmod +x ./wait_image.sh
         ./wait_image.sh danilaworker/sboam-nginx:1.0.0
