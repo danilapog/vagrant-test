@@ -14,8 +14,14 @@ while true; do
     
 
     if [[ $? -eq 0 && "$OUTPUT" != *"not found"* && "$OUTPUT" != *"ERROR:"* ]]; then
+        INSTALLED=$(docker buildx imagetools inspect "$IMAGE" --format '{{ range .SBOM.SPDX.packages }}{{ println .name .versionInfo }}{{ end }}' | sort)
+        CVE=$(docker buildx imagetools inspect "$IMAGE" --format '{{ json .SBOM.SPDX }}' | grype)
         echo "✅ Image found!"
         echo "$OUTPUT" | jq . 
+        echo "INSTALLED PACKAGES:"
+        echo "$INSTALLED"
+        echo "CVE:"
+        echo "$CVE"
         break
     else
         echo "❌ Image still is not exist. Wait $INTERVAL seconds..."
