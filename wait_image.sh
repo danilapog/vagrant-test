@@ -13,7 +13,7 @@ while true; do
     OUTPUT=$(docker buildx imagetools inspect "$IMAGE" --format '{{ json .SBOM.SPDX }}' 2>&1)
     
 
-    if [[ $? -eq 0 && "$OUTPUT" != *"no such image"* && "$OUTPUT" != *"404"* ]]; then
+    if [[ $? -eq 0 && "$OUTPUT" != *"not found"* && "$OUTPUT" != *"ERROR:"* ]]; then
         echo "✅ Image found!"
         echo "$OUTPUT" | jq . 
         break
