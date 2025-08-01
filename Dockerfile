@@ -1,2 +1,2 @@
-FROM danilaworker/sboam-nginx:1.0.0 as mynginx-release
+FROM danilaworker/nginx-test:1.0.0 as mynginx-release
 
