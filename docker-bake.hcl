@@ -1,5 +1,5 @@
-target "mynginx" {
-    target = "mynginx"
+target "mynginx-release" {
+    target = "mynginx-release"
     dockerfile = "Dockerfile"
     tags = [
            "docker.io/danilaworker/nginx-test-release:1.0.0"
