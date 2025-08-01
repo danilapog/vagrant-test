@@ -10,7 +10,7 @@ echo "⏳ Wait untill present '$IMAGE' в registry..."
 
 while true; do
   
-    OUTPUT=$(docker buildx imagetools inspect "$IMAGE" --format '{{ json .SBOM.SPDX }}' 2>&1)
+    OUTPUT=$(docker buildx imagetools inspect "$IMAGE" --format '{{ json (index .SBOM "linux/amd64").SPDX}}' 2>&1)
     
 
     if [[ $? -eq 0 && "$OUTPUT" != *"not found"* && "$OUTPUT" != *"ERROR:"* ]]; then
