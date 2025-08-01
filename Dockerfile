@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:alpine as mynginx
 
 RUN apk update && apk add --no-cache \
     curl \
