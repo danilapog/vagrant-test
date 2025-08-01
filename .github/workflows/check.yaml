@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: build
-      run: docker buildx bake -f docker-bake.hcl --push
+      run: docker buildx bake --sbom=true -f docker-bake.hcl mynginx --push
 
     - name: wait image
       run: |
