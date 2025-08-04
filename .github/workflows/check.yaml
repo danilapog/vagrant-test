@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: build
-      run: docker buildx bake -f docker-bake.hcl "mynginx-release" --push
+      run: docker buildx bake --sbom=true --attest type=provenance,mode=[max] -f docker-bake.hcl "mynginx-release" --push
 
     - name: wait image
       run: |
