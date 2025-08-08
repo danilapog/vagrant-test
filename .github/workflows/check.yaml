@@ -7,11 +7,12 @@ on:
 jobs:
   sync:
     name: "Sync"
-    runs-on: macos-latest
+    runs-on: windows-latest
     steps:
-    - name: Checkout code 
-      uses: actions/checkout@v4
-
-    - name: check freespace
+    - name: Check free disk space (PowerShell)
       run: |
-        df -h
+        Get-PSDrive -PSProvider FileSystem
+        $drive = Get-PSDrive C
+        Write-Output "Free space on C: $([math]::Round($drive.Free/1GB,2)) GB"
+      shell: pwsh
+
