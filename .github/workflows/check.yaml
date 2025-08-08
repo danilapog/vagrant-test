@@ -12,24 +12,11 @@ jobs:
     - name: Checkout code 
       uses: actions/checkout@v4
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+    - name: Free Disk Space
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/rust-lang/rust/refs/heads/master/src/ci/scripts/free-disk-space-linux.sh | sed 's/::[^:]*:://g' | sudo bash
+          curl -fsSL https://raw.githubusercontent.com/apache/arrow/refs/heads/main/ci/scripts/util_free_space.sh | sudo bash
 
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-    - name: build
-      run: docker buildx bake --sbom=true --provenance=mode=max -f docker-bake.hcl "mynginx-release" --push
-
-    - name: wait image
+    - name: check freespace
       run: |
-        curl -sSfL https://get.anchore.io/grype | sudo sh -s -- -b /usr/local/bin
-        chmod +x ./wait_image.sh
-        ./wait_image.sh danilaworker/nginx-test-release:1.0.0
+        df -h
