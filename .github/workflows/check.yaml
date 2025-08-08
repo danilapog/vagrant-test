@@ -7,7 +7,7 @@ on:
 jobs:
   sync:
     name: "Sync"
-    runs-on: macos-15-large
+    runs-on: macos-latest
     steps:
     - name: Checkout code 
       uses: actions/checkout@v4
