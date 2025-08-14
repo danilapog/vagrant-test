@@ -1,9 +1,9 @@
 https://github.com/user-attachments/assets/43ba760a-092a-4b8c-aaa5-c32707561dd8# vagrant-github-actions
 [![Build Status](https://github.com/jonashackt/vagrant-github-actions/workflows/vagrant-up/badge.svg)](https://github.com/jonashackt/vagrant-github-actions/actions)
 
+https://github.com/user-attachments/assets/c2e14ec6-ff8f-4467-aa1a-a81e4aa811de
 
-https://github.com/user-attachments/assets/43ba760a-092a-4b8c-aaa5-c32707561dd8
-
+https://github.com/user-attachments/assets/4c47edcc-1ac8-42ee-838c-982c03dca5da
 
 Example project showing how to run a Vagrant box on GitHub Actions
 
