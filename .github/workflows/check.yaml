@@ -7,6 +7,9 @@ on:
       backend_url:
         description: "Specify backend url"
         type: string
+      product_version:
+        description: "Specify product version"
+        type: string
       
 jobs:
   build:
@@ -36,6 +39,7 @@ jobs:
       - name: Build
         env:
            BACKEND_URL: ${{  github.event.inputs.backend_url }}
+           PRODUCT_VERSION: ${{ github.event.inputs.product_version }}
         run: |
           docker compose build \
                --build-arg BACKEND_URL=$BACKEND_URL
