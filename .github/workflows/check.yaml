@@ -1,38 +1,42 @@
-name: Sboam test
+### This workflow setup instance then build and push images ###
+name: Build DocSpace-pipedrive
 
 on:
-  push:
-
-  
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: "Specify backend url"
+        type: string
+      
 jobs:
-  sync:
-    name: "Sync"
-    runs-on: ubuntu-22.04
+  build:
+    name: "Build DocSpace-pipedrive"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
     steps:
-    - name: Add Oracle VirtualBox APT repo (jammy)
-      run: |
-          sudo mkdir -p /etc/apt/keyrings
-          curl -fsSL https://www.virtualbox.org/download/oracle_vbox_2016.asc \
-            | sudo tee /etc/apt/keyrings/oracle-virtualbox.asc >/dev/null
-          sudo chmod 0644 /etc/apt/keyrings/oracle-virtualbox.asc
-          sudo tee /etc/apt/sources.list.d/virtualbox.sources >/dev/null <<'EOF'
-          Types: deb
-          URIs: https://download.virtualbox.org/virtualbox/debian
-          Suites: jammy
-          Components: contrib
-          Signed-By: /etc/apt/keyrings/oracle-virtualbox.asc
-          EOF
-          sudo wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          sudo apt-get update
-          sudo apt install vagrant
-          
-    - name: Install VirtualBox 7.1
-      run: |
-          sudo apt-get install -y --no-install-recommends \
-          build-essential dkms linux-headers-$(uname -r) virtualbox-7.1
-    - name: Check VBox version
-      run: VBoxManage --version
+      - name: Checkout code 
+        uses: actions/checkout@v4
+        with:
+          repository: ONLYOFFICE/onlyoffice-docspace-pipedrive
 
-    
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      #- name: Login to Container Registry
+      #  uses: docker/login-action@v3
+      #  with:
+      #    registry: ${{ secrets.DOCKER_TEST_REGISTRY }}
+      #    username: ${{ secrets.DOCKER_TEST_USERNAME }}
+      #    password: ${{ secrets.DOCKER_TEST_ACCESS_TOKEN }}
+
+      - name: Build
+        env:
+           BACKEND_URL: ${{  github.event.inputs.backend_url }}
+        run: |
+          docker compose build \
+               --build-arg BACKEND_URL=$BACKEND_URL
+          docker compose push
