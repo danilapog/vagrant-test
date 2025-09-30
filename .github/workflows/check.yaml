@@ -38,6 +38,7 @@ jobs:
         with:
           submodules: recursive
           repository: ONLYOFFICE/onlyoffice-pipedrive
+          ref: develop
 
       - name: Mask custom value
         if: github.event.inputs.create_modal_id != ''
@@ -59,7 +60,7 @@ jobs:
         env: 
           ARG_POSTFIX: ${{ github.event.inputs.type }}
           CUSTOM_BACKEND_GATEWAY: ${{ github.event.inputs.backend_gateway }}
-          REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
+          REGISTRY: danilaworker
         run: |
           declare -A ArgsArray=( 
                      [backend_gateway_prod]=https://pipedrive-gateway.onlyoffice.com
