@@ -73,3 +73,8 @@ jobs:
               --build-arg "PIPEDRIVE_CREATE_MODAL_ID=${CUSTOM_MODAL_ID:-${ArgsArray[create_modal_id_${ARG_POSTFIX}]}}" 
           #docker compose push
           docker images
+          BACKEND_GATEWAY=${CUSTOM_BACKEND_GATEWAY:-${ArgsArray[backend_gateway_${ARG_POSTFIX}]}}
+          PIPEDRIVE_CREATE_MODAL_ID=${CUSTOM_MODAL_ID:-${ArgsArray[create_modal_id_${ARG_POSTFIX}]}}
+
+          echo "$BACKEND_GATEWAY"
+          echo "$PIPEDRIVE_CREATE_MODAL_ID"
