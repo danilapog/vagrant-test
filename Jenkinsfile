@@ -1,3 +1,10 @@
+def stageStats = [:] 
+
+// ———————————————————————— helpers ————————————————————————
+void setStageStats(int status, String stageName = env.STAGE_NAME) {
+  stageStats[stageName] = status
+}
+
 pipeline {
   agent any
 
@@ -9,7 +16,7 @@ pipeline {
     booleanParam(name: 'linux_aarch64_ok', defaultValue: true, description: 'Consider aarch64 like success')
 
     string(name: 'branch_name', defaultValue: 'develop', description: 'ref for gh')
-    string(name: 'tag',         defaultValue: 'v0.0.0.1', description: 'build tag')
+    string(name: 'tag',         defaultValue: '0.0.0.1', description: 'build tag')
     string(name: 'version',     defaultValue: '0.0.0-1',  description: 'version для workflow')
 
     booleanParam(name: 'docs_utils',       defaultValue: true,  description: 'build utils')
