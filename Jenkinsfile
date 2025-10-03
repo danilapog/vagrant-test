@@ -96,7 +96,7 @@ void buildDockerDocs() {
 
         sleep 5
         run_id=\$(gh run list --repo \$repo --workflow build.yaml \\
-          --branch \$BRANCH_NAME --json databaseId --jq '.[0].databaseId')
+          --branch release/v9.1.0 --json databaseId --jq '.[0].databaseId')
 
         gh --repo \$repo run watch \$run_id --interval 15 > /dev/null
         gh --repo \$repo run view \$run_id --verbose --exit-status
