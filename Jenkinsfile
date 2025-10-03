@@ -18,8 +18,8 @@ pipeline {
     booleanParam(name: 'linux_aarch64_ok', defaultValue: true, description: 'Consider aarch64 like success')
 
     string(name: 'branch_name', defaultValue: 'develop', description: 'ref for gh')
-    string(name: 'tag',         defaultValue: '0.0.0.1', description: 'build tag')
-    string(name: 'version',     defaultValue: '0.0.0-1',  description: 'version для workflow')
+    string(name: 'tag',         defaultValue: '9.1.0.1', description: 'build tag')
+    string(name: 'version',     defaultValue: '9.1.0-1',  description: 'version для workflow')
 
     booleanParam(name: 'docs_utils',       defaultValue: true,  description: 'build utils')
     booleanParam(name: 'docs_balancer',    defaultValue: true,  description: 'build balancer')
