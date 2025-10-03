@@ -71,8 +71,8 @@ void buildDockerDocs() {
     boolean amd64 = (stageStats['Linux x86_64'] == 0)
     boolean arm64 = (stageStats['Linux aarch64'] == 0)
 
-    String tag = "${env.BUILD_VERSION}.${env.BUILD_NUMBER}"
-    String version = "${env.BUILD_VERSION}-${env.BUILD_NUMBER}"
+    String tag = "9.1.0.1"
+    String version = "9.1.0-1"
 
     withCredentials([
       string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
