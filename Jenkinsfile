@@ -46,7 +46,6 @@ pipeline {
     stage('Trigger Docker-Docs workflow') {
       steps {
         script {
-          echo "server_ee=${params.server_ee}, server_de=${params.server_de}"
           buildDockerDocs()
         }
       }
