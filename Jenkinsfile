@@ -1,4 +1,6 @@
-def stageStats = [:] 
+import groovy.transform.Field
+
+@Field Map stageStats = [:] 
 
 // ———————————————————————— helpers ————————————————————————
 void setStageStats(int status, String stageName = env.STAGE_NAME) {
