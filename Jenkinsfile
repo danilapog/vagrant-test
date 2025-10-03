@@ -12,12 +12,9 @@ pipeline {
     string(name: 'tag',         defaultValue: 'v0.0.0.1', description: 'build tag')
     string(name: 'version',     defaultValue: '0.0.0-1',  description: 'version для workflow')
 
-    choice(name: 'package_url', choices: ['s3','prod'], description: 'Откуда брать пакеты')
-    booleanParam(name: 'test_repo', defaultValue: false, description: 'Публиковать в test-repo')
-
-    booleanParam(name: 'docs_utils',       defaultValue: true,  description: 'Собирать utils')
-    booleanParam(name: 'docs_balancer',    defaultValue: true,  description: 'Собирать balancer')
-    booleanParam(name: 'docs_non_plugins', defaultValue: false, description: 'Собирать non-plugins')
+    booleanParam(name: 'docs_utils',       defaultValue: true,  description: 'build utils')
+    booleanParam(name: 'docs_balancer',    defaultValue: true,  description: 'build balancer')
+    booleanParam(name: 'docs_non_plugins', defaultValue: false, description: 'build non-plugins')
   }
 
   stages {
@@ -74,7 +71,7 @@ void buildDockerDocs() {
     ]) {
       sh label: 'DOCKER DOCS BUILD', script: """
         set -euxo pipefail
-        repo=ONLYOFFICE/Docker-Docs
+        repo=danilapog/Docker-Docs
 
         gh workflow run build.yaml \\
           --repo \$repo \\
