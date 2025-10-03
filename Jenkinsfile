@@ -79,10 +79,10 @@ void buildDockerDocs() {
     ]) {
       sh label: 'DOCKER DOCS BUILD', script: """
         repo=danilapog/Docker-Docs
-
+        ref='release/v9.1.0'
         gh workflow run build.yaml \\
           --repo \$repo \\
-          --ref \$BRANCH_NAME \\
+          --ref \$ref \\
           -f amd64=${amd64} \\
           -f arm64=${arm64} \\
           -f edition='${edition}' \\
