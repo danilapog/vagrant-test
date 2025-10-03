@@ -78,7 +78,6 @@ void buildDockerDocs() {
       string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
     ]) {
       sh label: 'DOCKER DOCS BUILD', script: """
-        set -euxo pipefail
         repo=danilapog/Docker-Docs
 
         gh workflow run build.yaml \\
