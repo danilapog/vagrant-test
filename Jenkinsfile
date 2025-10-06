@@ -11,7 +11,6 @@ pipeline {
   agent any
   environment {
     COMPANY_NAME = 'ONLYOFFICE'
-    BUILD_CHANNEL = "${defaults.channel}"
     BUILD_VERSION = "45"
     PRODUCT_VERSION = "9.1.0"
   }
