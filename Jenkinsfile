@@ -9,7 +9,12 @@ void setStageStats(int status, String stageName = env.STAGE_NAME) {
 
 pipeline {
   agent any
-
+  environment {
+    COMPANY_NAME = 'ONLYOFFICE'
+    BUILD_CHANNEL = "${defaults.channel}"
+    BUILD_VERSION = "45"
+    PRODUCT_VERSION = "9.1.0"
+  }
   parameters {
     booleanParam(name: 'server_ee', defaultValue: true,  description: 'Edition EE')
     booleanParam(name: 'server_de', defaultValue: false, description: 'Edition DE')
@@ -71,35 +76,25 @@ void buildDockerDocs() {
     boolean amd64 = (stageStats['Linux x86_64'] == 0)
     boolean arm64 = (stageStats['Linux aarch64'] == 0)
 
-    String tag = "9.1.0.1"
-    String version = "9.1.0-1"
-
     withCredentials([
       string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
     ]) {
       sh label: 'DOCKER DOCS BUILD', script: """
         repo=danilapog/Docker-Docs
         ref='release/v9.1.0'
-        gh workflow run build.yaml \\
-          --repo \$repo \\
-          --ref \$ref \\
-          -f amd64=${amd64} \\
-          -f arm64=${arm64} \\
-          -f edition='${edition}' \\
-          -f docs-utils=true \\
-          -f docs-balancer=true \\
-          -f docs-non-plugins=false \\
-          -f tag='${tag}' \\
-          -f version='${version}' \\
-          -f package-url='s3' \\
+        gh workflow run build.yaml \
+          --repo \$repo \
+          --ref \$ref \
+          -f amd64=${stageStats['Linux x86_64'] == 0} \
+          -f arm64=${stageStats['Linux aarch64'] == 0} \
+          -f edition='${edition}' \
+          -f docs-utils=true \
+          -f docs-balancer=true \
+          -f docs-non-plugins=false \
+          -f tag=\$BUILD_VERSION.\$BUILD_NUMBER \
+          -f version=\$BUILD_VERSION-\$BUILD_NUMBER \
+          -f package-url='s3' \
           -f test-repo=false
-
-        sleep 5
-        run_id=\$(gh run list --repo \$repo --workflow build.yaml \\
-          --branch release/v9.1.0 --json databaseId --jq '.[0].databaseId')
-
-        gh --repo \$repo run watch \$run_id --interval 15 > /dev/null
-        gh --repo \$repo run view \$run_id --verbose --exit-status
       """
     }
   } catch (err) {
