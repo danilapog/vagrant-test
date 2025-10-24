@@ -16,3 +16,5 @@ jobs:
 
       - name: Mask custom value
         run: cat /proc/cpuinfo
+
+      - run: uname -m
