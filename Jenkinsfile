@@ -7,6 +7,12 @@ pipeline {
     BUILD_VERSION = "99.99.99"
   }
 
+  parameters {
+    booleanParam(name: 'server_ce', defaultValue: true, description: 'Build community edition')
+    booleanParam(name: 'server_ee', defaultValue: false, description: 'Build enterprise edition')
+    booleanParam(name: 'server_de', defaultValue: false, description: 'Build developer edition')
+  }
+  
   stages {
     stage('Build') {
       parallel {
