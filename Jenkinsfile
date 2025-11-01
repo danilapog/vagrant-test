@@ -25,7 +25,7 @@ pipeline {
           post {
             success {
               echo "Post success for x86_64"
-              node('built-in') { script { ghaDocsDockerArm64() } }
+              node('built-in') { script { ghaDocsDockerAmd64() } }
             }
           }
         }
