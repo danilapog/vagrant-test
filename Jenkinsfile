@@ -43,7 +43,6 @@ pipeline {
 }
 
 void ghaDocsDockerAmd64() {
-  echo ">>> [ghaDocsDockerAmd64] AMD64..."
   try {
     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
       sh label: 'DOCKER DOCS BUILD AMD64', script: """
@@ -65,7 +64,6 @@ void ghaDocsDockerAmd64() {
 }
 
 void ghaDocsDockerArm64() {
-  echo ">>> [ghaDocsDockerArm64] ARM64..."
   try {
     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
       sh label: 'DOCKER DOCS BUILD ARM64', script: """
