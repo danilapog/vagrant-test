@@ -25,7 +25,7 @@ pipeline {
           post {
             success {
               echo "Post success for x86_64"
-              node('built-in') { script { ghaDocsDockerAmd64() } }
+              script { ghaDocsDockerAmd64() }
             }
           }
         }
@@ -39,7 +39,7 @@ pipeline {
           post {
             success {
               echo "Post success for aarch64"
-              node('built-in') { script { ghaDocsDockerArm64() } }
+              script { ghaDocsDockerArm64() }
             }
           }
         }
