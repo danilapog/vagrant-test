@@ -24,6 +24,7 @@ pipeline {
           }
           post {
             success {
+              success { setStageStats(0) }
               echo "Post success for x86_64"
               script { ghaDocsDockerAmd64() }
             }
@@ -38,6 +39,7 @@ pipeline {
           }
           post {
             success {
+              success { setStageStats(0) }
               echo "Post success for aarch64"
               script { ghaDocsDockerArm64() }
             }
@@ -88,4 +90,8 @@ void ghaDocsDockerArm64() {
     echo err.toString()
   }
   echo ">>> [ghaDocsDockerArm64] Done!"
+}
+
+void setStageStats(int status, String stageName = env.STAGE_NAME) {
+  echo "[stub] setStageStats(${status}, ${stageName})"
 }
