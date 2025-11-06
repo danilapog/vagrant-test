@@ -24,7 +24,7 @@ pipeline {
           }
           post {
             success {
-              { setStageStats(0) }
+              setStageStats(0)
               echo "Post success for x86_64"
               script { ghaDocsDockerAmd64() }
             }
@@ -39,7 +39,7 @@ pipeline {
           }
           post {
             success {
-              { setStageStats(0) }
+              setStageStats(0)
               echo "Post success for aarch64"
               script { ghaDocsDockerArm64() }
             }
