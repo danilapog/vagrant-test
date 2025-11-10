@@ -34,4 +34,4 @@ jobs:
           URL="https://sourceforge.net/projects/corefonts/files/the%20fonts/final/andale32.exe/download?use_mirror=autoselect"
           echo "Downloading: $URL"
  
-          curl -fL -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
+          curl L -C - -o andale32.exe "$URL"
