@@ -19,11 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
+        shell: bash
         run: | 
-           export DEBIAN_FRONTEND=noninteractive
-           export ACCEPT_EULA=Y
-           #sudo apt-get update -y 
-           #sudo apt-get install -y ttf-mscorefonts-installer
+           set -euo pipefail
+           URL="https://sourceforge.net/projects/corefonts/files/the%20fonts/final/andale32.exe/download?use_mirror=autoselect"
+           echo "Downloading: $URL"
+  
+           curl -fL -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
+
+           ls -la
 
       - name: check2
         shell: bash
@@ -33,3 +37,5 @@ jobs:
            echo "Downloading: $URL"
   
            curl -fL -A "Mozilla/5.0" -c cookies.txt -b cookies.txt -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
+
+           ls -la
