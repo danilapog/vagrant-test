@@ -20,5 +20,8 @@ jobs:
     steps:
       - name: Checkout code
         run: | 
+           DEBIAN_FRONTEND=noninteractive
+           ACCEPT_EULA=Y
+           echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections 
            sudo apt-get update -y 
            sudo apt-get install -y ttf-mscorefonts-installer
