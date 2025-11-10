@@ -27,4 +27,4 @@ jobs:
   
            curl -fL -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
 
-           ls -la
+           cat ./andale32.exe
