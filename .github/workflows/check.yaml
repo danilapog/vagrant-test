@@ -37,6 +37,6 @@ jobs:
            URL="https://sourceforge.net/projects/corefonts/files/the%20fonts/final/andale32.exe/download?use_mirror=autoselect"
            echo "Downloading: $URL"
   
-           curl -fL -A "Mozilla/5.0" -c cookies.txt -b cookies.txt -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
+           curl -fL -C - --retry 3 --retry-delay 2 -o andale32.exe "$URL"
 
            ls -la
