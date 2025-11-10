@@ -4,26 +4,7 @@ run-name: >
      Build pipedrive with version: ${{ github.event.inputs.version }}
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Set version that will be used for images tag'
-        type: string
-        required: true
-      create_modal_id:
-        description: 'If set, overwrite create-modal-id with value that you specify'
-        type: string
-        required: false
-      backend_gateway:
-        description: 'If set, overwrite backend_gateway with value that you specify'
-        type: string
-        required: false
-      type:
-        type: choice
-        description: For which environment should substitute arguments?
-        options:
-        - 'prod'
-        - 'dev'
+  push:
 
 env: 
   PRODUCT_VERSION: ${{ github.event.inputs.version }}
