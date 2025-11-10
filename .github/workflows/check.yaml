@@ -12,6 +12,10 @@ env:
 jobs:
   build:
     name: "Build tag: ${{ github.event.inputs.version }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["1", "2", "3", "4", "5", "6"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
