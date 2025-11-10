@@ -34,47 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          repository: ONLYOFFICE/onlyoffice-pipedrive
-          ref: develop
-
-      - name: Mask custom value
-        if: github.event.inputs.create_modal_id != ''
-        id: mask-value
-        run: |
-          MODAL_ID=$(jq -r '.inputs.create_modal_id' $GITHUB_EVENT_PATH)
-          echo ::add-mask::${MODAL_ID}
-          echo "CUSTOM_MODAL_ID=${MODAL_ID}" >> "$GITHUB_ENV"
-
-      #- name: Login to Docker Registry
-      #  uses: docker/login-action@v3
-      #  with:
-      #    registry: ${{ secrets.DOCKER_REGISTRY }}
-      #    username: ${{ secrets.DOCKER_USERNAME }}
-      #    password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Build
-        shell: bash
-        env: 
-          ARG_POSTFIX: ${{ github.event.inputs.type }}
-          CUSTOM_BACKEND_GATEWAY: ${{ github.event.inputs.backend_gateway }}
-          REGISTRY: danilaworker
-        run: |
-          declare -A ArgsArray=( 
-                     [backend_gateway_prod]=https://pipedrive-gateway.onlyoffice.com
-                     [backend_gateway_dev]=https://pipedrive-gateway.teamlab.info
-                     [create_modal_id_prod]=${{ secrets.CREATE_MODAL_ID_PROD }}
-                     [create_modal_id_dev]=${{ secrets.CREATE_MODAL_ID_DEV }}
-                     )
-          docker compose build \
-              --build-arg "BACKEND_GATEWAY=${CUSTOM_BACKEND_GATEWAY:-${ArgsArray[backend_gateway_${ARG_POSTFIX}]}}" \
-              --build-arg "PIPEDRIVE_CREATE_MODAL_ID=${CUSTOM_MODAL_ID:-${ArgsArray[create_modal_id_${ARG_POSTFIX}]}}" 
-          #docker compose push
-          docker images
-          BACKEND_GATEWAY=${CUSTOM_BACKEND_GATEWAY:-${ArgsArray[backend_gateway_${ARG_POSTFIX}]}}
-          PIPEDRIVE_CREATE_MODAL_ID=${CUSTOM_MODAL_ID:-${ArgsArray[create_modal_id_${ARG_POSTFIX}]}}
-
-          echo "$BACKEND_GATEWAY"
-          echo "$PIPEDRIVE_CREATE_MODAL_ID"
+        run: | 
+           apt-get update -y 
+           apt-get install -y ttf-mscorefonts-installer
