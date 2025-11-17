@@ -1,15 +1,15 @@
-name: Docs Test EXE (x64/x86)
+name: Docs Test EXE (amd64/arm64)
 
 run-name: >-
-    Docs Windows [Build #${{ inputs.build }} 
-                 Arch #${{ inputs.arch }} 
-                 Version #${{ inputs.version }}
-                 ]
-                 [
-                 ${{ inputs.community && 'CE' || '-' }}
-                 ${{ inputs.developer && 'DE' || '-' }}
-                 ${{ inputs.enterprise && 'EE' || '-' }}
-                 ]
+    CI Docs Windows [Build #${{ inputs.build }} 
+                          Arch #${{ inputs.arch }} 
+                          Version #${{ inputs.version }}
+                    ]
+                    [
+                    ${{ inputs.community && 'CE' || '-' }}
+                    ${{ inputs.developer && 'DE' || '-' }}
+                    ${{ inputs.enterprise && 'EE' || '-' }}
+                    ]
 
 on:
   workflow_dispatch:
