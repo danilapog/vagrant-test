@@ -2,8 +2,8 @@ name: Docs Test EXE (amd64/arm64)
 
 run-name: >-
     CI Docs Windows [Build #${{ inputs.build }} 
-                          Arch #${{ inputs.arch }} 
-                          Version #${{ inputs.version }}
+                          Arch: ${{ inputs.arch }} 
+                          Version: ${{ inputs.version }}
                     ]
                     [
                     ${{ inputs.community && 'CE' || '-' }}
