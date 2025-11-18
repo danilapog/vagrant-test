@@ -45,5 +45,5 @@ jobs:
     #name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
     runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
     steps:
-      - name: Test
-        run: echo "hello"
+      - name: Download
+        run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
