@@ -48,5 +48,11 @@ jobs:
       - name: Download
         run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
 
-      - name: install
+      - name: Install
         run: .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+
+      - name: Verify
+        run: |
+         if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
+              Write-Error "App not installed!"
+          }
