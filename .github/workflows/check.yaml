@@ -49,12 +49,14 @@ jobs:
         run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
 
       - name: Install
+        shell: cmd
         run: |
-           .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
-           Write-Host "Exit code: $LASTEXITCODE"
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+           echo Exit code: %ERRORLEVEL%
 
       - name: Verify
         run: |
+         ls C:\Program Files\ONLYOFFICE\DocumentServer
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
               Write-Error "App not installed!"
           }
