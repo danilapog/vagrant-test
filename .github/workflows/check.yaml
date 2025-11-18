@@ -49,7 +49,9 @@ jobs:
         run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
 
       - name: Install
-        run: .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+        run: |
+           .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
+           Write-Host "Exit code: $LASTEXITCODE"
 
       - name: Verify
         run: |
