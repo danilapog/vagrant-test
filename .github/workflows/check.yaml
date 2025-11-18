@@ -47,3 +47,6 @@ jobs:
     steps:
       - name: Download
         run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
+
+      - name: install
+        run: .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
