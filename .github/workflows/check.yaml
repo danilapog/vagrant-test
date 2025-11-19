@@ -76,16 +76,16 @@ jobs:
       - name: Dump ONLYOFFICE logs
         shell: pwsh
         run: |
-            $paths = @(
-              "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\logs",
-              "C:\Program Files\ONLYOFFICE\DocumentServer\services",
-              "C:\ProgramData\ONLYOFFICE\DocumentServer"
+            $folders = @(
+              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-docservice",
+              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-converter",
+              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-proxy"
             )
         
-            foreach ($p in $paths) {
-              if (Test-Path $p) {
-                Write-Host "=== LOGS FROM $p ==="
-                Get-ChildItem -Recurse $p | ForEach-Object {
+            foreach ($f in $folders) {
+              if (Test-Path $f) {
+                Write-Host "=== LOGS FROM $f ==="
+                Get-ChildItem $f | ForEach-Object {
                   Write-Host "`n--- $($_.FullName) ---"
                   Get-Content $_.FullName -ErrorAction SilentlyContinue
                 }
