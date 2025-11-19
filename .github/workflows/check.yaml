@@ -72,11 +72,30 @@ jobs:
     
          Write-Host "== Open ports =="
          netstat -ano
+
+      - name: Dump ONLYOFFICE logs
+        shell: pwsh
+        run: |
+            $paths = @(
+              "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\logs",
+              "C:\Program Files\ONLYOFFICE\DocumentServer\services",
+              "C:\ProgramData\ONLYOFFICE\DocumentServer"
+            )
+        
+            foreach ($p in $paths) {
+              if (Test-Path $p) {
+                Write-Host "=== LOGS FROM $p ==="
+                Get-ChildItem -Recurse $p | ForEach-Object {
+                  Write-Host "`n--- $($_.FullName) ---"
+                  Get-Content $_.FullName -ErrorAction SilentlyContinue
+                }
+              }
+            }
     
       - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
         run: |
-            $timeout = 600     # 5 минут
+            $timeout = 300     # 5 минут
             $interval = 5      # каждые 5 секунд
             $elapsed = 0
         
