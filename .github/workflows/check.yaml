@@ -91,7 +91,12 @@ jobs:
                 }
               }
             }
-    
+
+      - name: List ALL folders inside services
+        shell: pwsh
+        run: |
+            Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer\services" -Recurse
+            
       - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
         run: |
