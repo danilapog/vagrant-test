@@ -51,12 +51,11 @@ jobs:
            curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe 
            curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
            
-        #ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
       - name: Install
         shell: cmd
         run: |
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /TYPE=full /LOG="C:\install-log.txt"
-           echo Exit code: %ERRORLEVEL%
+           ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
     
       - name: Verify
         run: |
@@ -77,7 +76,8 @@ jobs:
          Write-Host "== Open ports =="
          netstat -ano
 
-      - name: get logs
+      - name: get service logs
+        if: ${{ always }}
         run: |
           $logRoot = "C:\Program Files\ONLYOFFICE\DocumentServer\Log"
           $nginxLogs = "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\logs"
@@ -107,10 +107,9 @@ jobs:
           }
             
       - name: Wait for healthcheck (with detailed logging)
-        if: ${{ false }}
         shell: pwsh
         run: |
-            $timeout = 30     # 5 минут
+            $timeout = 300    # 5 минут
             $interval = 5      # каждые 5 секунд
             $elapsed = 0
         
