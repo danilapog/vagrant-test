@@ -74,24 +74,10 @@ jobs:
          Write-Host "== Open ports =="
          netstat -ano
 
-      - name: Dump WinSW proxy logs
+      - name: Get WinSW
         shell: pwsh
         run: |
-            $p = "C:\Program Files\ONLYOFFICE\DocumentServer\winsw"
-            if (Test-Path $p) {
-              Write-Host "=== LOGS FROM winsw ==="
-              Get-ChildItem $p | ForEach-Object {
-                Write-Host "`n--- $($_.FullName) ---"
-                Get-Content $_.FullName -ErrorAction SilentlyContinue
-              }
-            } else {
-              Write-Host "winsw not found!"
-            }
-
-      - name: List ALL folders inside services
-        shell: pwsh
-        run: |
-            Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer" -Recurse
+            ls "C:\Program Files\ONLYOFFICE\DocumentServer\winsw"
             
       - name: Wait for healthcheck (with detailed logging)
         if: ${{ false }}
