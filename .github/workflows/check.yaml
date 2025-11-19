@@ -54,15 +54,6 @@ jobs:
         run: |
            ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
            echo Exit code: %ERRORLEVEL%
-
-      - name: Dump InnoSetup log
-        shell: pwsh
-        run: |
-            if (Test-Path "C:\install-log.txt") {
-              Get-Content "C:\install-log.txt"
-            } else {
-              Write-Host "No install log generated."
-            }
     
       - name: Verify
         run: |
@@ -100,7 +91,7 @@ jobs:
       - name: List ALL folders inside services
         shell: pwsh
         run: |
-            Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer\services" -Recurse
+            Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer" -Recurse
             
       - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
