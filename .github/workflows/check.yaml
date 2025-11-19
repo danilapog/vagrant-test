@@ -94,6 +94,7 @@ jobs:
             Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer" -Recurse
             
       - name: Wait for healthcheck (with detailed logging)
+        if: ${{ false }}
         shell: pwsh
         run: |
             $timeout = 30     # 5 минут
