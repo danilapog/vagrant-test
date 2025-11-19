@@ -12,6 +12,7 @@ run-name: >-
                     ]
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       build:
@@ -51,9 +52,18 @@ jobs:
       - name: Install
         shell: cmd
         run: |
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
            echo Exit code: %ERRORLEVEL%
 
+      - name: Dump InnoSetup log
+        shell: pwsh
+        run: |
+            if (Test-Path "C:\install-log.txt") {
+              Get-Content "C:\install-log.txt"
+            } else {
+              Write-Host "No install log generated."
+            }
+    
       - name: Verify
         run: |
          ls "C:\Program Files\ONLYOFFICE\DocumentServer"
