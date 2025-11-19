@@ -80,11 +80,11 @@ jobs:
             $interval = 5      # каждые 5 секунд
             $elapsed = 0
         
-            Write-Host "Waiting for healthcheck at http://localhost:8080/healthcheck ..."
+            Write-Host "Waiting for healthcheck at http://localhost:8000/healthcheck ..."
         
             while ($elapsed -lt $timeout) {
                 try {
-                    $response = Invoke-WebRequest -Uri "http://localhost:8080/healthcheck" -UseBasicParsing -TimeoutSec 2
+                    $response = Invoke-WebRequest -Uri "http://localhost:8000/healthcheck" -UseBasicParsing -TimeoutSec 2
                     $body = $response.Content.Trim()
         
                     Write-Host "[$elapsed sec] Got response:"
