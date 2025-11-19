@@ -49,8 +49,8 @@ jobs:
       - name: Download
         run: |
            curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /?
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /HELP
+           ./ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /?
+           ./ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /HELP
 
       - name: Install
         shell: cmd
