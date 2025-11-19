@@ -48,14 +48,14 @@ jobs:
     steps:
       - name: Download
         run: |
+           curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe -o ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe 
            curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
-           Get-Item .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe | Format-List *
-           (Get-Command .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe).FileVersionInfo
-           Select-String -Path .\ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe -Pattern "7z" -SimpleMatch -Encoding Byte
+           
 
       - name: Install
         shell: cmd
         run: |
+           ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
            ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
            echo Exit code: %ERRORLEVEL%
     
