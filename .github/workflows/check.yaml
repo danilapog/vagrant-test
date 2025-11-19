@@ -61,13 +61,13 @@ jobs:
               Write-Error "App not installed!"
          }
 
-      - name: Wait for healthcheck (up to 5 minutes)
+      - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
         run: |
-           $timeout = 300     # 5 минут
-           $interval = 5      # каждые 5 секунд
-           $elapsed = 0
-
+            $timeout = 300     # 5 минут
+            $interval = 5      # каждые 5 секунд
+            $elapsed = 0
+        
             Write-Host "Waiting for healthcheck at http://localhost/healthcheck ..."
         
             while ($elapsed -lt $timeout) {
@@ -75,19 +75,23 @@ jobs:
                     $response = Invoke-WebRequest -Uri "http://localhost/healthcheck" -UseBasicParsing -TimeoutSec 2
                     $body = $response.Content.Trim()
         
+                    Write-Host "[$elapsed sec] Got response:"
+                    Write-Host "  StatusCode: $($response.StatusCode)"
+                    Write-Host "  Body: '$body'"
+        
                     if ($body -eq "true") {
                         Write-Host "Healthcheck OK!"
                         exit 0
                     }
                 }
                 catch {
-                # Just wait a bit
+                    Write-Host "[$elapsed sec] ERROR calling endpoint:"
+                    Write-Host "  $($_.Exception.Message)"
                 }
         
                 Start-Sleep -Seconds $interval
                 $elapsed += $interval
-                Write-Host "Still waiting... ($elapsed sec)"
             }
         
-            Write-Error "Service did NOT become healthy within 5 minutes!"
+            Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
