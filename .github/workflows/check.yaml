@@ -56,7 +56,7 @@ jobs:
         shell: cmd
         run: |
            ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /TYPE=full /LOG="C:\install-log.txt"
            echo Exit code: %ERRORLEVEL%
     
       - name: Verify
