@@ -59,4 +59,35 @@ jobs:
          ls "C:\Program Files\ONLYOFFICE\DocumentServer"
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
               Write-Error "App not installed!"
-          }
+         }
+
+      - name: Wait for healthcheck (up to 5 minutes)
+        shell: pwsh
+        run: |
+           $timeout = 300     # 5 минут
+           $interval = 5      # каждые 5 секунд
+           $elapsed = 0
+
+            Write-Host "Waiting for healthcheck at http://localhost/healthcheck ..."
+        
+            while ($elapsed -lt $timeout) {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://localhost/healthcheck" -UseBasicParsing -TimeoutSec 2
+                    $body = $response.Content.Trim()
+        
+                    if ($body -eq "true") {
+                        Write-Host "Healthcheck OK!"
+                        exit 0
+                    }
+                }
+                catch {
+                # Just wait a bit
+                }
+        
+                Start-Sleep -Seconds $interval
+                $elapsed += $interval
+                Write-Host "Still waiting... ($elapsed sec)"
+            }
+        
+            Write-Error "Service did NOT become healthy within 5 minutes!"
+            exit 1
