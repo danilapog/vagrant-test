@@ -72,7 +72,7 @@ jobs:
         
             while ($elapsed -lt $timeout) {
                 try {
-                    $response = Invoke-WebRequest -Uri "http://localhost/healthcheck" -UseBasicParsing -TimeoutSec 2
+                    $response = Invoke-WebRequest -Uri "http://localhost:80/example" -UseBasicParsing -TimeoutSec 2
                     $body = $response.Content.Trim()
         
                     Write-Host "[$elapsed sec] Got response:"
