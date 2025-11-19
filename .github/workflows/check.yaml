@@ -64,6 +64,7 @@ jobs:
       - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
         run: |
+            Get-Service | Where-Object {$_.Status -eq "Running"}
             $timeout = 600     # 5 минут
             $interval = 5      # каждые 5 секунд
             $elapsed = 0
