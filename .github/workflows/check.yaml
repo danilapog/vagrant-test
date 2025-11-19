@@ -47,7 +47,10 @@ jobs:
     runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
     steps:
       - name: Download
-        run: curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
+        run: |
+           curl -L "${{ secrets.PACKAGE_URL }}/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /?
+           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /HELP
 
       - name: Install
         shell: cmd
