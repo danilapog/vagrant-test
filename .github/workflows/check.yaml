@@ -83,23 +83,18 @@ jobs:
          Write-Host "== Open ports =="
          netstat -ano
 
-      - name: Dump ONLYOFFICE logs
+      - name: Dump WinSW proxy logs
         shell: pwsh
         run: |
-            $folders = @(
-              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-docservice",
-              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-converter",
-              "C:\Program Files\ONLYOFFICE\DocumentServer\services\ds-proxy"
-            )
-        
-            foreach ($f in $folders) {
-              if (Test-Path $f) {
-                Write-Host "=== LOGS FROM $f ==="
-                Get-ChildItem $f | ForEach-Object {
-                  Write-Host "`n--- $($_.FullName) ---"
-                  Get-Content $_.FullName -ErrorAction SilentlyContinue
-                }
+            $p = "C:\Program Files\ONLYOFFICE\DocumentServer\winsw"
+            if (Test-Path $p) {
+              Write-Host "=== LOGS FROM winsw ==="
+              Get-ChildItem $p | ForEach-Object {
+                Write-Host "`n--- $($_.FullName) ---"
+                Get-Content $_.FullName -ErrorAction SilentlyContinue
               }
+            } else {
+              Write-Host "winsw not found!"
             }
 
       - name: List ALL folders inside services
