@@ -74,10 +74,34 @@ jobs:
          Write-Host "== Open ports =="
          netstat -ano
 
-      - name: Get WinSW
-        shell: pwsh
+      - name: get logs
         run: |
-            ls "C:\Program Files\ONLYOFFICE\DocumentServer\winsw"
+          $logRoot = "C:\Program Files\ONLYOFFICE\DocumentServer\Log"
+          $nginxLogs = "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\logs"
+            
+          Write-Host "=== NGINX LOGS ==="
+          if (Test-Path $nginxLogs) {
+              Get-ChildItem -Recurse $nginxLogs | ForEach-Object {
+                  if (-not $_.PSIsContainer) {
+                      Write-Host "`n--- $($_.FullName) ---"
+                      try { Get-Content $_.FullName -ErrorAction Stop }
+                      catch { Write-Host "ERROR: $($_.Exception.Message)" }
+                  }
+              }
+          }
+            
+          Write-Host "`n=== DOCUMENTSERVER LOGS ==="
+          if (Test-Path $logRoot) {
+              Get-ChildItem -Recurse $logRoot | ForEach-Object {
+                  if (-not $_.PSIsContainer) {
+                      Write-Host "`n--- $($_.FullName) ---"
+                      try { Get-Content $_.FullName -ErrorAction Stop }
+                      catch { Write-Host "ERROR: $($_.Exception.Message)" }
+                  }
+              }
+          } else {
+              Write-Host "Log root directory not found: $logRoot"
+          }
             
       - name: Wait for healthcheck (with detailed logging)
         if: ${{ false }}
