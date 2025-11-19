@@ -61,6 +61,18 @@ jobs:
               Write-Error "App not installed!"
          }
 
+         Write-Host "== Running services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }
+    
+         Write-Host "== ONLYOFFICE services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "*onlyoffice*" -or $_.DisplayName -like "*onlyoffice*" }
+    
+         Write-Host "== Processes =="
+         Get-Process
+    
+         Write-Host "== Open ports =="
+         netstat -ano
+    
       - name: Wait for healthcheck (with detailed logging)
         shell: pwsh
         run: |
