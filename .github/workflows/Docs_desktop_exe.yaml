@@ -12,7 +12,7 @@ run-name: >-
                     ]
 
 on:
-  #push:
+  push:
   workflow_dispatch:
     inputs:
       build:
@@ -49,6 +49,7 @@ jobs:
     - name: Download
       run: |
          curl -L "${{ secrets.PACKAGE_URL }}/desktop/win/inno/ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe" -o ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe
+         
     - name: Install
       shell: cmd
       run: |
