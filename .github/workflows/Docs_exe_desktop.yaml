@@ -46,5 +46,10 @@ jobs:
     #name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
     runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
     steps:
-    - name: Download package
+    - name: Download
       run: |
+         curl -L "${{ secrets.PACKAGE_URL }}/desktop/win/inno/ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe" -o ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe
+    - name: Install
+      shell: cmd
+      run: |
+           ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
