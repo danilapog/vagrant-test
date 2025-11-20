@@ -57,7 +57,7 @@ jobs:
 
     - name: Verify
       run: |
-         ls "C:\Program Files\ONLYOFFICE\DocumentServer"
+         ls "C:\Program Files"
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
               Write-Error "App not installed!"
          }
