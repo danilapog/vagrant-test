@@ -54,3 +54,57 @@ jobs:
       shell: cmd
       run: |
            ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+
+    - name: Verify
+      run: |
+         ls "C:\Program Files\ONLYOFFICE\DocumentServer"
+         if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
+              Write-Error "App not installed!"
+         }
+
+         Write-Host "== Running services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }
+    
+         Write-Host "== ONLYOFFICE services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "*onlyoffice*" -or $_.DisplayName -like "*onlyoffice*" }
+    
+         Write-Host "== Processes =="
+         Get-Process
+    
+         Write-Host "== Open ports =="
+         netstat -ano
+
+    - name: Wait for healthcheck (with detailed logging)
+      shell: pwsh
+      run: |
+            $timeout = 300    # 5 минут
+            $interval = 5      # каждые 5 секунд
+            $elapsed = 0
+        
+            Write-Host "Waiting for healthcheck at http://127.0.0.1:8200/healthcheck ..."
+        
+            while ($elapsed -lt $timeout) {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://127.0.0.1:8200/healthcheck" -UseBasicParsing -TimeoutSec 2
+                    $body = $response.Content.Trim()
+        
+                    Write-Host "[$elapsed sec] Got response:"
+                    Write-Host "  StatusCode: $($response.StatusCode)"
+                    Write-Host "  Body: '$body'"
+        
+                    if ($body -eq "true") {
+                        Write-Host "Healthcheck OK!"
+                        exit 0
+                    }
+                }
+                catch {
+                    Write-Host "[$elapsed sec] ERROR calling endpoint:"
+                    Write-Host "  $($_.Exception.Message)"
+                }
+        
+                Start-Sleep -Seconds $interval
+                $elapsed += $interval
+            }
+        
+            Write-Error "Service did NOT return 'true' within 5 minutes!"
+            exit 1
