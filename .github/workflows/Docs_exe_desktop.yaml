@@ -1,0 +1,50 @@
+name: Docs Desktop Test EXE (amd64/arm64)
+
+run-name: >-
+    CI Docs Windows [Build #${{ inputs.build }} 
+                          Arch: ${{ inputs.arch }} 
+                          Version: ${{ inputs.version }}
+                    ]
+                    [
+                    ${{ inputs.community && 'CE' || '-' }}
+                    ${{ inputs.developer && 'DE' || '-' }}
+                    ${{ inputs.enterprise && 'EE' || '-' }}
+                    ]
+
+on:
+  #push:
+  workflow_dispatch:
+    inputs:
+      build:
+        description: 'Please specify windows package build'
+        type: string
+        required: true
+      version:
+        description: 'Please specify windows package version'
+        type: string
+        required: true
+      arch:
+        type: string
+        description: 'Type arch amd64 or arm64'
+        required: true
+      community:
+        type: boolean
+        description: 'Test Exe Community Edition'
+        default: true
+      enterprise:
+        type: boolean
+        description: 'Test Exe Enterprise Edition'
+        default: true
+      developer:
+        type: boolean
+        description: 'Test Exe Developer Edition'
+        default: true
+  
+jobs:
+  test:
+    name: test
+    #name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
+    runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
+    steps:
+    - name: Download package
+      run: |
