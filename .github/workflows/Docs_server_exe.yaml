@@ -1,4 +1,4 @@
-name: Docs Test EXE (amd64/arm64)
+name: Docs Server Test EXE (amd64/arm64)
 
 run-name: >-
     CI Docs Windows [Build #${{ inputs.build }} 
