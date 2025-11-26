@@ -39,12 +39,44 @@ on:
         type: boolean
         description: 'Test Exe Developer Edition'
         default: true
-  
+
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - id: matrix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          AMD64: ${{ github.event.inputs.amd64 }}
+          ARM64: ${{ github.event.inputs.arm64 }}
+          COMMUNITY: ${{ github.event.inputs.community }}
+          ENTERPRISE: ${{ github.event.inputs.enterprise }}
+          DEVELOPER: ${{ github.event.inputs.developer }}
+        run: |
+          set -ex
+
+          [ "${COMMUNITY}" = true ] && EDITIONS+=("")
+          [ "${ENTERPRISE}" = true ] && EDITIONS+=("-EE")
+          [ "${DEVELOPER}" = true ] && EDITIONS+=("-DE")
+          if [ -z ${EDITIONS} ]; then
+            echo "None of the editions are selected."
+            exit 1
+          fi
+          echo "editions=$(jq -n -c --arg s "${EDITIONS[*]}" '($s|split(" "))')" >> $GITHUB_OUTPUT
+    outputs:
+      editions: ${{ steps.matrix.outputs.editions }}
+      
   test:
-    name: test
-    #name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
+    needs: prepare
+    name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
     runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
+    env:
+      VERSION: ${{ github.event.inputs.version }}
+      BUILD: ${{ github.event.inputs.build }}
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: ${{ fromJSON(needs.prepare.outputs.editions) }}
     steps:
       - uses: ikalnytskyi/action-setup-postgres@v8
         with:
@@ -58,14 +90,14 @@ jobs:
     
       - name: Download
         run: |
-           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe 
-           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
+           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe 
+           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer${{ matrix.edition }}-$VERSION.$BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-$VERSION.$BUILD-x64.exe
            
       - name: Install
         shell: cmd
         run: |
-           ONLYOFFICE-DocumentServer-Prerequisites-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
-           ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+           ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
+           ONLYOFFICE-DocumentServer-$VERSION.$BUILD-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
     
       - name: Verify
         run: |
