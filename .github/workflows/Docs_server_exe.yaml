@@ -58,6 +58,7 @@ jobs:
           [ "${COMMUNITY}" = true ] && EDITIONS+=("")
           [ "${ENTERPRISE}" = true ] && EDITIONS+=("-EE")
           [ "${DEVELOPER}" = true ] && EDITIONS+=("-DE")
+          echo ${EDITIONS[@]}
           if [ -z ${EDITIONS} ]; then
             echo "None of the editions are selected."
             exit 1
