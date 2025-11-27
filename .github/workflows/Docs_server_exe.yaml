@@ -109,7 +109,7 @@ jobs:
            
       - name: Download
         shell: pwsh
-        run:
+        run: |
             $url    = "${{ secrets.PACKAGE_URL }}/server/win/inno"
             $ver    = $env:VERSION
             $build  = $env:BUILD
