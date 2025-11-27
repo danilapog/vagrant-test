@@ -79,6 +79,20 @@ jobs:
       matrix:
         edition: ${{ fromJSON(needs.prepare.outputs.editions) }}
     steps:
+      - name: Init env
+        shell: pwsh
+        run: |
+          switch ($env:EDITION) {
+            "community"  { $PRODUCT_EDITION = "" }
+            "enterprise" { $PRODUCT_EDITION = "-ee" }
+            "developer"  { $PRODUCT_EDITION = "-de" }
+          }
+
+          # Выводим переменные в GITHUB_ENV, чтобы они жили везде
+          echo "PRODUCT_EDITION=$PRODUCT_EDITION" | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
+          
       - uses: ikalnytskyi/action-setup-postgres@v8
         with:
           username: postgres
@@ -90,20 +104,16 @@ jobs:
         id: postgres
     
       - name: Download
-        run: |
-           switch ($EDITION) {
-                 "community"  { $env:PRODUCT_EDITION = "" }
-                 "enterprise" { $env:PRODUCT_EDITION = "-ee" }
-                 "developer"  { $env:PRODUCT_EDITION = "-de" }
-           }
+        shell: pwsh
+        run:
            curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-Prerequisites-$env:VERSION.$env:BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-$env:VERSION.$env:BUILD-x64.exe 
            curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer$env:PRODUCT_EDITION-$env:VERSION.$env:BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-$env:VERSION.$env:BUILD-x64.exe
            
       - name: Install
         shell: cmd
         run: |
-           ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
-           ONLYOFFICE-DocumentServer-$VERSION.$BUILD-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+           ONLYOFFICE-DocumentServer-Prerequisites-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
+           ONLYOFFICE-DocumentServer-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
     
       - name: Verify
         run: |
