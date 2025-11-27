@@ -116,7 +116,7 @@ jobs:
             $edition= $env:PRODUCT_EDITION
         
             $file1 = "ONLYOFFICE-DocumentServer-Prerequisites-$ver.$build-x64.exe"
-            $file2 = "ONLYOFFICE-DocumentServer$edition-$ver.$build-x64.exe"
+            $file2 = "ONLYOFFICE-DocumentServer-$ver.$build-x64.exe"
         
             Write-Host "Downloading $file1"
             curl -L "$url/$file1" -o $file1
