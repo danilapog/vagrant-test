@@ -84,12 +84,11 @@ jobs:
         run: |
           switch ($env:EDITION) {
             "community"  { $PRODUCT_EDITION = "" }
-            "enterprise" { $PRODUCT_EDITION = "-ee" }
-            "developer"  { $PRODUCT_EDITION = "-de" }
+            "enterprise" { $PRODUCT_EDITION = "-EE" }
+            "developer"  { $PRODUCT_EDITION = "-DE" }
           }
 
-          # Выводим переменные в GITHUB_ENV, чтобы они жили везде
-          echo "PRODUCT_EDITION=$PRODUCT_EDITION" | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
           
