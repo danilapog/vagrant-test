@@ -108,6 +108,7 @@ jobs:
       #     curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
            
       - name: Download
+        shell: pwsh
         run:
             $url    = "${{ secrets.PACKAGE_URL }}/server/win/inno"
             $ver    = $env:VERSION
