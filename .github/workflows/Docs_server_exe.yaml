@@ -68,7 +68,7 @@ jobs:
       
   test:
     needs: prepare
-    name: "Test Win ONLYOFFICE-Docs-${{ matrix.edition }}-${{ github.event.inputs.version }}"
+    name: "CI ONLYOFFICE-Docs-${{ matrix.edition }}-${{ github.event.inputs.version }}"
     runs-on: 'windows-latest'
     env:
       VERSION: ${{ github.event.inputs.version }}
