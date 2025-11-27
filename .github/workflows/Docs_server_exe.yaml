@@ -108,7 +108,6 @@ jobs:
       #     curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe" -o ONLYOFFICE-DocumentServer-9.2.0.80-x64.exe
            
       - name: Download
-        shell: pwsh
         run:
            curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-Prerequisites-${{ env.VERSION }}.${{ env.BUILD }}-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-${{ env.VERSION }}.${{ env.BUILD }}-x64.exe 
            curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer${{ env.PRODUCT_EDITION }}-${{ env.VERSION }}.${{ env.BUILD }}-x64.exe" -o ONLYOFFICE-DocumentServer-${{ env.VERSION }}.${{ env.BUILD }}-x64.exe
