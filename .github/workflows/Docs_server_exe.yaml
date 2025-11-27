@@ -68,11 +68,12 @@ jobs:
       
   test:
     needs: prepare
-    name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
-    runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
+    name: "Test Win ONLYOFFICE-Docs-${{ matrix.edition }}-${{ github.event.inputs.version }}"
+    runs-on: 'windows-latest'
     env:
       VERSION: ${{ github.event.inputs.version }}
       BUILD: ${{ github.event.inputs.build }}
+      EDITION: ${{ matrix.edition }}
     strategy:
       fail-fast: false
       matrix:
@@ -90,8 +91,13 @@ jobs:
     
       - name: Download
         run: |
+           switch ($EDITION) {
+                 "community"  { $env:PRODUCT_EDITION = "" }
+                 "enterprise" { $env:PRODUCT_EDITION = "-ee" }
+                 "developer"  { $env:PRODUCT_EDITION = "-de" }
+           }
            curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-Prerequisites-$VERSION.$BUILD-x64.exe 
-           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer${{ matrix.edition }}-$VERSION.$BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-$VERSION.$BUILD-x64.exe
+           curl -L "${{ secrets.PACKAGE_URL }}/server/win/inno/ONLYOFFICE-DocumentServer$PRODUCT_EDITION-$VERSION.$BUILD-x64.exe" -o ONLYOFFICE-DocumentServer-$VERSION.$BUILD-x64.exe
            
       - name: Install
         shell: cmd
