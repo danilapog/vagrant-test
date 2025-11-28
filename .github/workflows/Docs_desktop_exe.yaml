@@ -70,6 +70,10 @@ jobs:
     name: "CI Docs-Desktop-${{ matrix.edition }}-${{ github.event.inputs.version }}"
     needs: prepare
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: ${{ fromJSON(needs.prepare.outputs.editions) }}
     env:
       VERSION: ${{ github.event.inputs.version }}
       BUILD: ${{ github.event.inputs.build }}
