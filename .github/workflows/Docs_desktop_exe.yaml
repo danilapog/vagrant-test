@@ -12,7 +12,7 @@ run-name: >-
                     ]
 
 on:
-  push:
+  #push:
   workflow_dispatch:
     inputs:
       build:
@@ -26,7 +26,7 @@ on:
       arch:
         type: string
         description: 'Type arch amd64 or arm64'
-        required: true
+        required: false
       community:
         type: boolean
         description: 'Test Exe Community Edition'
@@ -41,14 +41,66 @@ on:
         default: true
   
 jobs:
-  test:
-    name: test
-    #name: "Test Win Docs-${{ matrix.edition }}-${{ matrix.arch }}"
-    runs-on: ${{ (github.event.inputs.arch == 'arm64') && 'windows-11-arm' || 'windows-latest' }}
+  prepare:
+    runs-on: ubuntu-latest
     steps:
-    - name: Download
+      - id: matrix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          AMD64: ${{ github.event.inputs.amd64 }}
+          ARM64: ${{ github.event.inputs.arm64 }}
+          COMMUNITY: ${{ github.event.inputs.community }}
+          ENTERPRISE: ${{ github.event.inputs.enterprise }}
+          DEVELOPER: ${{ github.event.inputs.developer }}
+        run: |
+          set -ex
+
+          [ "${COMMUNITY}" = true ] && EDITIONS+=("community")
+          [ "${ENTERPRISE}" = true ] && EDITIONS+=("enterprise")
+          [ "${DEVELOPER}" = true ] && EDITIONS+=("developer")
+          if [ -z ${EDITIONS} ]; then
+            echo "None of the editions are selected."
+            exit 1
+          fi
+          echo "editions=$(jq -n -c --arg s "${EDITIONS[*]}" '($s|split(" "))')" >> $GITHUB_OUTPUT
+    outputs:
+      editions: ${{ steps.matrix.outputs.editions }}
+
+  test:
+    name: "CI Docs-Desktop-${{ matrix.edition }}-${{ github.event.inputs.version }}"
+    needs: prepare
+    runs-on: windows-latest
+    env:
+      VERSION: ${{ github.event.inputs.version }}
+      BUILD: ${{ github.event.inputs.build }}
+      EDITION: ${{ matrix.edition }}
+    steps:
+    - name: Init env
+      shell: pwsh
       run: |
-         curl -L "${{ secrets.PACKAGE_URL }}/desktop/win/inno/ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe" -o ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe
+          switch ($env:EDITION) {
+            "community"  { $PRODUCT_EDITION = "" }
+            "enterprise" { $PRODUCT_EDITION = "-EE" }
+            "developer"  { $PRODUCT_EDITION = "-DE" }
+          }
+
+          echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
+          
+    - name: Download
+      shell: pwsh
+      run: |
+          $url    = "${{ secrets.PACKAGE_URL }}/desktop/win/inno"
+          $ver    = $env:VERSION
+          $build  = $env:BUILD
+          $edition= $env:PRODUCT_EDITION
+        
+          $file = "ONLYOFFICE-DesktopEditors$edition-$ver.$build-x64.exe"
+          $fileName = "ONLYOFFICE-DesktopEditors-$ver.$build-x64.exe"
+        
+          Write-Host "Downloading $file"
+          curl -L "$url/$file" -o $fileName
          
     - name: Install
       shell: cmd
