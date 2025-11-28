@@ -104,7 +104,7 @@ jobs:
     - name: Install
       shell: cmd
       run: |
-           ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\desktop-install-log.txt"
+           ONLYOFFICE-DesktopEditors-9.2.0.80-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\desktop-install-log%EDITION%.txt"
 
     - name: Verify
       run: |
@@ -135,4 +135,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
          name: desktop-install-log
-         path: C:\desktop-install-log.txt
+         path: C:\desktop-install-log${{ matrix.edition }}.txt
