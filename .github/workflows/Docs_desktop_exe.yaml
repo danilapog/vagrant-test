@@ -134,5 +134,5 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-         name: desktop-install-log
+         name: desktop-install-log${{ matrix.edition }}
          path: C:\desktop-install-log${{ matrix.edition }}.txt
