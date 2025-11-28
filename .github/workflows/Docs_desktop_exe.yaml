@@ -35,11 +35,7 @@ on:
         type: boolean
         description: 'Test Exe Enterprise Edition'
         default: true
-      developer:
-        type: boolean
-        description: 'Test Exe Developer Edition'
-        default: true
-  
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -84,8 +80,7 @@ jobs:
       run: |
           switch ($env:EDITION) {
             "community"  { $PRODUCT_EDITION = "" }
-            "enterprise" { $PRODUCT_EDITION = "-EE" }
-            "developer"  { $PRODUCT_EDITION = "-DE" }
+            "enterprise" { $PRODUCT_EDITION = "-Enterprise" }
           }
 
           echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
