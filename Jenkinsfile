@@ -73,6 +73,7 @@ pipeline {
 	    always { 
 		sh '''#!/bin/bash
                echo "Wipe docker: logout and prune all data"
+			   exit 1
 	       '''
 	    }
           }
