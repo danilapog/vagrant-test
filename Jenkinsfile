@@ -44,7 +44,6 @@ pipeline {
     stage('Build-->') {
       parallel {
         stage('Build api') {
-          agent { label 'ubuntu' }
           when {
             allOf {
               expression { return params.Execute == "true" }
@@ -62,7 +61,6 @@ pipeline {
         }
 
         stage('Build front') {
-          agent { label 'ubuntu' }
           when {
             allOf {
               expression { return params.Execute == "true" }
@@ -82,7 +80,6 @@ pipeline {
     }
 
     stage('Post step-->') {
-      agent { label 'ubuntu' }
       when {
         allOf {
           expression { return params.Execute == "true" }
