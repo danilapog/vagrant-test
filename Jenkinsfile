@@ -90,11 +90,9 @@ pipeline {
         }
       }
       steps {
-        {
         sh '''#!/bin/bash
           echo "123"
         '''
-      }
     }
     }
    }
