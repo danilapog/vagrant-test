@@ -63,9 +63,6 @@ pipeline {
 	      }
 	    }
 	stage ('Build front') {
-              agent {
-		      label 'ubuntu'
-	            }
 	    when { 
 		    allOf {expression { return env.Execute == "true" }; expression { return env.FRONT_BUILD == "true" } } 
 	    } 
