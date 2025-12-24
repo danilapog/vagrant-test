@@ -42,65 +42,60 @@ pipeline {
   }
   stages {
     stage('Build-->') {
-	parallel {
-	   stage ('Build api') {
-	    when { 
-		    allOf {expression { return env.Execute == "true" }; expression { return env.API_BUILD == "true" } } 
-	    } 
-      steps {
-		    {
-          sh '''
-	        echo "api"
-          '''
-	     } 
-      }
-	      post {
-		always {
-	  sh '''
-          echo "Wipe docker: logout and prune all data"
-		    '''
-		}
-	      }
-	    }
-	stage ('Build front') {
-	    when { 
-		    allOf {expression { return env.Execute == "true" }; expression { return env.FRONT_BUILD == "true" } } 
-	    } 
-      steps {
-		    {
-          sh '''#!/bin/bash
-	        echo "front"
-          '''
-	     }
-      }
-	  post {
-	    always { 
-		sh '''#!/bin/bash
-               echo "Wipe docker: logout and prune all data"
-	       '''
-	    }
+      parallel {
+        stage('Build api') {
+          agent { label 'ubuntu' }
+          when {
+            allOf {
+              expression { return params.Execute == "true" }
+              expression { return params.API_BUILD == "true" }
+            }
           }
-	}
+          steps {
+            sh 'echo "api"'
+          }
+          post {
+            always {
+              sh 'echo "Wipe docker: logout and prune all data"'
+            }
+          }
+        }
+
+        stage('Build front') {
+          agent { label 'ubuntu' }
+          when {
+            allOf {
+              expression { return params.Execute == "true" }
+              expression { return params.FRONT_BUILD == "true" }
+            }
+          }
+          steps {
+            sh 'echo "front"'
+          }
+          post {
+            always {
+              sh 'echo "Wipe docker: logout and prune all data"'
+            }
+          }
+        }
       }
-	}
-     stage('Post step-->') {
+    }
+
+    stage('Post step-->') {
+      agent { label 'ubuntu' }
       when {
         allOf {
-          expression { return env.Execute == "true" }
+          expression { return params.Execute == "true" }
           anyOf {
-            expression { return env.API_BUILD == "true" }
-            expression { return env.FRONT_BUILD == "true" }
+            expression { return params.API_BUILD == "true" }
+            expression { return params.FRONT_BUILD == "true" }
           }
         }
       }
       steps {
-        {
-        sh '''#!/bin/bash
-          echo "123"
-        '''
+        sh 'echo "123"'
       }
     }
-    }
-   }
+  }
 }
   
