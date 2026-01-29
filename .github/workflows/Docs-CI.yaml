@@ -1,7 +1,7 @@
 name: Docs CI Windows
 
 run-name: >-
-    Docs CI Windows [Build #${{ inputs.build }} 
+    Docs CI Test [Build #${{ inputs.build }} 
                           Version: ${{ inputs.version }}
                     ]
                     [
@@ -10,7 +10,6 @@ run-name: >-
                     ]
 
 on:
-  #push:
   workflow_dispatch:
     inputs:
       build:
@@ -35,11 +34,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: matrix
+        shell: bash
         env:
           BRANCH_NAME: ${{ github.ref_name }}
           COMMUNITY: ${{ github.event.inputs.community }}
           ENTERPRISE: ${{ github.event.inputs.enterprise }}
         run: |
+          ${{  github.workspace }}/.github/scripts/get_windows_server_packages.sh
+          ${{  github.workspace }}/.github/scripts/get_windows_desktop_packages.sh
+          ${{  github.workspace }}/.github/scripts/get_macos_desktop_packages.sh
+          
           set -ex
 
           [ "${COMMUNITY}" = true ] && EDITIONS+=("community")
@@ -48,18 +52,180 @@ jobs:
             echo "None of the editions are selected."
             exit 1
           fi
-          echo "editions=$(jq -n -c --arg s "${EDITIONS[*]}" '($s|split(" "))')" >> $GITHUB_OUTPUT
+          
+          echo "windows-server-packages=$(jq -n -c --arg s "${EDITIONS[*]}" '($s|split(" "))')" >> $GITHUB_OUTPUT
+          echo "windows_desktop_packages="
+          echo "macos_desktop_packages="
+          
     outputs:
-      editions: ${{ steps.matrix.outputs.editions }}
+      windows-server-packages: ${{ steps.matrix.outputs.windows-server-packages }}
+      windows_desktop_packages: ${{ steps.matrix.outputs.windows_desktop_packages }}
+      macos_desktop_packages: ${{ steps.matrix.outputs.macos_desktop_packages }}
 
-  test:
-    name: "CI Docs-Desktop-${{ matrix.edition }}-${{ github.event.inputs.version }}"
+  desktop-mac:
+    name: "Desktop-${{ matrix.edition }}-${{ github.event.inputs.version }}"
+    if: ${{ needs.prepare.outputs.macos_desktop_packages != '' }}
     needs: prepare
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: ${{ fromJSON(needs.prepare.outputs.macos_desktop_packages) }}
+        
+  server-windows:
+    needs: prepare
+    name: "Server-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    if: ${{ needs.prepare.outputs.windows-server-packages != '' }}
+    runs-on: windows-latest
+    env:
+      VERSION: ${{ github.event.inputs.version }}
+      BUILD: ${{ github.event.inputs.build }}
+      EDITION: ${{ matrix.edition }}
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: ${{ fromJSON(needs.prepare.outputs.windows-server-packages) }}
+    steps:
+      - name: Init env
+        shell: pwsh
+        run: |
+          switch ($env:EDITION) {
+            "community"  { $PRODUCT_EDITION = "" }
+            "enterprise" { $PRODUCT_EDITION = "-EE" }
+            "developer"  { $PRODUCT_EDITION = "-DE" }
+          }
+
+          echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
+          echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
+          
+      - uses: ikalnytskyi/action-setup-postgres@v8
+        with:
+          username: postgres
+          password: postgres
+          database: postgres
+          port: 5432
+          postgres-version: "14"
+          ssl: true
+        id: postgres
+           
+      - name: Download
+        shell: pwsh
+        run: |
+            $url    = "${{ secrets.PACKAGE_URL }}/server/win/inno"
+            $ver    = $env:VERSION
+            $build  = $env:BUILD
+            $edition= $env:PRODUCT_EDITION
+        
+            $preq = "ONLYOFFICE-DocumentServer-Prerequisites-$ver.$build-x64.exe"
+            
+            $packageFile = "ONLYOFFICE-DocumentServer$edition-$ver.$build-x64.exe"
+            $packageFileName = "ONLYOFFICE-DocumentServer-$ver.$build-x64.exe"
+        
+            Write-Host "Downloading $preq"
+            curl -L "$url/$preq" -o $preq
+        
+            Write-Host "Downloading $packageFile"
+            curl -L "$url/$packageFileName" -o $packageFileName
+           
+      - name: Install
+        shell: cmd
+        run: |
+           ONLYOFFICE-DocumentServer-Prerequisites-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-rpeq.txt"
+           ONLYOFFICE-DocumentServer-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+    
+      - name: Verify
+        run: |
+         ls "C:\Program Files\ONLYOFFICE\DocumentServer"
+         if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
+              Write-Error "App not installed!"
+         }
+
+         Write-Host "== Running services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }
+    
+         Write-Host "== ONLYOFFICE services =="
+         Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "*onlyoffice*" -or $_.DisplayName -like "*onlyoffice*" }
+    
+         Write-Host "== Processes =="
+         Get-Process
+    
+         Write-Host "== Open ports =="
+         netstat -ano
+
+      - name: get service logs
+        if: always()
+        run: |
+          $logRoot = "C:\Program Files\ONLYOFFICE\DocumentServer\Log"
+          $nginxLogs = "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\logs"
+            
+          Write-Host "=== NGINX LOGS ==="
+          if (Test-Path $nginxLogs) {
+              Get-ChildItem -Recurse $nginxLogs | ForEach-Object {
+                  if (-not $_.PSIsContainer) {
+                      Write-Host "`n--- $($_.FullName) ---"
+                      try { Get-Content $_.FullName -ErrorAction Stop }
+                      catch { Write-Host "ERROR: $($_.Exception.Message)" }
+                  }
+              }
+          }
+            
+          Write-Host "`n=== DOCUMENTSERVER LOGS ==="
+          if (Test-Path $logRoot) {
+              Get-ChildItem -Recurse $logRoot | ForEach-Object {
+                  if (-not $_.PSIsContainer) {
+                      Write-Host "`n--- $($_.FullName) ---"
+                      try { Get-Content $_.FullName -ErrorAction Stop }
+                      catch { Write-Host "ERROR: $($_.Exception.Message)" }
+                  }
+              }
+          } else {
+              Write-Host "Log root directory not found: $logRoot"
+          }
+            
+      - name: Wait for healthcheck (with detailed logging)
+        shell: pwsh
+        run: |
+            $timeout = 300    
+            $interval = 5      
+            $elapsed = 0
+        
+            Write-Host "Waiting for healthcheck at http://127.0.0.1:8200/healthcheck ..."
+        
+            while ($elapsed -lt $timeout) {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://127.0.0.1:8200/healthcheck" -UseBasicParsing -TimeoutSec 2
+                    $body = $response.Content.Trim()
+        
+                    Write-Host "[$elapsed sec] Got response:"
+                    Write-Host "  StatusCode: $($response.StatusCode)"
+                    Write-Host "  Body: '$body'"
+        
+                    if ($body -eq "true") {
+                        Write-Host "Healthcheck OK!"
+                        exit 0
+                    }
+                }
+                catch {
+                    Write-Host "[$elapsed sec] ERROR calling endpoint:"
+                    Write-Host "  $($_.Exception.Message)"
+                }
+        
+                Start-Sleep -Seconds $interval
+                $elapsed += $interval
+            }
+        
+            Write-Error "Service did NOT return 'true' within 5 minutes!"
+            exit 1
+        
+  desktop-windows:
+    name: "Desktop-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    needs: ['prepare']
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        edition: ${{ fromJSON(needs.prepare.outputs.editions) }}
+        edition: ${{ fromJSON(needs.prepare.outputs.windows_desktop_packages) }}
     env:
       VERSION: ${{ github.event.inputs.version }}
       BUILD: ${{ github.event.inputs.build }}
@@ -121,8 +287,8 @@ jobs:
           Write-Host "Exit code: $LASTEXITCODE"    
 
     - name: Upload install log
-      if: always()
+      if: ${{ failure() }}
       uses: actions/upload-artifact@v4
       with:
-         name: desktop-install-log${{ matrix.edition }}
+         name: desktop-windows-install-log${{ matrix.edition }}
          path: C:\desktop-install-log${{ matrix.edition }}.txt
