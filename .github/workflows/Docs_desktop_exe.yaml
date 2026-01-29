@@ -23,10 +23,6 @@ on:
         description: 'Please specify windows package version'
         type: string
         required: true
-      arch:
-        type: string
-        description: 'Type arch amd64 or arm64'
-        required: false
       community:
         type: boolean
         description: 'Test Exe Community Edition'
