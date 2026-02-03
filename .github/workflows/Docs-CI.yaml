@@ -344,6 +344,7 @@ jobs:
          name: desktop-windows-log-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}
          path: C:\desktop-install-log-${{ matrix.edition }}.txt
 
+
   desktop-mac:
     name: "Desktop-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.macos-desktop-packages != '' }}
