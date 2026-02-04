@@ -97,15 +97,15 @@ check_package_type() {
         fi
     done
     
-    # If editions and platforms found, add to matrix
+    # If editions and platforms found, add each combination to matrix
     if [ ${#editions[@]} -gt 0 ] && [ ${#platforms[@]} -gt 0 ]; then
-        local editions_json=$(printf '%s\n' "${editions[@]}" | jq -R . | jq -s -c .)
-        local platforms_json=$(printf '%s\n' "${platforms[@]}" | jq -R . | jq -s -c .)
-        
-        local matrix_entry="{\"type\":\"${type}\",\"editions\":${editions_json},\"platforms\":${platforms_json}}"
-        MATRIX_ITEMS+=("${matrix_entry}")
-        
-        echo "  Matrix entry: ${matrix_entry}"
+        for edition in "${editions[@]}"; do
+            for platform in "${platforms[@]}"; do
+                local matrix_entry="{\"type\":\"${type}\",\"edition\":\"${edition}\",\"platform\":\"${platform}\"}"
+                MATRIX_ITEMS+=("${matrix_entry}")
+                echo "  Matrix entry: ${matrix_entry}"
+            done
+        done
     else
         echo "  ✗ Insufficient packages for ${type}"
     fi
