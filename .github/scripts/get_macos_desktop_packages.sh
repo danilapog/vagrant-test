@@ -74,7 +74,7 @@ V8_URL="${BASE_URL}/v8/${VERSION}/${BUILD}/${V8_FILE}"
 
 if check_package "${V8_URL}"; then
     echo "  ✓ V8 edition found: ${V8_URL}"
-    local v8_entry='{"architecture":"v8","editions":["community"]}'
+    v8_entry='{"architecture":"v8","editions":["community"]}'
     MATRIX_ITEMS+=("${v8_entry}")
     echo "  Matrix entry: ${v8_entry}"
 else
