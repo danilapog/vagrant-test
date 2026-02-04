@@ -51,7 +51,7 @@ jobs:
 
   server-windows:
     needs: prepare
-    name: "Server-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    name: "Server-win-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.windows-server-packages != '' }}
     runs-on: windows-latest
     env:
@@ -356,7 +356,7 @@ jobs:
          path: C:\desktop-install-log-${{ matrix.edition }}.txt
 
   desktop-mac:
-    name: "Desktop-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    name: "Desktop-mac-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.macos-desktop-packages != '' }}
     needs: prepare
     runs-on: macos-latest
