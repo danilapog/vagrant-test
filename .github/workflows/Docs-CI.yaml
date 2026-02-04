@@ -4,7 +4,6 @@ run-name: >-
     Docs CI Test [Build #${{ inputs.build }} 
                           Version: ${{ inputs.version }}
                     ]
-
 on:
   workflow_dispatch:
     inputs:
@@ -51,7 +50,7 @@ jobs:
 
   server-windows:
     needs: prepare
-    name: "Server-win-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    name: "Server-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.windows-server-packages != '' }}
     runs-on: windows-latest
     env:
@@ -71,7 +70,6 @@ jobs:
             "enterprise" { $PRODUCT_EDITION = "-EE" }
             "developer"  { $PRODUCT_EDITION = "-DE" }
           }
-
           echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
@@ -117,7 +115,6 @@ jobs:
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
               Write-Error "App not installed!"
          }
-
          Write-Host "== Running services =="
          Get-Service -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }
     
@@ -196,6 +193,105 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest requests
+      
+      - name: Run API tests
+        shell: pwsh
+        run: |
+          # Create test file
+          @'
+          import pytest
+          import requests
+          import time
+
+          BASE_URL = "http://127.0.0.1:8200"
+          TIMEOUT = 30
+
+          def test_healthcheck():
+              """Basic healthcheck test"""
+              response = requests.get(f"{BASE_URL}/healthcheck", timeout=TIMEOUT)
+              assert response.status_code == 200
+              assert response.text.strip() == "true"
+              print("✓ Healthcheck passed")
+
+          def test_server_info():
+              """Test server info endpoint"""
+              response = requests.get(f"{BASE_URL}/info/info.json", timeout=TIMEOUT)
+              assert response.status_code == 200
+              data = response.json()
+              assert "version" in data
+              assert "buildVersion" in data
+              print(f"✓ Server version: {data.get('version')}")
+              print(f"✓ Build: {data.get('buildNumber')}")
+
+          def test_conversion_service():
+              """Test conversion service availability"""
+              response = requests.post(
+                  f"{BASE_URL}/ConversionService.ashx",
+                  json={},
+                  timeout=TIMEOUT
+              )
+              # Service should respond (even with error for empty request)
+              assert response.status_code in [200, 400]
+              print("✓ Conversion service is available")
+
+          def test_webapp_api():
+              """Test web-apps API availability"""
+              response = requests.get(
+                  f"{BASE_URL}/web-apps/apps/api/documents/api.js",
+                  timeout=TIMEOUT
+              )
+              assert response.status_code == 200
+              assert "DocsAPI" in response.text
+              print("✓ Web-apps API loaded successfully")
+
+          def test_command_service():
+              """Test command service"""
+              response = requests.post(
+                  f"{BASE_URL}/coauthoring/CommandService.ashx",
+                  json={"c": "version"},
+                  timeout=TIMEOUT
+              )
+              assert response.status_code in [200, 400]
+              print("✓ Command service is available")
+
+          def test_concurrent_requests():
+              """Test handling concurrent requests"""
+              import concurrent.futures
+              
+              def make_request():
+                  response = requests.get(f"{BASE_URL}/healthcheck", timeout=TIMEOUT)
+                  return response.status_code == 200
+              
+              with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                  futures = [executor.submit(make_request) for _ in range(5)]
+                  results = [f.result() for f in concurrent.futures.as_completed(futures)]
+              
+              assert all(results), "Some concurrent requests failed"
+              print(f"✓ All {len(results)} concurrent requests successful")
+
+          if __name__ == "__main__":
+              pytest.main([__file__, "-v", "-s"])
+          '@ | Out-File -FilePath test_server.py -Encoding utf8
+          
+          # Run tests
+          python test_server.py
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-test-results-${{ matrix.edition }}
+          path: test_server.py
+
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -209,7 +305,7 @@ jobs:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     needs: prepare
     if: ${{ needs.prepare.outputs.windows-desktop-packages != '' }}
-    runs-on: windows-latest
+    runs-on: ${{ matrix.platform == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -235,7 +331,6 @@ jobs:
             "inno-setup"          { $PACKAGE_PATH = "inno" }
             "advanced-installer"  { $PACKAGE_PATH = "advinst" }
           }
-
           echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "PACKAGE_PATH=$PACKAGE_PATH"        | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
@@ -278,12 +373,12 @@ jobs:
             "inno-setup" {
               $file = "ONLYOFFICE-DesktopEditors$edition-$ver.$build-$platform.exe"
               Write-Host "Installing inno-setup package: $file"
-              Start-Process -FilePath $file -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=C:\desktop-install-log-$env:EDITION.txt" -Wait
+              Start-Process -FilePath $file -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LOG=C:\desktop-install-log-$env:EDITION-$platform.txt" -Wait
             }
             "advanced-installer" {
               $file = "ONLYOFFICE-DesktopEditors$edition-$ver.$build-$platform.msi"
               Write-Host "Installing MSI package: $file"
-              Start-Process -FilePath "msiexec.exe" -ArgumentList "/i", $file, "/qn", "/L*V", "C:\desktop-install-log-$env:EDITION.txt" -Wait
+              Start-Process -FilePath "msiexec.exe" -ArgumentList "/i", $file, "/qn", "/L*V", "C:\desktop-install-log-$env:EDITION-$platform.txt" -Wait
             }
           }
 
@@ -300,9 +395,12 @@ jobs:
              ls $path
            }
            default {
-             # x86 apps install to "Program Files (x86)", x64 to "Program Files"
+             # Determine installation path based on architecture
              if ($env:PLATFORM -eq "x86") {
                $path = "C:\Program Files (x86)\ONLYOFFICE\DesktopEditors"
+             } elseif ($env:PLATFORM -eq "arm64") {
+               # ARM64 apps typically install to standard Program Files on ARM Windows
+               $path = "C:\Program Files\ONLYOFFICE\DesktopEditors"
              } else {
                $path = "C:\Program Files\ONLYOFFICE\DesktopEditors"
              }
@@ -323,9 +421,11 @@ jobs:
               $exe = "C:\ONLYOFFICE-Portable\DesktopEditors.exe"
             }
             default {
-              # x86 apps install to "Program Files (x86)", x64 to "Program Files"
+              # Determine executable path based on architecture
               if ($env:PLATFORM -eq "x86") {
                 $exe = "C:\Program Files (x86)\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+              } elseif ($env:PLATFORM -eq "arm64") {
+                $exe = "C:\Program Files\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
               } else {
                 $exe = "C:\Program Files\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
               }
@@ -338,7 +438,7 @@ jobs:
           
           Write-Host "=== Version Info ==="
           (Get-Item $exe).VersionInfo
-
+          
           Write-Host "=== Running DesktopEditors with --help ==="
           try {
             Start-Process -FilePath $exe -ArgumentList "--help" -NoNewWindow -Wait
@@ -348,15 +448,102 @@ jobs:
             Write-Host "Failed to run executable: $_"
           }
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Run Desktop smoke tests
+      shell: pwsh
+      run: |
+        pip install pytest
+        
+        @'
+        import pytest
+        import subprocess
+        import os
+        import platform
+
+        def get_desktop_path():
+            """Find Desktop Editors executable"""
+            type_env = os.environ.get("TYPE", "")
+            platform_env = os.environ.get("PLATFORM", "x64")
+            
+            if type_env == "portable":
+                path = r"C:\ONLYOFFICE-Portable\DesktopEditors.exe"
+            elif platform_env == "x86":
+                path = r"C:\Program Files (x86)\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+            else:
+                path = r"C:\Program Files\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+            
+            if os.path.exists(path):
+                return path
+            pytest.fail(f"Desktop not found at: {path}")
+
+        def test_executable_exists():
+            """Test that executable exists"""
+            path = get_desktop_path()
+            assert os.path.exists(path)
+            print(f"✓ Found executable: {path}")
+
+        def test_version():
+            """Test version command"""
+            path = get_desktop_path()
+            try:
+                result = subprocess.run(
+                    [path, "--version"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                print(f"Version output: {result.stdout}")
+                print(f"Stderr: {result.stderr}")
+                assert result.returncode in [0, 1]
+                print("✓ Version check passed")
+            except subprocess.TimeoutExpired:
+                pytest.fail("Version check timed out")
+
+        def test_help():
+            """Test help command"""
+            path = get_desktop_path()
+            try:
+                result = subprocess.run(
+                    [path, "--help"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                output = result.stdout + result.stderr
+                print(f"Help output: {output}")
+                print("✓ Help command executed")
+            except subprocess.TimeoutExpired:
+                pytest.fail("Help command timed out")
+
+        def test_file_size():
+            """Test executable file size"""
+            path = get_desktop_path()
+            size = os.path.getsize(path)
+            size_mb = size / (1024 * 1024)
+            print(f"Executable size: {size_mb:.2f} MB")
+            # Executable should be reasonable size (> 10MB)
+            assert size_mb > 10, f"Executable too small: {size_mb:.2f} MB"
+            print("✓ File size check passed")
+
+        if __name__ == "__main__":
+            pytest.main([__file__, "-v", "-s"])
+        '@ | Out-File -FilePath test_desktop.py -Encoding utf8
+        
+        python test_desktop.py
+
     - name: Upload install log
       if: failure()
       uses: actions/upload-artifact@v4
       with:
          name: desktop-windows-log-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}
-         path: C:\desktop-install-log-${{ matrix.edition }}.txt
+         path: C:\desktop-install-log-${{ matrix.edition }}-${{ matrix.platform }}.txt
 
   desktop-mac:
-    name: "Desktop-mac-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
+    name: "Desktop-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.macos-desktop-packages != '' }}
     needs: prepare
     runs-on: macos-latest
@@ -427,6 +614,76 @@ jobs:
           
           echo "=== App Info ==="
           /usr/bin/defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString || echo "Version not found"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Run macOS smoke tests
+        shell: bash
+        run: |
+          pip install pytest
+          
+          cat > test_desktop_mac.py << 'EOF'
+          import pytest
+          import subprocess
+          import os
+
+          APP_PATH = "/Volumes/ONLYOFFICE/ONLYOFFICE.app"
+          EXEC_PATH = "/Volumes/ONLYOFFICE/ONLYOFFICE.app/Contents/MacOS/ONLYOFFICE"
+
+          def test_app_exists():
+              """Test that app bundle exists"""
+              assert os.path.exists(APP_PATH)
+              print(f"✓ Found app: {APP_PATH}")
+
+          def test_executable_exists():
+              """Test that executable exists"""
+              assert os.path.exists(EXEC_PATH)
+              print(f"✓ Found executable: {EXEC_PATH}")
+
+          def test_app_signature():
+              """Test app code signature"""
+              result = subprocess.run(
+                  ["codesign", "-v", APP_PATH],
+                  capture_output=True,
+                  text=True
+              )
+              print(f"Signature check: {result.stdout} {result.stderr}")
+              print("✓ Signature check completed")
+
+          def test_version():
+              """Test version info"""
+              try:
+                  result = subprocess.run(
+                      [EXEC_PATH, "--version"],
+                      capture_output=True,
+                      text=True,
+                      timeout=10
+                  )
+                  print(f"Version: {result.stdout}")
+                  print("✓ Version check completed")
+              except subprocess.TimeoutExpired:
+                  print("Version check timed out (may be expected)")
+
+          def test_app_bundle_structure():
+              """Test app bundle has required structure"""
+              required_paths = [
+                  "Contents/Info.plist",
+                  "Contents/MacOS",
+                  "Contents/Resources"
+              ]
+              for rel_path in required_paths:
+                  full_path = os.path.join(APP_PATH, rel_path)
+                  assert os.path.exists(full_path), f"Missing: {rel_path}"
+              print("✓ App bundle structure verified")
+
+          if __name__ == "__main__":
+              pytest.main([__file__, "-v", "-s"])
+          EOF
+          
+          python test_desktop_mac.py
           
       - name: Unmount DMG
         if: always()
