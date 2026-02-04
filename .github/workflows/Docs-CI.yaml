@@ -300,11 +300,17 @@ jobs:
              ls $path
            }
            default {
-             $path = "C:\Program Files\ONLYOFFICE\DesktopEditors"
-             if (!(Test-Path $path)) {
-                 Write-Error "App not installed!"
+             # x86 apps install to "Program Files (x86)", x64 to "Program Files"
+             if ($env:PLATFORM -eq "x86") {
+               $path = "C:\Program Files (x86)\ONLYOFFICE\DesktopEditors"
+             } else {
+               $path = "C:\Program Files\ONLYOFFICE\DesktopEditors"
              }
-             Write-Host "Files in DesktopEditors:"
+             
+             if (!(Test-Path $path)) {
+                 Write-Error "App not installed at: $path"
+             }
+             Write-Host "Files in DesktopEditors ($path):"
              ls $path
            }
          }
@@ -317,7 +323,12 @@ jobs:
               $exe = "C:\ONLYOFFICE-Portable\DesktopEditors.exe"
             }
             default {
-              $exe = "C:\Program Files\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+              # x86 apps install to "Program Files (x86)", x64 to "Program Files"
+              if ($env:PLATFORM -eq "x86") {
+                $exe = "C:\Program Files (x86)\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+              } else {
+                $exe = "C:\Program Files\ONLYOFFICE\DesktopEditors\DesktopEditors.exe"
+              }
             }
           }
           
@@ -343,7 +354,6 @@ jobs:
       with:
          name: desktop-windows-log-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}
          path: C:\desktop-install-log-${{ matrix.edition }}.txt
-
 
   desktop-mac:
     name: "Desktop-${{ matrix.architecture }}-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
