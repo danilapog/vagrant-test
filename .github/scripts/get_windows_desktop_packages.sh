@@ -30,8 +30,8 @@ check_package_type() {
     local editions=()
     local platforms=()
     
-    # Detect available platforms (x64, x86)
-    for platform in "x64" "x86"; do
+    # Detect available platforms (x64, x86, arm64)
+    for platform in "x64" "x86" "arm64"; do
         # Check community edition for this platform
         local ce_file="${prefix}-${VERSION}.${BUILD}-${platform}"
         case $type in
