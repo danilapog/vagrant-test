@@ -21,6 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 BASE_URL = "http://127.0.0.1:8200"
+CONVERTER_URL = "http://127.0.0.1:8000/converter"  # Direct converter port
 TIMEOUT = 60
 
 
@@ -30,6 +31,7 @@ def test_session_info():
     start_time = datetime.now()
     logger.info("=" * 80)
     logger.info(f"TEST SESSION STARTED: {start_time}")
+    logger.info(f"Using converter at: {CONVERTER_URL}")
     logger.info("=" * 80)
     
     yield
@@ -68,7 +70,7 @@ class TestDocumentConversion:
         # Perform conversion with timing
         start = time.time()
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             json=conversion_request,
             timeout=TIMEOUT
         )
@@ -80,7 +82,7 @@ class TestDocumentConversion:
         logger.debug(f"Response body: {response.text[:200]}")
         
         # Validate response
-        assert response.status_code == 200
+        assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text[:200]}"
         result = response.json()
         
         if "endConvert" in result:
@@ -116,7 +118,7 @@ Jane Smith,25,Los Angeles"""
         start = time.time()
         try:
             response = requests.post(
-                f"{BASE_URL}/ConversionService.ashx",
+                CONVERTER_URL,
                 json=conversion_request,
                 timeout=TIMEOUT
             )
@@ -163,7 +165,7 @@ Jane Smith,25,Los Angeles"""
         
         start = time.time()
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             json=conversion_request,
             timeout=TIMEOUT
         )
@@ -259,7 +261,7 @@ class TestPerformance:
             
             start = time.time()
             response = requests.post(
-                f"{BASE_URL}/ConversionService.ashx",
+                CONVERTER_URL,
                 json=conversion_request,
                 timeout=TIMEOUT
             )
@@ -319,7 +321,7 @@ class TestPerformance:
         
         start = time.time()
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             json=conversion_request,
             timeout=TIMEOUT
         )
@@ -381,7 +383,7 @@ class TestErrorHandling:
         }
         
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             json=conversion_request,
             timeout=TIMEOUT
         )
@@ -398,7 +400,7 @@ class TestErrorHandling:
         conversion_request = {"filetype": "txt"}
         
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             json=conversion_request,
             timeout=TIMEOUT
         )
@@ -412,7 +414,7 @@ class TestErrorHandling:
         logger.info("Testing malformed JSON handling")
         
         response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
+            CONVERTER_URL,
             data="this is not valid json",
             headers={"Content-Type": "application/json"},
             timeout=TIMEOUT
