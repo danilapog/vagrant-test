@@ -203,7 +203,7 @@ jobs:
           Write-Host "`n=== Running Advanced Functional Tests ===`n"
           
           # Run tests with multiple output formats
-          python -m pytest test_server_advanced.py `
+          python -m pytest .github/scripts/ci-test-server-advanced.py `
             -v `
             -s `
             --tb=short `
