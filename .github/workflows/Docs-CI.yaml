@@ -196,13 +196,15 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest requests pytest-html pytest-json-report
+          
       - name: Run Advanced Functional Tests
         shell: pwsh
         continue-on-error: true
         run: |
-          # Install pytest plugins for better reporting
-          pip install pytest-html pytest-json-report
-          
           Write-Host "`n=== Running Advanced Functional Tests ===`n"
           
           # Run tests with multiple output formats
