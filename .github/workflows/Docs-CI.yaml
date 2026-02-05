@@ -196,46 +196,114 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
-      - name: Check FileConverter Structure
+      - name: Check Converter Process and Configuration
         shell: pwsh
         run: |
-            Write-Host "`n=== Checking FileConverter ===`n"
+            Write-Host "`n=== Checking Converter Runtime ===`n"
             
-            $basePath = "C:\Program Files\ONLYOFFICE\DocumentServer"
-            $converterPath = "$basePath\server\FileConverter"
+            # 1. Check if converter.exe is running
+            Write-Host "--- Running Converter Processes ---"
+            $converterProc = Get-Process -ErrorAction SilentlyContinue | Where-Object {
+                $_.ProcessName -eq "converter" -or 
+                $_.Path -like "*FileConverter*"
+            }
             
-            if (Test-Path $converterPath) {
-                Write-Host "✅ FileConverter folder EXISTS at: $converterPath`n"
-                
-                Write-Host "--- FileConverter contents ---"
-                ls $converterPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
-                
-                Write-Host "`n--- Looking for x2t.exe ---"
-                $x2t = Get-ChildItem -Path $converterPath -Recurse -Filter "x2t.exe" -ErrorAction SilentlyContinue
-                if ($x2t) {
-                    Write-Host "✅ Found x2t.exe at: $($x2t.FullName)"
-                    Write-Host "   Size: $($x2t.Length) bytes"
-                    Write-Host "   Version: $((Get-Item $x2t.FullName).VersionInfo.FileVersion)"
-                } else {
-                    Write-Host "❌ x2t.exe NOT FOUND"
-                }
-                
-                Write-Host "`n--- Looking for converter executable ---"
-                $converter = Get-ChildItem -Path $converterPath -Recurse -Filter "converter.exe" -ErrorAction SilentlyContinue
-                if ($converter) {
-                    Write-Host "✅ Found converter.exe at: $($converter.FullName)"
-                }
-                
+            if ($converterProc) {
+                Write-Host "✅ Converter process is RUNNING:"
+                $converterProc | Format-Table -AutoSize ProcessName, Id, Path, StartTime
             } else {
-                Write-Host "❌ FileConverter folder NOT FOUND at: $converterPath"
-                
-                Write-Host "`n--- Checking server folder ---"
-                $serverPath = "$basePath\server"
-                if (Test-Path $serverPath) {
-                    ls $serverPath | Select-Object Name | Format-Table -AutoSize
+                Write-Host "⚠️  Converter process NOT RUNNING"
+                Write-Host "Attempting to check if it's embedded in DocService..."
+            }
+            
+            # 2. Check DocService processes (converter might be part of it)
+            Write-Host "`n--- DocService Processes ---"
+            Get-Process -ErrorAction SilentlyContinue | Where-Object {
+                $_.ProcessName -like "*docservice*" -or
+                $_.Path -like "*DocumentServer\server*"
+            } | Format-Table -AutoSize ProcessName, Id, Path
+            
+            # 3. Check Node.js processes (DocumentServer uses Node.js)
+            Write-Host "`n--- Node.js Processes (DocumentServer) ---"
+            Get-Process -ErrorAction SilentlyContinue | Where-Object {
+                $_.ProcessName -eq "node" -and 
+                $_.Path -like "*DocumentServer*"
+            } | Format-Table -AutoSize ProcessName, Id, CommandLine
+            
+            # 4. Check configuration files for converter URL
+            Write-Host "`n--- Checking Configuration Files ---"
+            $configFiles = @(
+                "C:\Program Files\ONLYOFFICE\DocumentServer\config\local.json",
+                "C:\Program Files\ONLYOFFICE\DocumentServer\config\default.json",
+                "C:\Program Files\ONLYOFFICE\DocumentServer\server\FileConverter\config.json"
+            )
+            
+            foreach ($file in $configFiles) {
+                if (Test-Path $file) {
+                    Write-Host "`nFile: $file"
+                    $content = Get-Content $file -Raw
+                    
+                    # Look for port configuration
+                    if ($content -match '"port".*?(\d+)') {
+                        Write-Host "  Contains port configuration"
+                    }
+                    
+                    # Show relevant lines
+                    Get-Content $file | Select-String -Pattern "port|url|converter" -Context 0,2 |
+                        Select-Object -First 10 | ForEach-Object { Write-Host "  $($_.Line)" }
                 }
             }
-    
+            
+            # 5. Check what's listening on common converter ports
+            Write-Host "`n--- Listening Ports (Converter typically uses 8000-8002) ---"
+            netstat -ano | Select-String "LISTENING" | Select-String ":80\d\d " |
+                ForEach-Object { 
+                    $line = $_.Line
+                    if ($line -match ":(\d+)\s") {
+                        Write-Host $line
+                    }
+                }
+            
+            # 6. Check nginx upstream configuration
+            Write-Host "`n--- Nginx Upstream Configuration ---"
+            $nginxConf = "C:\Program Files\ONLYOFFICE\DocumentServer\nginx\conf\nginx.conf"
+            if (Test-Path $nginxConf) {
+                $content = Get-Content $nginxConf -Raw
+                
+                # Find upstream converter block
+                if ($content -match 'upstream\s+[\w-]*converter[\w-]*\s*\{([^}]+)\}') {
+                    Write-Host "Found upstream converter configuration:"
+                    Write-Host $matches[0]
+                }
+                
+                # Find location blocks for converter
+                Write-Host "`n--- Nginx Location Blocks for Converter ---"
+                $lines = Get-Content $nginxConf
+                for ($i = 0; $i -lt $lines.Count; $i++) {
+                    if ($lines[$i] -match 'location.*/.*[Cc]onvert') {
+                        Write-Host "`n$($lines[$i])"
+                        for ($j = 1; $j -le 8; $j++) {
+                            if (($i+$j) -lt $lines.Count -and $lines[$i+$j] -notmatch '^\s*location') {
+                                Write-Host $lines[$i+$j]
+                                if ($lines[$i+$j] -match '\}') { break }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            # 7. Try to directly access converter if it's running
+            Write-Host "`n--- Testing Direct Converter Access ---"
+            $ports = @(8000, 8001, 8002, 8003)
+            foreach ($port in $ports) {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://127.0.0.1:$port" -TimeoutSec 2 -UseBasicParsing
+                    Write-Host "✅ Port $port responds: HTTP $($response.StatusCode)"
+                } catch {
+                    # Port not responding, that's OK
+                }
+            }
+            
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
