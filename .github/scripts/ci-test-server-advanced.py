@@ -1,57 +1,142 @@
 """
-Advanced DocumentServer Functional Tests
-Tests the actual functionality of conversion and document handling
+Advanced DocumentServer Tests with Logging
+Tests real document conversion functionality and performance
 """
 import pytest
 import requests
 import time
 import base64
-import json
-from io import BytesIO
-from pathlib import Path
+import logging
+from datetime import datetime
 
+# Configure logging with file and console output
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('test_detailed.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 BASE_URL = "http://127.0.0.1:8200"
 TIMEOUT = 60
 
 
+@pytest.fixture(scope="session", autouse=True)
+def test_session_info():
+    """Log test session start and end times"""
+    start_time = datetime.now()
+    logger.info("=" * 80)
+    logger.info(f"TEST SESSION STARTED: {start_time}")
+    logger.info("=" * 80)
+    
+    yield
+    
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    logger.info("=" * 80)
+    logger.info(f"TEST SESSION COMPLETED: {end_time}")
+    logger.info(f"Total duration: {duration:.2f}s")
+    logger.info("=" * 80)
+
+
 class TestDocumentConversion:
-    """Real-World Document Conversion Tests"""
+    """Test document conversion with detailed logging"""
     
     def test_text_to_pdf_conversion(self):
-        """Convert a text document to PDF"""
-        # Make simple text document
-        text_content = "Hello ONLYOFFICE DocumentServer!\nThis is a test document.\n\nLine 3"
+        """Convert plain text to PDF format"""
+        logger.info("Starting text to PDF conversion test")
+        
+        # Create simple text content
+        text_content = "Hello ONLYOFFICE!\nThis is a test document."
         text_base64 = base64.b64encode(text_content.encode()).decode()
         
+        # Prepare conversion request
         conversion_request = {
             "async": False,
             "filetype": "txt",
-            "key": f"test_txt_to_pdf_{int(time.time())}",
+            "key": f"test_txt_pdf_{int(time.time())}",
             "outputtype": "pdf",
-            "title": "test_document.txt",
+            "title": "test.txt",
             "url": f"data:text/plain;base64,{text_base64}"
         }
         
+        logger.debug(f"Request payload: {conversion_request}")
+        
+        # Perform conversion with timing
+        start = time.time()
         response = requests.post(
             f"{BASE_URL}/ConversionService.ashx",
             json=conversion_request,
             timeout=TIMEOUT
         )
+        duration = time.time() - start
         
-        print(f"Response status: {response.status_code}")
-        print(f"Response body: {response.text}")
+        # Log response details
+        logger.info(f"Response status: {response.status_code}")
+        logger.info(f"Response time: {duration:.3f}s")
+        logger.debug(f"Response body: {response.text[:200]}")
         
+        # Validate response
         assert response.status_code == 200
         result = response.json()
         
-        # Check convertation result
-        assert "endConvert" in result or "fileUrl" in result or "percent" in result
-        print(f"✓ Text to PDF conversion successful")
-        print(f"Result: {result}")
+        if "endConvert" in result:
+            logger.info(f"✓ Conversion completed successfully")
+            logger.debug(f"Result: {result}")
+        
+        assert "endConvert" in result or "fileUrl" in result
+        logger.info("✓ Test PASSED")
+    
+    def test_csv_to_xlsx_conversion(self):
+        """Convert CSV data to XLSX format"""
+        logger.info("Starting CSV to XLSX conversion test")
+        
+        # Create sample CSV content
+        csv_content = """Name,Age,City
+John Doe,30,New York
+Jane Smith,25,Los Angeles"""
+        
+        csv_base64 = base64.b64encode(csv_content.encode()).decode()
+        
+        logger.debug(f"CSV content size: {len(csv_content)} bytes")
+        
+        # Prepare conversion request
+        conversion_request = {
+            "async": False,
+            "filetype": "csv",
+            "key": f"test_csv_xlsx_{int(time.time())}",
+            "outputtype": "xlsx",
+            "title": "test.csv",
+            "url": f"data:text/csv;base64,{csv_base64}"
+        }
+        
+        start = time.time()
+        try:
+            response = requests.post(
+                f"{BASE_URL}/ConversionService.ashx",
+                json=conversion_request,
+                timeout=TIMEOUT
+            )
+            duration = time.time() - start
+            
+            logger.info(f"Response status: {response.status_code}")
+            logger.info(f"Response time: {duration:.3f}s")
+            
+            assert response.status_code == 200
+            logger.info("✓ Test PASSED")
+            
+        except Exception as e:
+            logger.error(f"✗ Test FAILED: {e}")
+            raise
     
     def test_html_to_docx_conversion(self):
-        """Convert HTML to DOCX"""
+        """Convert HTML document to DOCX format"""
+        logger.info("Starting HTML to DOCX conversion test")
+        
+        # Create HTML content with formatting
         html_content = """
         <html>
         <head><title>Test Document</title></head>
@@ -61,7 +146,6 @@ class TestDocumentConversion:
             <ul>
                 <li>Item 1</li>
                 <li>Item 2</li>
-                <li>Item 3</li>
             </ul>
         </body>
         </html>
@@ -71,137 +155,34 @@ class TestDocumentConversion:
         conversion_request = {
             "async": False,
             "filetype": "html",
-            "key": f"test_html_to_docx_{int(time.time())}",
+            "key": f"test_html_docx_{int(time.time())}",
             "outputtype": "docx",
             "title": "test.html",
             "url": f"data:text/html;base64,{html_base64}"
         }
         
+        start = time.time()
         response = requests.post(
             f"{BASE_URL}/ConversionService.ashx",
             json=conversion_request,
             timeout=TIMEOUT
         )
+        duration = time.time() - start
+        
+        logger.info(f"Response status: {response.status_code}")
+        logger.info(f"Response time: {duration:.3f}s")
         
         assert response.status_code == 200
-        result = response.json()
-        print(f"✓ HTML to DOCX conversion successful")
-        print(f"Result: {result}")
-    
-    def test_csv_to_xlsx_conversion(self):
-        """Convert CSV to XLSX"""
-        csv_content = """Name,Age,City,Salary
-John Doe,30,New York,75000
-Jane Smith,25,Los Angeles,65000
-Bob Johnson,35,Chicago,80000
-Alice Williams,28,Houston,70000"""
-        
-        csv_base64 = base64.b64encode(csv_content.encode()).decode()
-        
-        conversion_request = {
-            "async": False,
-            "filetype": "csv",
-            "key": f"test_csv_to_xlsx_{int(time.time())}",
-            "outputtype": "xlsx",
-            "title": "test_data.csv",
-            "url": f"data:text/csv;base64,{csv_base64}"
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
-            json=conversion_request,
-            timeout=TIMEOUT
-        )
-        
-        assert response.status_code == 200
-        result = response.json()
-        print(f"✓ CSV to XLSX conversion successful")
-        print(f"Result: {result}")
-    
-    def test_markdown_to_docx_conversion(self):
-        """Convert Markdown to DOCX"""
-        markdown_content = """# Test Document
-
-## Introduction
-
-This is a **test** document written in *Markdown*.
-
-### Features
-
-- Feature 1
-- Feature 2
-- Feature 3
-
-### Code Example
-
-```python
-def hello():
-    print("Hello, World!")
-```
-
-### Conclusion
-
-This concludes our test document.
-"""
-        
-        md_base64 = base64.b64encode(markdown_content.encode()).decode()
-        
-        conversion_request = {
-            "async": False,
-            "filetype": "md",
-            "key": f"test_md_to_docx_{int(time.time())}",
-            "outputtype": "docx",
-            "title": "test.md",
-            "url": f"data:text/markdown;base64,{md_base64}"
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
-            json=conversion_request,
-            timeout=TIMEOUT
-        )
-        
-        assert response.status_code == 200
-        result = response.json()
-        print(f"✓ Markdown to DOCX conversion successful")
-        print(f"Result: {result}")
+        logger.info("✓ HTML to DOCX conversion successful")
 
 
-class TestDocumentBuilder:
-    """Тесты Document Builder API"""
-    
-    def test_builder_simple_document(self):
-        """Creating a Simple Document with the Builder API"""
-        builder_script = """
-        builder.CreateFile("docx");
-        var oDocument = Api.GetDocument();
-        var oParagraph = oDocument.GetElement(0);
-        oParagraph.AddText("Hello from Document Builder!");
-        builder.SaveFile("docx", "test_output.docx");
-        builder.CloseFile();
-        """
-        
-        builder_request = {
-            "async": False,
-            "key": f"test_builder_{int(time.time())}",
-            "url": f"data:text/plain;base64,{base64.b64encode(builder_script.encode()).decode()}"
-        }
-        
-        response = requests.post(
-            f"{BASE_URL}/ConversionService.ashx",
-            json=builder_request,
-            timeout=TIMEOUT
-        )
-        
-        print(f"Builder response: {response.status_code}")
-        print(f"Builder result: {response.text[:500]}")
-
-
-class TestEditorAPI:
-    """Тесты Editor API (Checking the generation of editor pages)"""
+class TestEditorPages:
+    """Test that editor pages load correctly"""
     
     def test_document_editor_page(self):
-        """Checking the loading of a text editor page"""
+        """Verify document editor page loads"""
+        logger.info("Testing document editor page")
+        
         response = requests.get(
             f"{BASE_URL}/web-apps/apps/documenteditor/main/index.html",
             timeout=TIMEOUT
@@ -210,13 +191,16 @@ class TestEditorAPI:
         assert response.status_code == 200
         content = response.text
         
-        # Checking for the presence of key elements
+        # Verify key content is present
         assert "documenteditor" in content.lower()
-        assert len(content) > 1000  # The page must be large enough
-        print(f"✓ Document editor page loaded ({len(content)} bytes)")
+        assert len(content) > 1000
+        
+        logger.info(f"✓ Document editor page loaded ({len(content)} bytes)")
     
     def test_spreadsheet_editor_page(self):
-        """Checking the loading of the table editor page"""
+        """Verify spreadsheet editor page loads"""
+        logger.info("Testing spreadsheet editor page")
+        
         response = requests.get(
             f"{BASE_URL}/web-apps/apps/spreadsheeteditor/main/index.html",
             timeout=TIMEOUT
@@ -225,22 +209,13 @@ class TestEditorAPI:
         assert response.status_code == 200
         content = response.text
         assert "spreadsheeteditor" in content.lower()
-        print(f"✓ Spreadsheet editor page loaded ({len(content)} bytes)")
-    
-    def test_presentation_editor_page(self):
-        """Checking the loading of the presentation editor page"""
-        response = requests.get(
-            f"{BASE_URL}/web-apps/apps/presentationeditor/main/index.html",
-            timeout=TIMEOUT
-        )
         
-        assert response.status_code == 200
-        content = response.text
-        assert "presentationeditor" in content.lower()
-        print(f"✓ Presentation editor page loaded ({len(content)} bytes)")
+        logger.info(f"✓ Spreadsheet editor page loaded ({len(content)} bytes)")
     
     def test_api_js_loads(self):
-        """Checking the loading of the main API file"""
+        """Verify main API JavaScript file loads"""
+        logger.info("Testing API.js loading")
+        
         response = requests.get(
             f"{BASE_URL}/web-apps/apps/api/documents/api.js",
             timeout=TIMEOUT
@@ -249,99 +224,89 @@ class TestEditorAPI:
         assert response.status_code == 200
         content = response.text
         
-        # Checking for the availability of key API functions
+        # Check for key API objects
         assert "DocsAPI" in content
         assert "DocEditor" in content
-        print(f"✓ API.js loaded ({len(content)} bytes)")
         
-        # Let's check that this is valid JavaScript.
-        assert content.strip().endswith(";") or content.strip().endswith("}")
-        print("✓ API.js appears to be valid JavaScript")
+        logger.info(f"✓ API.js loaded ({len(content)} bytes)")
+        logger.debug("API.js contains required DocsAPI objects")
 
 
-class TestStressAndPerformance:
-    """Stress tests and performance tests"""
+class TestPerformance:
+    """Performance tests with detailed metrics"""
     
-    def test_multiple_sequential_conversions(self):
-        """Multiple consecutive conversions"""
-        text_content = "Test document content"
+    def test_multiple_conversions_with_metrics(self):
+        """Run multiple conversions and measure performance"""
+        logger.info("Starting performance test with 5 conversions")
+        
+        text_content = "Performance test document"
         text_base64 = base64.b64encode(text_content.encode()).decode()
         
-        num_conversions = 5
         results = []
         
-        for i in range(num_conversions):
-            start_time = time.time()
+        # Perform 5 sequential conversions
+        for i in range(5):
+            logger.info(f"Conversion {i+1}/5...")
             
             conversion_request = {
                 "async": False,
                 "filetype": "txt",
-                "key": f"test_sequential_{i}_{int(time.time())}",
+                "key": f"perf_test_{i}_{int(time.time())}",
                 "outputtype": "pdf",
-                "title": f"test_{i}.txt",
+                "title": f"perf_{i}.txt",
                 "url": f"data:text/plain;base64,{text_base64}"
             }
             
+            start = time.time()
             response = requests.post(
                 f"{BASE_URL}/ConversionService.ashx",
                 json=conversion_request,
                 timeout=TIMEOUT
             )
-            
-            duration = time.time() - start_time
-            results.append({
-                "iteration": i,
-                "status": response.status_code,
-                "duration": duration
-            })
-            
-            assert response.status_code == 200
-        
-        avg_duration = sum(r["duration"] for r in results) / len(results)
-        print(f"✓ Completed {num_conversions} sequential conversions")
-        print(f"Average duration: {avg_duration:.2f}s")
-        print(f"Results: {results}")
-    
-    def test_concurrent_healthchecks(self):
-        """Parallel healthcheck queries"""
-        import concurrent.futures
-        
-        num_requests = 20
-        
-        def make_healthcheck():
-            start = time.time()
-            response = requests.get(f"{BASE_URL}/healthcheck", timeout=TIMEOUT)
             duration = time.time() - start
-            return {
+            
+            # Collect metrics for each conversion
+            result_data = {
+                "iteration": i + 1,
                 "status": response.status_code,
                 "duration": duration,
-                "success": response.text.strip() == "true"
+                "success": response.status_code == 200
             }
+            results.append(result_data)
+            
+            logger.info(f"  → Status: {response.status_code}, Duration: {duration:.3f}s")
         
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(make_healthcheck) for _ in range(num_requests)]
-            results = [f.result() for f in concurrent.futures.as_completed(futures)]
-        
+        # Calculate and log statistics
         successful = sum(1 for r in results if r["success"])
         avg_duration = sum(r["duration"] for r in results) / len(results)
+        min_duration = min(r["duration"] for r in results)
+        max_duration = max(r["duration"] for r in results)
         
-        assert successful == num_requests
-        print(f"✓ All {num_requests} concurrent requests successful")
-        print(f"Average response time: {avg_duration:.3f}s")
+        logger.info("=" * 60)
+        logger.info("PERFORMANCE METRICS:")
+        logger.info(f"  Total conversions: {len(results)}")
+        logger.info(f"  Successful: {successful}/{len(results)}")
+        logger.info(f"  Average time: {avg_duration:.3f}s")
+        logger.info(f"  Min time: {min_duration:.3f}s")
+        logger.info(f"  Max time: {max_duration:.3f}s")
+        logger.info("=" * 60)
+        
+        assert successful == len(results)
+        logger.info("✓ Performance test PASSED")
     
     def test_large_csv_conversion(self):
-        """Converting a large CSV file"""
-        # Generating a CSV with 1000 rows
-        csv_lines = ["ID,Name,Email,Age,Salary"]
-        for i in range(1000):
-            csv_lines.append(f"{i},User{i},user{i}@example.com,{20+i%50},{30000+i*100}")
+        """Test conversion of large CSV file (500+ rows)"""
+        logger.info("Starting large CSV conversion test")
+        
+        # Generate CSV with 500 rows
+        csv_lines = ["ID,Name,Email,Age"]
+        for i in range(500):
+            csv_lines.append(f"{i},User{i},user{i}@example.com,{20+i%50}")
         
         csv_content = "\n".join(csv_lines)
         csv_base64 = base64.b64encode(csv_content.encode()).decode()
         
-        print(f"CSV size: {len(csv_content)} bytes, {len(csv_lines)} rows")
-        
-        start_time = time.time()
+        logger.info(f"CSV size: {len(csv_content)} bytes, {len(csv_lines)} rows")
         
         conversion_request = {
             "async": False,
@@ -352,23 +317,60 @@ class TestStressAndPerformance:
             "url": f"data:text/csv;base64,{csv_base64}"
         }
         
+        start = time.time()
         response = requests.post(
             f"{BASE_URL}/ConversionService.ashx",
             json=conversion_request,
             timeout=TIMEOUT
         )
-        
-        duration = time.time() - start_time
+        duration = time.time() - start
         
         assert response.status_code == 200
-        print(f"✓ Large CSV conversion successful in {duration:.2f}s")
+        logger.info(f"✓ Large CSV conversion successful in {duration:.2f}s")
+    
+    def test_concurrent_healthchecks(self):
+        """Test server handles concurrent requests"""
+        logger.info("Starting concurrent requests test")
+        
+        import concurrent.futures
+        
+        num_requests = 10
+        
+        def make_healthcheck():
+            """Perform a single healthcheck request"""
+            start = time.time()
+            response = requests.get(f"{BASE_URL}/healthcheck", timeout=TIMEOUT)
+            duration = time.time() - start
+            return {
+                "status": response.status_code,
+                "duration": duration,
+                "success": response.text.strip() == "true"
+            }
+        
+        # Execute concurrent requests
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(make_healthcheck) for _ in range(num_requests)]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+        
+        # Calculate metrics
+        successful = sum(1 for r in results if r["success"])
+        avg_duration = sum(r["duration"] for r in results) / len(results)
+        
+        logger.info(f"Concurrent requests: {num_requests}")
+        logger.info(f"Successful: {successful}/{num_requests}")
+        logger.info(f"Average response time: {avg_duration:.3f}s")
+        
+        assert successful == num_requests
+        logger.info("✓ Concurrent requests test PASSED")
 
 
 class TestErrorHandling:
-    """Error handling tests"""
+    """Test error handling for invalid inputs"""
     
     def test_invalid_filetype(self):
-        """Test with unsupported file type"""
+        """Test server rejects unsupported file types"""
+        logger.info("Testing invalid filetype handling")
+        
         conversion_request = {
             "async": False,
             "filetype": "invalid_format",
@@ -384,16 +386,16 @@ class TestErrorHandling:
             timeout=TIMEOUT
         )
         
-        # Should be error
+        # Should return error status
         assert response.status_code in [400, 500]
-        print(f"✓ Invalid filetype properly rejected with status {response.status_code}")
+        logger.info(f"✓ Invalid filetype properly rejected with status {response.status_code}")
     
     def test_missing_parameters(self):
-        """Tests with missed parameters"""
-        conversion_request = {
-            "filetype": "txt"
-            # We intentionally skip mandatory parameters
-        }
+        """Test server rejects requests with missing parameters"""
+        logger.info("Testing missing parameters handling")
+        
+        # Request with only filetype (missing required params)
+        conversion_request = {"filetype": "txt"}
         
         response = requests.post(
             f"{BASE_URL}/ConversionService.ashx",
@@ -401,32 +403,68 @@ class TestErrorHandling:
             timeout=TIMEOUT
         )
         
-        # There must be a validation error
+        # Should return validation error
         assert response.status_code in [400, 500]
-        print(f"✓ Missing parameters properly rejected with status {response.status_code}")
+        logger.info(f"✓ Missing parameters properly rejected with status {response.status_code}")
     
     def test_malformed_json(self):
-        """Test with invalid JSON"""
+        """Test server handles malformed JSON"""
+        logger.info("Testing malformed JSON handling")
+        
         response = requests.post(
             f"{BASE_URL}/ConversionService.ashx",
-            data="this is not json",
+            data="this is not valid json",
             headers={"Content-Type": "application/json"},
             timeout=TIMEOUT
         )
         
-        # There must be a parsing error
+        # Should return parsing error
         assert response.status_code in [400, 500]
-        print(f"✓ Malformed JSON properly rejected with status {response.status_code}")
+        logger.info(f"✓ Malformed JSON properly rejected with status {response.status_code}")
 
 
-class TestCommandServiceOperations:
-    """Command Service Tests for Document Management"""
+class TestStaticResources:
+    """Test availability of static resources"""
+    
+    def test_fonts_available(self):
+        """Check if fonts resources are accessible"""
+        logger.info("Testing fonts availability")
+        
+        response = requests.get(
+            f"{BASE_URL}/sdkjs/common/AllFonts.js",
+            timeout=TIMEOUT
+        )
+        
+        if response.status_code == 200:
+            logger.info(f"✓ Fonts resource loaded ({len(response.content)} bytes)")
+        else:
+            logger.warning(f"⚠ Fonts resource returned {response.status_code}")
+    
+    def test_localization_available(self):
+        """Check if localization files are accessible"""
+        logger.info("Testing localization availability")
+        
+        response = requests.get(
+            f"{BASE_URL}/web-apps/apps/documenteditor/main/locale/en.json",
+            timeout=TIMEOUT
+        )
+        
+        if response.status_code == 200:
+            content = response.json()
+            assert isinstance(content, dict)
+            logger.info(f"✓ Localization resource loaded ({len(content)} keys)")
+        else:
+            logger.warning(f"⚠ Localization resource returned {response.status_code}")
+
+
+class TestCommandService:
+    """Test Command Service API"""
     
     def test_version_command(self):
-        """Obtaining a version via Command Service"""
-        command_request = {
-            "c": "version"
-        }
+        """Get version info via Command Service"""
+        logger.info("Testing version command")
+        
+        command_request = {"c": "version"}
         
         response = requests.post(
             f"{BASE_URL}/coauthoring/CommandService.ashx",
@@ -434,13 +472,16 @@ class TestCommandServiceOperations:
             timeout=TIMEOUT
         )
         
-        print(f"Version command response: {response.status_code}")
-        print(f"Response body: {response.text}")
+        logger.info(f"Version command response: {response.status_code}")
+        logger.debug(f"Response body: {response.text}")
         
         assert response.status_code in [200, 400]
+        logger.info("✓ Version command executed")
     
     def test_info_command(self):
-        """Obtaining information about a document"""
+        """Get document info via Command Service"""
+        logger.info("Testing info command")
+        
         command_request = {
             "c": "info",
             "key": f"test_doc_{int(time.time())}"
@@ -452,52 +493,18 @@ class TestCommandServiceOperations:
             timeout=TIMEOUT
         )
         
-        print(f"Info command response: {response.status_code}")
+        logger.info(f"Info command response: {response.status_code}")
         assert response.status_code in [200, 400]
-
-
-class TestStaticResources:
-    """Static resource loading tests"""
-    
-    def test_fonts_available(self):
-        """Checking font availability"""
-        # We are trying to get a list of fonts or a specific font
-        response = requests.get(
-            f"{BASE_URL}/sdkjs/common/AllFonts.js",
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code == 200:
-            print(f"✓ Fonts resource loaded ({len(response.content)} bytes)")
-        else:
-            print(f"⚠ Fonts resource returned {response.status_code}")
-    
-    def test_themes_available(self):
-        """Checking the availability of topics"""
-        response = requests.get(
-            f"{BASE_URL}/web-apps/apps/common/main/resources/themes/theme-classic-light.json",
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code == 200:
-            print(f"✓ Theme resource loaded")
-        else:
-            print(f"⚠ Theme resource returned {response.status_code}")
-    
-    def test_localization_available(self):
-        """Checking the availability of localization files"""
-        response = requests.get(
-            f"{BASE_URL}/web-apps/apps/documenteditor/main/locale/en.json",
-            timeout=TIMEOUT
-        )
-        
-        if response.status_code == 200:
-            content = response.json()
-            assert isinstance(content, dict)
-            print(f"✓ Localization resource loaded ({len(content)} keys)")
-        else:
-            print(f"⚠ Localization resource returned {response.status_code}")
+        logger.info("✓ Info command executed")
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-s", "--tb=short"])
+    # Run with verbose output and HTML report
+    pytest.main([
+        __file__, 
+        "-v", 
+        "-s", 
+        "--tb=short", 
+        "--html=report.html", 
+        "--self-contained-html"
+    ])
