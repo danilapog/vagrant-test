@@ -62,6 +62,9 @@ jobs:
       matrix:
         edition: ${{ fromJSON(needs.prepare.outputs.windows-server-packages) }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Init env
         shell: pwsh
         run: |
