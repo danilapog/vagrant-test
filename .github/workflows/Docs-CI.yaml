@@ -1,4 +1,4 @@
-name: Docs CI Windows
+name: "Docs-CI (install/test) (Windows/Mac)"
 
 run-name: >-
     Docs CI Test [Build #${{ inputs.build }} 
