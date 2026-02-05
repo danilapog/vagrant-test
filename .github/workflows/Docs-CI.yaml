@@ -193,6 +193,58 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
+      - name: Run Advanced Functional Tests
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          # Install pytest plugins for better reporting
+          pip install pytest-html pytest-json-report
+          
+          Write-Host "`n=== Running Advanced Functional Tests ===`n"
+          
+          # Run tests with multiple output formats
+          python -m pytest test_server_advanced.py `
+            -v `
+            -s `
+            --tb=short `
+            --html=test_report_advanced.html `
+            --self-contained-html `
+            --json-report `
+            --json-report-file=test_report_advanced.json `
+            --junit-xml=test_report_advanced.xml `
+            2>&1 | Tee-Object -FilePath test_output_advanced.log
+          
+          # Store exit code for later use
+          $test_exit_code = $LASTEXITCODE
+          
+          Write-Host "`n=== Test Summary ===`n"
+          if ($test_exit_code -eq 0) {
+            Write-Host "✅ All tests passed!" -ForegroundColor Green
+          } else {
+            Write-Host "⚠️ Some tests failed (exit code: $test_exit_code)" -ForegroundColor Yellow
+          }
+          
+          # Display test statistics from JSON report
+          if (Test-Path "test_report_advanced.json") {
+            $json = Get-Content "test_report_advanced.json" | ConvertFrom-Json
+            Write-Host "Total tests: $($json.summary.total)"
+            Write-Host "Passed: $($json.summary.passed)" -ForegroundColor Green
+            Write-Host "Failed: $($json.summary.failed)" -ForegroundColor Red
+            Write-Host "Duration: $($json.duration)s"
+          }
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-advanced-test-reports-${{ matrix.edition }}
+          path: |
+            test_report_advanced.html
+            test_report_advanced.json
+            test_report_advanced.xml
+            test_output_advanced.log
+            test_server_advanced.py
+            
       - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
