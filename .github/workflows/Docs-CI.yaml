@@ -196,64 +196,45 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
-      - name: Detailed Diagnostic
+      - name: Check FileConverter Structure
         shell: pwsh
         run: |
-            Write-Host "`n=== DETAILED DIAGNOSTIC ===`n"
+            Write-Host "`n=== Checking FileConverter ===`n"
             
-            # Check if FileConverter exists
-            Write-Host "--- Checking FileConverter folder ---"
-            if (Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer\FileConverter") {
-                Write-Host "✅ FileConverter folder EXISTS"
-                ls "C:\Program Files\ONLYOFFICE\DocumentServer\FileConverter"
-            } else {
-                Write-Host "❌ FileConverter folder NOT FOUND"
-            }
+            $basePath = "C:\Program Files\ONLYOFFICE\DocumentServer"
+            $converterPath = "$basePath\server\FileConverter"
             
-            # Check server structure
-            Write-Host "`n--- DocumentServer folder structure ---"
-            ls "C:\Program Files\ONLYOFFICE\DocumentServer" | Select-Object Name
-            
-            # Check info.json
-            Write-Host "`n--- Server Info ---"
-            try {
-                $info = Invoke-WebRequest -Uri "http://127.0.0.1:8200/info/info.json" -UseBasicParsing | ConvertFrom-Json
-                Write-Host "Version: $($info.version)"
-                Write-Host "Build: $($info.buildNumber)"
-                Write-Host "Edition: $($info.edition)"
-                if ($info.PSObject.Properties.Name -contains 'jwsEnabled') {
-                    Write-Host "JWT Enabled: $($info.jwsEnabled)"
+            if (Test-Path $converterPath) {
+                Write-Host "✅ FileConverter folder EXISTS at: $converterPath`n"
+                
+                Write-Host "--- FileConverter contents ---"
+                ls $converterPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+                
+                Write-Host "`n--- Looking for x2t.exe ---"
+                $x2t = Get-ChildItem -Path $converterPath -Recurse -Filter "x2t.exe" -ErrorAction SilentlyContinue
+                if ($x2t) {
+                    Write-Host "✅ Found x2t.exe at: $($x2t.FullName)"
+                    Write-Host "   Size: $($x2t.Length) bytes"
+                    Write-Host "   Version: $((Get-Item $x2t.FullName).VersionInfo.FileVersion)"
+                } else {
+                    Write-Host "❌ x2t.exe NOT FOUND"
                 }
-            } catch {
-                Write-Host "Could not get info: $_"
+                
+                Write-Host "`n--- Looking for converter executable ---"
+                $converter = Get-ChildItem -Path $converterPath -Recurse -Filter "converter.exe" -ErrorAction SilentlyContinue
+                if ($converter) {
+                    Write-Host "✅ Found converter.exe at: $($converter.FullName)"
+                }
+                
+            } else {
+                Write-Host "❌ FileConverter folder NOT FOUND at: $converterPath"
+                
+                Write-Host "`n--- Checking server folder ---"
+                $serverPath = "$basePath\server"
+                if (Test-Path $serverPath) {
+                    ls $serverPath | Select-Object Name | Format-Table -AutoSize
+                }
             }
-            
-            # Test conversion endpoints
-            Write-Host "`n--- Testing Conversion Endpoints ---"
-            
-            @'
-            import requests
-            BASE_URL = "http://127.0.0.1:8200"
-            
-            endpoints = [
-                "/ConversionService.ashx",
-                "/conversionservice.ashx",
-                "/converter",
-                "/FileConverter.ashx",
-                "/FileConverterService.ashx"
-            ]
-            
-            for endpoint in endpoints:
-                try:
-                    r = requests.post(f"{BASE_URL}{endpoint}", json={}, timeout=5)
-                    print(f"{endpoint:35} -> {r.status_code}")
-                    if r.status_code != 404:
-                        print(f"  Response: {r.text[:100]}")
-                except Exception as e:
-                    print(f"{endpoint:35} -> ERROR: {str(e)[:50]}")
-            '@ | Out-File -FilePath test_endpoints.py -Encoding utf8
-            
-            python test_endpoints.py
     
       - name: Install test dependencies
         run: |
