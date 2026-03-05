@@ -83,35 +83,9 @@ jobs:
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
         run: |
-          # Mask the token in logs
-          Write-Host "::add-mask::$env:GITEA_TOKEN"
+          # Clone with token
+          git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
           
-          # Use git credential helper
-          git config --global credential.helper store
-          
-          # Store credentials securely
-          $credContent = "https://${env:GITEA_TOKEN}@git.onlyoffice.com"
-          $credFile = "$env:USERPROFILE\.git-credentials"
-          $credContent | Out-File -FilePath $credFile -Encoding ASCII -NoNewline
-      
-      - name: Clone Repository
-        shell: pwsh
-        run: |
-          # Clone without any output
-          $ErrorActionPreference = 'Stop'
-          
-          try {
-              # Redirect all output to null
-              git clone https://git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git dep-tests *>&1 | Out-Null
-              
-              if (!(Test-Path "dep-tests")) {
-                  throw "Clone failed"
-              }
-          } catch {
-              Write-Error "Repository access failed"
-              exit 1
-          }
-      
       - name: Initialize Submodules
         shell: pwsh
         working-directory: dep-tests
