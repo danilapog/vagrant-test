@@ -211,17 +211,6 @@ jobs:
             git config --global url."https://${{ secrets.MY_TOKEN }}@github.com/".insteadOf "https://github.com/"
             git submodule update --init
           
-      - name: Initialize Submodules
-        shell: pwsh
-        working-directory: dep-tests
-        continue-on-error: true
-        run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          
-          if (Test-Path ".gitmodules") {
-              git submodule update --init --recursive *>&1 | Out-Null
-          }
-      
       - name: Verify Structure
         shell: pwsh
         run: |
