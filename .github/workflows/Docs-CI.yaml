@@ -203,6 +203,13 @@ jobs:
         run: |
           # Clone with token
           git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
+
+      - name: Initialize Submodules
+        shell: pwsh
+        working-directory: dep-tests
+        run: |
+            git config --global url."https://${{ secrets.MY_TOKEN }}@github.com/".insteadOf "https://github.com/"
+            git submodule update --init
           
       - name: Initialize Submodules
         shell: pwsh
