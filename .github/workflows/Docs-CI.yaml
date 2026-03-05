@@ -253,59 +253,16 @@ jobs:
         with:
           chrome-version: 120
       
-      - name: Configure Tests
-        shell: pwsh
-        run: |
-          # Create config without showing contents
-          @{
-              testOptions = @{
-                  url = "http://127.0.0.1:8200"
-                  urlParam = @('action={"debug":false}')
-                  messageType = @("error")
-                  userDelay = 0
-                  cacheEnabled = $true
-                  disableTooltips = $true
-                  logEvents = $false
-              }
-              puppeteerOptions = @{
-                  browser = "chrome"
-                  headless = $true
-                  slowMo = 0
-                  protocolTimeout = 300000
-                  defaultViewport = @{
-                      height = 600
-                      width = 1000
-                      deviceScaleFactor = 0
-                  }
-              }
-              reportOptions = @{
-                  ignoreBrowserErrors = @("Failed to load resource")
-                  ignoreExternalScriptsErrors = @()
-              }
-              runOptions = @{
-                  disableAnimation = $false
-              }
-              resourceServer = @{
-                  port = 3000
-                  resourcePath = "resources"
-              }
-              provider = ""
-          } | ConvertTo-Json -Depth 10 | Out-File "dep-tests/puppeteer/config_ci.json" -Encoding UTF8
-      
       - name: Execute Tests
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
         continue-on-error: true
         timeout-minutes: 30
         run: |
-          # Run tests with minimal output
-          # Adjust test path as needed:
-          # python run.py tests/smoke --config ../config_ci.json --threads 2 2>&1 | Out-Null
-          
-          # For now just validate setup
-          if (!(Test-Path "../config_ci.json")) {
-              Write-Error "Config not found"
-              exit 1
+          python run.py tests/smoke `
+            --config config_chrome_win.json `
+            --config_params "testOptions.url=http://127.0.0.1:8200" `
+            --threads 2
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
