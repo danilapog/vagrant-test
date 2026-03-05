@@ -52,7 +52,7 @@ jobs:
     needs: prepare
     name: "Server-win-${{ matrix.edition }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
     if: ${{ needs.prepare.outputs.windows-server-packages != '' }}
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       VERSION: ${{ github.event.inputs.version }}
       BUILD: ${{ github.event.inputs.build }}
