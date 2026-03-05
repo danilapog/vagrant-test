@@ -196,6 +196,13 @@ jobs:
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
 
+      - name: Start Example Service
+        shell: pwsh
+        run: |
+           Start-Service -Name "DsExampleSvc"
+           Start-Sleep -Seconds 5
+           Get-Service -Name "DsExampleSvc"
+    
       - name: Setup Git Credentials
         shell: pwsh
         env:
