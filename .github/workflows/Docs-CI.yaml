@@ -76,43 +76,6 @@ jobs:
           echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
-
-      #### puppeter test ############
-      - name: Setup Git Credentials
-        shell: pwsh
-        env:
-          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
-        run: |
-          # Clone with token
-          git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
-          
-      - name: Initialize Submodules
-        shell: pwsh
-        working-directory: dep-tests
-        continue-on-error: true
-        run: |
-          $ErrorActionPreference = 'SilentlyContinue'
-          
-          if (Test-Path ".gitmodules") {
-              git submodule update --init --recursive *>&1 | Out-Null
-          }
-      
-      - name: Verify Structure
-        shell: pwsh
-        run: |
-          # Only verify, no details
-          $required = @(
-              "dep-tests/puppeteer/engine/package.json",
-              "dep-tests/puppeteer/engine/run.py"
-          )
-          
-          foreach ($file in $required) {
-              if (!(Test-Path $file)) {
-                  Write-Error "Setup incomplete"
-                  exit 1
-              }
-          }
-      #########################################
       
       - uses: ikalnytskyi/action-setup-postgres@v8
         with:
@@ -232,6 +195,117 @@ jobs:
         
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
+
+      - name: Setup Git Credentials
+        shell: pwsh
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          # Clone with token
+          git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
+          
+      - name: Initialize Submodules
+        shell: pwsh
+        working-directory: dep-tests
+        continue-on-error: true
+        run: |
+          $ErrorActionPreference = 'SilentlyContinue'
+          
+          if (Test-Path ".gitmodules") {
+              git submodule update --init --recursive *>&1 | Out-Null
+          }
+      
+      - name: Verify Structure
+        shell: pwsh
+        run: |
+          # Only verify, no details
+          $required = @(
+              "dep-tests/puppeteer/engine/package.json",
+              "dep-tests/puppeteer/engine/run.py"
+          )
+          
+          foreach ($file in $required) {
+              if (!(Test-Path $file)) {
+                  Write-Error "Setup incomplete"
+                  exit 1
+              }
+          }
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Dependencies
+        shell: pwsh
+        working-directory: dep-tests/puppeteer/engine
+        run: |
+          # Silent install
+          npm install --silent --no-progress 2>&1 | Out-Null
+          
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Dependency installation failed"
+              exit 1
+          }
+      
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: 120
+      
+      - name: Configure Tests
+        shell: pwsh
+        run: |
+          # Create config without showing contents
+          @{
+              testOptions = @{
+                  url = "http://127.0.0.1:8200"
+                  urlParam = @('action={"debug":false}')
+                  messageType = @("error")
+                  userDelay = 0
+                  cacheEnabled = $true
+                  disableTooltips = $true
+                  logEvents = $false
+              }
+              puppeteerOptions = @{
+                  browser = "chrome"
+                  headless = $true
+                  slowMo = 0
+                  protocolTimeout = 300000
+                  defaultViewport = @{
+                      height = 600
+                      width = 1000
+                      deviceScaleFactor = 0
+                  }
+              }
+              reportOptions = @{
+                  ignoreBrowserErrors = @("Failed to load resource")
+                  ignoreExternalScriptsErrors = @()
+              }
+              runOptions = @{
+                  disableAnimation = $false
+              }
+              resourceServer = @{
+                  port = 3000
+                  resourcePath = "resources"
+              }
+              provider = ""
+          } | ConvertTo-Json -Depth 10 | Out-File "dep-tests/puppeteer/config_ci.json" -Encoding UTF8
+      
+      - name: Execute Tests
+        shell: pwsh
+        working-directory: dep-tests/puppeteer/engine
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          # Run tests with minimal output
+          # Adjust test path as needed:
+          # python run.py tests/smoke --config ../config_ci.json --threads 2 2>&1 | Out-Null
+          
+          # For now just validate setup
+          if (!(Test-Path "../config_ci.json")) {
+              Write-Error "Config not found"
+              exit 1
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
