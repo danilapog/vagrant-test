@@ -253,7 +253,6 @@ jobs:
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
         continue-on-error: true
-        timeout-minutes: 30
         run: |
             python run.py `
               --config config_chrome_win.json `
