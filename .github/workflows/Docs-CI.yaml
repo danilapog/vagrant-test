@@ -257,7 +257,7 @@ jobs:
             python run.py `
               --config config_chrome_win.json `
               --config_params "runOptions.disableAnimation=true" `
-              --config_params "testOptions.url=http://127.0.0.1:8200" `
+              --config_params "testOptions.url=http://127.0.0.1:8200/example" `
               --threads 4 *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -FilePath "../test-output.log"
 
       - name: Upload test results
