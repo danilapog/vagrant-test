@@ -78,21 +78,66 @@ jobs:
           echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
 
       #### puppeter test ############
-      - name: Clone Private Gitea Repository (with PAT)
+      - name: Setup Git Credentials
         shell: pwsh
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
         run: |
-          # Clone with token
-          git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
+          # Mask the token in logs
+          Write-Host "::add-mask::$env:GITEA_TOKEN"
           
-          cd dep-tests/puppeteer
-          git submodule update --init files 2>&1 | Out-Null
-
-      - name: Setup Node.js for Puppeteer
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+          # Use git credential helper
+          git config --global credential.helper store
+          
+          # Store credentials securely
+          $credContent = "https://${env:GITEA_TOKEN}@git.onlyoffice.com"
+          $credFile = "$env:USERPROFILE\.git-credentials"
+          $credContent | Out-File -FilePath $credFile -Encoding ASCII -NoNewline
+      
+      - name: Clone Repository
+        shell: pwsh
+        run: |
+          # Clone without any output
+          $ErrorActionPreference = 'Stop'
+          
+          try {
+              # Redirect all output to null
+              git clone https://git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git dep-tests *>&1 | Out-Null
+              
+              if (!(Test-Path "dep-tests")) {
+                  throw "Clone failed"
+              }
+          } catch {
+              Write-Error "Repository access failed"
+              exit 1
+          }
+      
+      - name: Initialize Submodules
+        shell: pwsh
+        working-directory: dep-tests
+        continue-on-error: true
+        run: |
+          $ErrorActionPreference = 'SilentlyContinue'
+          
+          if (Test-Path ".gitmodules") {
+              git submodule update --init --recursive *>&1 | Out-Null
+          }
+      
+      - name: Verify Structure
+        shell: pwsh
+        run: |
+          # Only verify, no details
+          $required = @(
+              "dep-tests/puppeteer/engine/package.json",
+              "dep-tests/puppeteer/engine/run.py"
+          )
+          
+          foreach ($file in $required) {
+              if (!(Test-Path $file)) {
+                  Write-Error "Setup incomplete"
+                  exit 1
+              }
+          }
       #########################################
       
       - uses: ikalnytskyi/action-setup-postgres@v8
