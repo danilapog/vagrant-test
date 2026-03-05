@@ -76,7 +76,25 @@ jobs:
           echo "PRODUCT_EDITION=$PRODUCT_EDITION"  | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "VERSION=$($env:VERSION)"           | Out-File -Append -FilePath $env:GITHUB_ENV
           echo "BUILD=$($env:BUILD)"               | Out-File -Append -FilePath $env:GITHUB_ENV
+
+      #### puppeter test ############
+      - name: Clone Private Gitea Repository (with PAT)
+        shell: pwsh
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+        run: |
+          # Clone with token
+          git clone "https://${env:GITEA_TOKEN}@git.onlyoffice.com/ONLYOFFICE-QA/Dep.Tests.git" dep-tests
           
+          cd dep-tests/puppeteer
+          git submodule update --init files 2>&1 | Out-Null
+
+      - name: Setup Node.js for Puppeteer
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      #########################################
+      
       - uses: ikalnytskyi/action-setup-postgres@v8
         with:
           username: postgres
@@ -195,69 +213,6 @@ jobs:
         
             Write-Error "Service did NOT return 'true' within 5 minutes!"
             exit 1
-            
-      - name: Install test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest requests pytest-html pytest-json-report
-          
-      - name: Run Advanced Functional Tests
-        shell: pwsh
-        continue-on-error: true
-        run: |
-          Write-Host "`n=== Running Advanced Functional Tests ===`n"
-          
-          # Run tests with multiple output formats
-          python -m pytest .github/scripts/ci_test_server_advanced.py `
-            -v `
-            -s `
-            --tb=short `
-            --html=test_report_advanced.html `
-            --self-contained-html `
-            --json-report `
-            --json-report-file=test_report_advanced.json `
-            --junit-xml=test_report_advanced.xml `
-            2>&1 | Tee-Object -FilePath test_output_advanced.log
-          
-          # Store exit code for later use
-          $test_exit_code = $LASTEXITCODE
-          
-          Write-Host "`n=== Test Summary ===`n"
-          if ($test_exit_code -eq 0) {
-            Write-Host "✅ All tests passed!" -ForegroundColor Green
-          } else {
-            Write-Host "⚠️ Some tests failed (exit code: $test_exit_code)" -ForegroundColor Yellow
-          }
-          
-          # Display test statistics from JSON report
-          if (Test-Path "test_report_advanced.json") {
-            $json = Get-Content "test_report_advanced.json" | ConvertFrom-Json
-            Write-Host "Total tests: $($json.summary.total)"
-            Write-Host "Passed: $($json.summary.passed)" -ForegroundColor Green
-            Write-Host "Failed: $($json.summary.failed)" -ForegroundColor Red
-            Write-Host "Duration: $($json.duration)s"
-          }
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-advanced-test-reports-${{ matrix.edition }}
-          path: |
-            test_report_advanced.html
-            test_report_advanced.json
-            test_report_advanced.xml
-            test_output_advanced.log
-            test_server_advanced.py
-            
-      - name: Upload logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-windows-logs-${{ matrix.edition }}
-          path: |
-            C:\install-log-prereq.txt
-            C:\install-log.txt
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
