@@ -5,6 +5,7 @@ run-name: >-
                           Version: ${{ inputs.version }}
                     ]
 on:
+  push: 
   workflow_dispatch:
     inputs:
       build:
@@ -27,8 +28,8 @@ jobs:
         id: matrix
         shell: bash
         env:
-          VERSION: ${{ github.event.inputs.version }}
-          BUILD: ${{ github.event.inputs.build }}
+          VERSION: 9.3.0
+          BUILD: 89
           PACKAGE_URL: ${{ secrets.PACKAGE_URL }}
         run: |
           set -ex
