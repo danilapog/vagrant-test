@@ -69,7 +69,9 @@ jobs:
       - name: Install fonts
         shell: pwsh
         run: |
-             choco install msttcorefonts -y
+            $url = "https://sourceforge.net/projects/corefonts/files/the%20fonts/final/andale32.exe/download"
+            Invoke-WebRequest $url -OutFile "andale32.exe" -UserAgent "wget"
+            Start-Process "andale32.exe" -ArgumentList "/q" -Wait
           
       - name: Init env
         shell: pwsh
