@@ -110,18 +110,6 @@ jobs:
         run: |
            ONLYOFFICE-DocumentServer-Prerequisites-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-prereq.txt"
            ONLYOFFICE-DocumentServer%PRODUCT_EDITION%-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
-
-      - name: Check DS fonts
-        shell: pwsh
-        run: |
-            $fontsPath = "C:\Program Files\ONLYOFFICE\DocumentServer\sdkjs-plugins\fonts"
-            if (Test-Path $fontsPath) {
-                Get-ChildItem $fontsPath | Select-Object Name
-            } else {
-                Write-Host "Fonts path not found: $fontsPath"
-                # Поищем где вообще лежат шрифты
-                Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer" -Recurse -Filter "*.ttf" | Select-Object FullName
-            }
     
       - name: Verify
         shell: pwsh
@@ -305,7 +293,35 @@ jobs:
                     --config_params "testOptions.url=http://127.0.0.1:8200/example" `
                     $test *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -Append -FilePath "../test-output.log"
                 }
-
+                
+      - name: Test Summary
+        if: always()
+        shell: pwsh
+        run: |
+            $log = Get-Content "../dep-tests/puppeteer/test-output.log" -ErrorAction SilentlyContinue
+            
+            $failed = $log | Where-Object { $_ -match "Test Failed|Verification failed" }
+            $passed = $log | Where-Object { $_ -match "Test Passed" }
+            
+            $summary = @"
+            ## Test Results
+            
+            ✅ Passed: $($passed.Count)
+            ❌ Failed: $($failed.Count)
+            
+            "@
+            
+            if ($failed.Count -gt 0) {
+              $summary += "### Failed Tests`n`n"
+              foreach ($line in $failed) {
+                if ($line -match 'tests\\(.+\.js)') {
+                  $testName = $matches[1] -replace '\\', '/'
+                  $summary += "- ❌ ``$testName```n"
+                }
+              }
+            }
+            
+            $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
       #- name: Upload test results
       #  if: always()
       #  uses: actions/upload-artifact@v4
