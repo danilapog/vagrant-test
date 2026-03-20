@@ -238,7 +238,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
+      - name: List tests
+        shell: pwsh
+        working-directory: dep-tests/puppeteer
+        run: |
+            Get-ChildItem -Recurse -Depth 3 tests/
+    
       - name: Install Dependencies
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
@@ -262,6 +268,11 @@ jobs:
         continue-on-error: true
         run: |
             python run.py `
+              tests/desktop/word/smoke `
+              tests/desktop/spreadsheets/smoke `
+              tests/desktop/presentation/smoke `
+              tests/desktop/pdf-form/smoke `
+              tests/desktop/pdf/smoke `
               --config config_chrome_win.json `
               --config_params "runOptions.disableAnimation=true" `
               --config_params "testOptions.url=http://127.0.0.1:8200/example" `
