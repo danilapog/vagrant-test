@@ -68,7 +68,7 @@ jobs:
       - name: Install fonts
         shell: pwsh
         run: |
-            choco install corefonts -y
+             choco install msttcorefonts-installer -y
           
       - name: Init env
         shell: pwsh
