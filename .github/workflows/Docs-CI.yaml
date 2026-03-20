@@ -292,14 +292,13 @@ jobs:
               "tests/desktop/pdf/smoke/reload_pdf_after_insert_page.js"
             )
         
-            $commonArgs = @(
-              "--config", "config_chrome_win.json",
-              "--config_params", "runOptions.disableAnimation=true",
-              "--config_params", "testOptions.url=http://127.0.0.1:8200/example"
-            )
-        
             foreach ($test in $tests) {
-              python run.py @commonArgs $test *>&1 |
+              python run.py `
+                --config config_chrome_win.json `
+                $test `
+                --config_params "runOptions.disableAnimation=true" `
+                --config_params "testOptions.url=http://127.0.0.1:8200/example" `
+                *>&1 |
                 Where-Object { $_ -notmatch "Running tests in folder" } |
                 Tee-Object -Append -FilePath "../test-output.log"
             }
