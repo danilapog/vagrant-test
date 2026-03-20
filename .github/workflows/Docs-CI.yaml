@@ -5,7 +5,6 @@ run-name: >-
                           Version: ${{ inputs.version }}
                     ]
 on:
-  push: 
   workflow_dispatch:
     inputs:
       build:
