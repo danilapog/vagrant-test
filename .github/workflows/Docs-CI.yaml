@@ -65,13 +65,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install fonts
-        shell: pwsh
-        run: |
-            $url = "https://sourceforge.net/projects/corefonts/files/the%20fonts/final/andale32.exe/download"
-            Invoke-WebRequest $url -OutFile "andale32.exe" -UserAgent "wget"
-            Start-Process "andale32.exe" -ArgumentList "/q" -Wait
           
       - name: Init env
         shell: pwsh
@@ -118,6 +111,18 @@ jobs:
         run: |
            ONLYOFFICE-DocumentServer-Prerequisites-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="C:\install-log-prereq.txt"
            ONLYOFFICE-DocumentServer%PRODUCT_EDITION%-%VERSION%.%BUILD%-x64.exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DS_PORT=8200 /LOG="C:\install-log.txt"
+
+      - name: Check DS fonts
+        shell: pwsh
+        run: |
+            $fontsPath = "C:\Program Files\ONLYOFFICE\DocumentServer\sdkjs-plugins\fonts"
+            if (Test-Path $fontsPath) {
+                Get-ChildItem $fontsPath | Select-Object Name
+            } else {
+                Write-Host "Fonts path not found: $fontsPath"
+                # Поищем где вообще лежат шрифты
+                Get-ChildItem "C:\Program Files\ONLYOFFICE\DocumentServer" -Recurse -Filter "*.ttf" | Select-Object FullName
+            }
     
       - name: Verify
         shell: pwsh
