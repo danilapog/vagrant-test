@@ -64,7 +64,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
+      - name: Install fonts
+        shell: pwsh
+        run: |
+         $fonts = "https://github.com/juliuste/andale-mono/raw/master/font/AndaleMo.TTF"
+          Invoke-WebRequest $fonts -OutFile "AndaleMo.TTF"
+          Copy-Item "AndaleMo.TTF" "C:\Windows\Fonts\"
+          
       - name: Init env
         shell: pwsh
         run: |
@@ -255,7 +262,7 @@ jobs:
         uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: 120
-      
+    
       - name: Execute Tests
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
@@ -267,7 +274,7 @@ jobs:
                 --config config_chrome_win.json `
                 --config_params "runOptions.disableAnimation=true" `
                 --config_params "testOptions.url=http://127.0.0.1:8200/example" `
-                --threads 4 `
+                --threads 1 `
                 tests/desktop/$suite/smoke *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -Append -FilePath "../test-output.log"
             }
 
