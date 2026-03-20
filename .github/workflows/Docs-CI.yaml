@@ -306,12 +306,12 @@ jobs:
                     $test *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -Append -FilePath "../test-output.log"
                 }
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-            name: test-results
-            path: dep-tests/puppeteer/out/
+      #- name: Upload test results
+      #  if: always()
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #      name: test-results
+      #      path: dep-tests/puppeteer/out/
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
