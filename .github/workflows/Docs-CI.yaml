@@ -238,12 +238,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: List tests
-        shell: pwsh
-        working-directory: dep-tests/puppeteer
-        run: |
-            Get-ChildItem -Recurse -Depth 3 tests/
     
       - name: Install Dependencies
         shell: pwsh
