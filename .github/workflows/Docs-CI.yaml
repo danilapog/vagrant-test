@@ -68,9 +68,7 @@ jobs:
       - name: Install fonts
         shell: pwsh
         run: |
-         $fonts = "https://github.com/juliuste/andale-mono/raw/master/font/AndaleMo.TTF"
-          Invoke-WebRequest $fonts -OutFile "AndaleMo.TTF"
-          Copy-Item "AndaleMo.TTF" "C:\Windows\Fonts\"
+            choco install corefonts -y
           
       - name: Init env
         shell: pwsh
