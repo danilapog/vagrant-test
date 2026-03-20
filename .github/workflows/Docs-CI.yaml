@@ -28,8 +28,8 @@ jobs:
         id: matrix
         shell: bash
         env:
-          VERSION: 9.3.0
-          BUILD: 89
+          VERSION: ${{ github.event.inputs.version }}
+          BUILD: ${{ github.event.inputs.build }}
           PACKAGE_URL: ${{ secrets.PACKAGE_URL }}
         run: |
           set -ex
@@ -69,7 +69,7 @@ jobs:
       - name: Install fonts
         shell: pwsh
         run: |
-             choco install msttcorefonts-installer -y
+             choco install msttcorefonts -y
           
       - name: Init env
         shell: pwsh
