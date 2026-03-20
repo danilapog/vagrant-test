@@ -299,7 +299,7 @@ jobs:
                 --config_params "runOptions.disableAnimation=true" `
                 --config_params "testOptions.url=http://127.0.0.1:8200/example" `
                 *>&1 |
-                Where-Object { $_ -notmatch "Running tests in folder" } |
+                Where-Object { $_ -notmatch "Running test" } |
                 Tee-Object -Append -FilePath "../test-output.log"
             }
             
