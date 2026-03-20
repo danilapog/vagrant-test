@@ -268,20 +268,43 @@ jobs:
         with:
           chrome-version: 120
     
-      - name: Execute Tests
+      - name: Execute Smoke Tests
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
         continue-on-error: true
         run: |
-            foreach ($suite in @("word", "spreadsheets", "presentation", "pdf-form", "pdf")) {
-              Write-Host "=== Running smoke tests for: $suite ==="
-              python run.py `
-                --config config_chrome_win.json `
-                --config_params "runOptions.disableAnimation=true" `
-                --config_params "testOptions.url=http://127.0.0.1:8200/example" `
-                --threads 1 `
-                tests/desktop/$suite/smoke *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -Append -FilePath "../test-output.log"
-            }
+              $tests = @(
+              "tests/desktop/word/smoke/check_disabled_reset_crop_button.js",
+              "tests/desktop/word/smoke/check_active_crop_button.js",
+              "tests/desktop/word/smoke/check_reset_crop.js",
+              "tests/desktop/word/smoke/check_search_while_drawing.js",
+              "tests/desktop/word/smoke/open-close-file-tab.js",
+              "tests/desktop/word/smoke/insert_chart_into_header.js",
+              "tests/desktop/word/smoke/insert_table_line_spacing_header_footer.js",
+              "tests/desktop/spreadsheets/smoke/check_replace_all.js",
+              "tests/desktop/spreadsheets/smoke/data_entry_use_tab_button.js",
+              "tests/desktop/presentation/smoke/delete_all_slides.js",
+              "tests/desktop/presentation/smoke/select_slides_with_shift_and_delete.js",
+              "tests/desktop/presentation/smoke/copy_all_objects_on_slide.js",
+              "tests/desktop/presentation/smoke/smoke_test_presentation.js",
+              "tests/desktop/pdf-form/smoke/checkbox_with_one_key.js",
+              "tests/desktop/pdf-form/smoke/field_format.js",
+              "tests/desktop/pdf-form/smoke/combobox_with_one_key.js",
+              "tests/desktop/pdf-form/smoke/dropdown_witn_one_key.js",
+              "tests/desktop/pdf-form/smoke/field_with_one_key.js",
+              "tests/desktop/pdf/smoke/check_find_for_a_specific_pdf.js",
+              "tests/desktop/pdf/smoke/check_undo_after_add_text_comment.js",
+              "tests/desktop/pdf/smoke/check_undo_for_edit_text.js",
+              "tests/desktop/pdf/smoke/reload_pdf_after_insert_page.js"
+              )
+            
+                foreach ($test in $tests) {
+                  python run.py `
+                    --config config_chrome_win.json `
+                    --config_params "runOptions.disableAnimation=true" `
+                    --config_params "testOptions.url=http://127.0.0.1:8200/example" `
+                    $test *>&1 | Where-Object { $_ -notmatch "Running tests in folder" } | Tee-Object -Append -FilePath "../test-output.log"
+                }
 
       - name: Upload test results
         if: always()
