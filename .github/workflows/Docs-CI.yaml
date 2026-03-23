@@ -255,13 +255,7 @@ jobs:
         uses: browser-actions/setup-chrome@v2
         with:
           chrome-version: 120
-    
-      - name: Execute Smoke Tests
-        shell: pwsh
-        working-directory: dep-tests/puppeteer/engine
-        continue-on-error: true
-        run: |
-     
+
       - name: Execute Smoke Tests
         shell: pwsh
         working-directory: dep-tests/puppeteer/engine
