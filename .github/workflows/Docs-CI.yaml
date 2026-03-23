@@ -116,13 +116,13 @@ jobs:
         run: |
          ls "C:\Program Files\ONLYOFFICE\DocumentServer"
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
-              @"
-              ## ❌ Installation Failed: Server Windows
+         @"
+         ## ❌ Installation Failed: Server Windows
               
-              - Version: $env:VERSION
-              - Build: $env:BUILD
-              - Edition: $env:EDITION
-              "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+         - Version: $env:VERSION
+         - Build: $env:BUILD
+         - Edition: $env:EDITION
+         "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
               Write-Error "App not installed!"
          }
          Write-Host "== Running services =="
@@ -405,15 +405,15 @@ jobs:
            "portable" {
              $path = "C:\ONLYOFFICE-Portable"
              if (!(Test-Path $path)) {
-                 @"
-                 ## ❌ Installation Failed: Desktop Windows
+         @"
+         ## ❌ Installation Failed: Desktop Windows
                   
-                 - Version: $env:VERSION
-                 - Build: $env:BUILD
-                 - Edition: $env:EDITION
-                 - Platform: $env:PLATFORM
-                 - Type: $env:TYPE
-                 "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+         - Version: $env:VERSION
+         - Build: $env:BUILD
+         - Edition: $env:EDITION
+         - Platform: $env:PLATFORM
+         - Type: $env:TYPE
+         "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
                  Write-Error "Portable package not extracted!"
              }
              Write-Host "Files in portable directory:"
@@ -545,7 +545,7 @@ jobs:
           ls -la /Volumes/ONLYOFFICE
           
           APP_PATH="/Volumes/ONLYOFFICE/ONLYOFFICE.app"
-          if [ -d "${APP_PATH}" ]; then
+          if [ ! -d "${APP_PATH}" ]; then
             cat >> $GITHUB_STEP_SUMMARY << EOF
             ## ❌ Installation Failed: Desktop Mac
               
