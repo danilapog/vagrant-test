@@ -553,7 +553,7 @@ jobs:
             - Build: $BUILD
             - Edition: $EDITION
             - Architecture: $ARCHITECTURE
-            EOF
+          EOF
             echo "ERROR: ONLYOFFICE.app not found!"
             exit 1
           fi
