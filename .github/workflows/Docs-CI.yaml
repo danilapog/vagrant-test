@@ -301,7 +301,7 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-            $log = Get-Content "../dep-tests/puppeteer/test-output.log" -ErrorAction SilentlyContinue
+            $log = Get-Content "dep-tests/puppeteer/test-output.log" -ErrorAction SilentlyContinue
             
             $failed = $log | Where-Object { $_ -match "Test Failed|Verification failed" }
             $passed = $log | Where-Object { $_ -match "Test Passed" }
