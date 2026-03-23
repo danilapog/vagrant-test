@@ -116,6 +116,13 @@ jobs:
         run: |
          ls "C:\Program Files\ONLYOFFICE\DocumentServer"
          if (!(Test-Path "C:\Program Files\ONLYOFFICE\DocumentServer")) {
+              @"
+              ## ❌ Installation Failed: Server Windows
+              
+              - Version: $env:VERSION
+              - Build: $env:BUILD
+              - Edition: $env:EDITION
+              "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
               Write-Error "App not installed!"
          }
          Write-Host "== Running services =="
@@ -218,22 +225,6 @@ jobs:
             git config --global url."https://${{ secrets.MY_TOKEN }}@github.com/".insteadOf "https://github.com/"
             git submodule update --init
           
-      - name: Verify Structure
-        shell: pwsh
-        run: |
-          # Only verify, no details
-          $required = @(
-              "dep-tests/puppeteer/engine/package.json",
-              "dep-tests/puppeteer/engine/run.py"
-          )
-          
-          foreach ($file in $required) {
-              if (!(Test-Path $file)) {
-                  Write-Error "Setup incomplete"
-                  exit 1
-              }
-          }
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -325,12 +316,6 @@ jobs:
             }
             
             $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
-      #- name: Upload test results
-      #  if: always()
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #      name: test-results
-      #      path: dep-tests/puppeteer/out/
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
@@ -420,6 +405,15 @@ jobs:
            "portable" {
              $path = "C:\ONLYOFFICE-Portable"
              if (!(Test-Path $path)) {
+                 @"
+                 ## ❌ Installation Failed: Desktop Windows
+                  
+                 - Version: $env:VERSION
+                 - Build: $env:BUILD
+                 - Edition: $env:EDITION
+                 - Platform: $env:PLATFORM
+                 - Type: $env:TYPE
+                 "@ | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
                  Write-Error "Portable package not extracted!"
              }
              Write-Host "Files in portable directory:"
@@ -552,13 +546,21 @@ jobs:
           
           APP_PATH="/Volumes/ONLYOFFICE/ONLYOFFICE.app"
           if [ ! -d "${APP_PATH}" ]; then
+            cat >> $GITHUB_STEP_SUMMARY << EOF
+            ## ❌ Installation Failed: Desktop Mac
+              
+            - Version: $VERSION
+            - Build: $BUILD
+            - Edition: $EDITION
+            - Architecture: $ARCHITECTURE
+            EOF
             echo "ERROR: ONLYOFFICE.app not found!"
             exit 1
           fi
           
           echo "=== App Info ==="
           /usr/bin/defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString || echo "Version not found"
-          
+  
       - name: Unmount DMG
         if: always()
         shell: bash
