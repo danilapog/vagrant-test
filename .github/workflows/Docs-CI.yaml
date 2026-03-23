@@ -545,7 +545,7 @@ jobs:
           ls -la /Volumes/ONLYOFFICE
           
           APP_PATH="/Volumes/ONLYOFFICE/ONLYOFFICE.app"
-          if [ ! -d "${APP_PATH}" ]; then
+          if [ -d "${APP_PATH}" ]; then
             cat >> $GITHUB_STEP_SUMMARY << EOF
             ## ❌ Installation Failed: Desktop Mac
               
