@@ -1,10 +1,4 @@
-FROM nginx:alpine as mynginx-release
+FROM nginx:alpine as server
 
-RUN apk update && apk add --no-cache \
-    curl \
-    git \
-    htop
-    
-EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+RUN echo "test"
