@@ -1,0 +1,47 @@
+name: Docker Scout Scan
+
+on:
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  scout-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: build
+        run: docker buildx bake --sbom=true --provenance=mode=max --metadata-file metadata.json -f docker-bake.hcl  "server" --push
+        
+
+      - name: Extract image name and digest
+        id: image
+        run: |
+          NAME=$(jq -r '.server."image.name" | split(",")[0]' metadata.json)
+          DIGEST=$(jq -r '.server."containerimage.digest"' metadata.json)
+          REPO="${NAME%:*}"
+          echo "name=$REPO" >> "$GITHUB_OUTPUT"
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ steps.image.outputs.name }}
+          subject-digest: ${{ steps.image.outputs.digest }}
+          push-to-registry: true
+          
