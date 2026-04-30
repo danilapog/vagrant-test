@@ -3,6 +3,7 @@ name: Docker Scout Scan
 on:
   push:
 
+
 permissions:
   id-token: write
   contents: read
