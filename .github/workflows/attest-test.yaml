@@ -1,0 +1,29 @@
+name: Test condition
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        type: boolean
+        description: 'test'
+        default: true
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  scout-scan:
+    runs-on: ubuntu-latest
+    env:
+      CONDITION: ${{ github.event.inputs.test }}
+    steps:
+      - name: Checkout
+        shell: bash
+        run: |
+           if [ "${CONDITION}" = "true" ]; then
+             echo "is true"
+           fi
+          
