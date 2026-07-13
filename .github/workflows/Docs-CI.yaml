@@ -317,6 +317,11 @@ jobs:
             }
             
             $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+
+            if ($failed.Count -gt 0) {
+              Write-Error "❌ $($failed.Count) test(s) failed"
+              exit 1
+            }
         
   desktop-windows:
     name: "Desktop-${{ matrix.type }}-${{ matrix.edition }}-${{ matrix.platform }}-${{ github.event.inputs.version }}:${{ github.event.inputs.build }}"
