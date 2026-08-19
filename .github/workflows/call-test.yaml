@@ -1,0 +1,43 @@
+name: E2E
+
+on:
+  workflow_call:
+    inputs:
+      system:
+        description: 'Playwright project and environments/ directory: alfresco | confluence | jira | liferay'
+        required: true
+        type: string
+      artifact_name:
+        description: 'Actions artifact of the calling run holding the plugin build(s) to install'
+        required: true
+        type: string
+      documentserver_image:
+        description: 'Document Server image'
+        type: string
+        default: 'onlyoffice/documentserver:latest'
+      env_overrides:
+        description: >-
+          Extra environment for the stand, one KEY=VALUE per line. The product version variable
+          differs per system: CONFLUENCE_VERSION, JIRA_VERSION, ALFRESCO_VERSION, LIFERAY_IMAGE.
+        type: string
+        default: ''
+      timeout_minutes:
+        description: >-
+          Backstop for a hung job. A green run is ~15-20 min and the stand's own waits give up
+          at ~45 min (see tests/setup/), so this only fires when something is stuck outside them.
+        type: number
+        default: 60
+
+jobs:
+  e2e:
+    name: ${{ inputs.system }}
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    env:
+      CI: 'true'
+      DOCUMENTSERVER_IMAGE: ${{ inputs.documentserver_image }}
+      OIT_RUN_ID: gh${{ github.run_id }}-${{ github.run_attempt }}
+
+    steps:
+      - name: Checkout integration-tests
+        run: echo "test"
