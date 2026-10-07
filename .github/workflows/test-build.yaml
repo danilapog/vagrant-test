@@ -37,5 +37,5 @@ jobs:
 
     - name: check
       run: |
-        docker run test/nginx:123 --name mytest
+        docker run --name mytest test/nginx:123
         docker exec mytest env
